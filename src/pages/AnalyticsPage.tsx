@@ -121,29 +121,29 @@ export const AnalyticsPage: React.FC = () => {
     return (
       <div className="space-y-8 animate-in fade-in duration-300">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2.5">
-            <BarChart3 className="w-6 h-6 text-primary-400" />
+          <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
+            <BarChart3 className="w-6 h-6 text-[#7E79D8]" />
             Learning Analytics & ML Mastery
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500">
             Real-time mastery tracking, scikit-learn weakness predictions, and spaced repetition
           </p>
         </div>
 
-        <div className="glass-card rounded-3xl p-10 text-center max-w-2xl mx-auto space-y-5 border border-primary-500/20">
-          <div className="w-16 h-16 rounded-2xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center mx-auto text-primary-400">
+        <div className="bg-white rounded-3xl p-10 text-center max-w-2xl mx-auto space-y-5 border border-[#1E222A]/10 shadow-sm">
+          <div className="w-16 h-16 rounded-2xl bg-[#7E79D8]/10 border border-[#7E79D8]/20 flex items-center justify-center mx-auto text-[#7E79D8]">
             <Brain className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-xl font-bold text-white">No Quiz or Review Activity Recorded Yet</h3>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
+            <h3 className="text-xl font-bold text-[#1E222A]">No Quiz or Review Activity Recorded Yet</h3>
+            <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
               LearnSphere calculates real topic mastery and predictive weakness models from your actual study history. Take your first quiz or review flashcards to populate this dashboard.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <Link to="/practice">
-              <Button variant="glow" leftIcon={<CheckSquare className="w-4 h-4" />}>
+              <Button variant="primary" leftIcon={<CheckSquare className="w-4 h-4" />}>
                 Take Practice Quiz
               </Button>
             </Link>
@@ -178,11 +178,11 @@ export const AnalyticsPage: React.FC = () => {
       {/* Top Banner & ML Diagnostic Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2.5">
-            <BarChart3 className="w-6 h-6 text-primary-400" />
+          <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
+            <BarChart3 className="w-6 h-6 text-[#7E79D8]" />
             Learning Analytics & ML Mastery
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500">
             Predictive weakness modeling, cognitive retention decay, and personalized revision scheduling
           </p>
         </div>

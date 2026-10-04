@@ -28,12 +28,12 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] select-none';
 
     const variants = {
-      primary: 'bg-primary-600 hover:bg-primary-500 text-white shadow-md shadow-primary-900/30 border border-primary-500/30 hover:shadow-glow-primary',
-      secondary: 'bg-surface-light hover:bg-surface-hover text-slate-200 border border-surface-border hover:border-slate-600',
-      outline: 'bg-transparent border border-slate-700 hover:border-primary-500 text-slate-300 hover:text-white hover:bg-primary-500/10',
-      ghost: 'bg-transparent text-slate-400 hover:text-slate-100 hover:bg-surface-light',
-      danger: 'bg-rose-600/20 text-rose-300 border border-rose-500/30 hover:bg-rose-600/30 hover:text-white',
-      glow: 'bg-gradient-to-r from-primary-600 to-accent-blue hover:from-primary-500 hover:to-accent-blue/90 text-white shadow-glow-primary border border-white/20'
+      primary: 'bg-[#7E79D8] hover:bg-[#6D67CF] text-white shadow-sm border border-[#7E79D8]/30 hover:shadow-md',
+      secondary: 'bg-white hover:bg-slate-50 text-[#1E222A] border border-[#1E222A]/10 hover:border-[#7E79D8]/50 shadow-sm',
+      outline: 'bg-transparent border border-slate-300 hover:border-[#7E79D8] text-slate-700 hover:text-[#1E222A] hover:bg-[#7E79D8]/10',
+      ghost: 'bg-transparent text-slate-600 hover:text-[#1E222A] hover:bg-slate-100',
+      danger: 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100',
+      glow: 'bg-gradient-to-r from-[#7E79D8] to-[#9333EA] hover:from-[#6D67CF] hover:to-[#7E79D8] text-white shadow-md border border-white/20'
     };
 
     const sizes = {

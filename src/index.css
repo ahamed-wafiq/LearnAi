@@ -1,55 +1,87 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #07090e;
-  --color-surface: #0f1422;
-  --color-surface-light: #171f34;
-  --color-surface-subtle: #121829;
-  --color-surface-border: rgba(255, 255, 255, 0.08);
-  --color-surface-hover: #1e293b;
+  --color-background: #b5b9f4;
+  --color-surface: #ffffff;
+  --color-surface-light: #f5f6fa;
+  --color-surface-subtle: #f0f2f8;
+  --color-surface-border: rgba(31, 35, 43, 0.08);
+  --color-surface-hover: #e9ebf5;
+
+  --color-charcoal: #1e222a;
+  --color-charcoal-light: #2a2e37;
+  --color-charcoal-dark: #16181f;
+
+  --color-lavender: #7e79d8;
+  --color-lavender-light: #dde0fa;
+  --color-lavender-soft: #b8bcf8;
+  --color-lavender-deep: #655fc4;
+
+  --color-peach: #f99f5b;
+  --color-peach-light: #fde5d2;
+  --color-peach-dark: #e8873f;
 
   --color-primary-50: #f5f3ff;
   --color-primary-100: #ede9fe;
   --color-primary-200: #ddd6fe;
   --color-primary-300: #c4b5fd;
   --color-primary-400: #a78bfa;
-  --color-primary-500: #8b5cf6;
-  --color-primary-600: #7c3aed;
-  --color-primary-700: #6d28d9;
-  --color-primary-800: #5b21b6;
-  --color-primary-900: #4c1d95;
-  --color-primary: #8b5cf6;
+  --color-primary-500: #7e79d8;
+  --color-primary-600: #6d67cf;
+  --color-primary-700: #5b54bd;
+  --color-primary-800: #4a43a8;
+  --color-primary-900: #3b358e;
+  --color-primary: #7e79d8;
 
   --color-accent-blue: #3b82f6;
   --color-accent-cyan: #06b6d4;
-  --color-accent-violet: #8b5cf6;
-  --color-accent-purple: #a855f7;
+  --color-accent-violet: #7e79d8;
+  --color-accent-purple: #9333ea;
   --color-accent-emerald: #10b981;
-  --color-accent-amber: #f59e0b;
+  --color-accent-amber: #f99f5b;
   --color-accent-rose: #f43f5e;
+
+  --color-slate-100: #1e222a;
+  --color-slate-200: #292d37;
+  --color-slate-300: #475569;
+  --color-slate-400: #64748b;
+  --color-slate-500: #94a3b8;
 
   --font-sans: "Plus Jakarta Sans", Inter, system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
-  --shadow-glow-primary: 0 0 25px -5px rgba(139, 92, 246, 0.35);
+  --shadow-glow-primary: 0 0 25px -5px rgba(126, 121, 216, 0.35);
   --shadow-glow-cyan: 0 0 25px -5px rgba(6, 182, 212, 0.35);
   --shadow-glow-blue: 0 0 25px -5px rgba(59, 130, 246, 0.35);
-  --shadow-card-subtle: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --shadow-card-subtle: 0 6px 24px 0 rgba(31, 35, 43, 0.06);
 }
 
 :root {
-  --bg-primary: #07090e;
-  --bg-surface: #0f1422;
-  --bg-surface-light: #171f34;
-  --border-subtle: rgba(255, 255, 255, 0.08);
+  --bg-primary: #f5f6fa;
+  --bg-surface: #ffffff;
+  --bg-surface-light: #f0f2f8;
+  --border-subtle: rgba(31, 35, 43, 0.08);
 }
 
 body {
-  background-color: #07090e;
-  color: #f1f5f9;
+  background-color: #b5b9f4;
+  color: #1e222a;
   min-height: 100vh;
   overflow-x: hidden;
+  font-family: "Plus Jakarta Sans", sans-serif;
 }
+
+/* EduView geometric lavender background pattern */
+.bg-lavender-geometric {
+  background-color: #b4b8f0;
+  background-image:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.18) 18%, transparent 18%, transparent 40%, rgba(255, 255, 255, 0.14) 40%, rgba(255, 255, 255, 0.14) 62%, transparent 62%, transparent 100%),
+    radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.25) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(139, 144, 230, 0.4) 0%, transparent 50%),
+    linear-gradient(135deg, #a7aceb 0%, #c4c8fa 50%, #b2b6ef 100%);
+  background-attachment: fixed;
+}
+
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
@@ -58,24 +90,54 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 20, 34, 0.6);
+  background: rgba(245, 246, 250, 0.8);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.25);
+  background: rgba(126, 121, 216, 0.35);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.5);
+  background: rgba(126, 121, 216, 0.6);
 }
 
 /* Glassmorphism & Card Styles */
 .glass-card {
-  background: rgba(15, 20, 34, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: #ffffff;
+  border-radius: 24px;
+  border: 1px solid rgba(31, 35, 43, 0.08);
+  box-shadow: 0 4px 20px -2px rgba(31, 35, 43, 0.05);
+  color: #1e222a;
+}
+
+/* EduView UI Cards & Patterns */
+.edu-card {
+  background-color: #ffffff;
+  border-radius: 24px;
+  border: 1px solid rgba(31, 35, 43, 0.07);
+  box-shadow: 0 4px 20px -2px rgba(31, 35, 43, 0.05);
+}
+
+.edu-card-hover {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.edu-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px -4px rgba(31, 35, 43, 0.09);
+  border-color: rgba(126, 121, 216, 0.3);
+}
+
+/* Diagonal stripes pattern for chart bars */
+.bg-striped-pattern {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.2) 6px,
+    transparent 6px,
+    transparent 12px
+  );
 }
 
 .glass-card-hover {
@@ -83,16 +145,17 @@ body {
 }
 
 .glass-card-hover:hover {
-  border-color: rgba(139, 92, 246, 0.35);
+  border-color: rgba(126, 121, 216, 0.35);
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px -10px rgba(139, 92, 246, 0.15);
+  box-shadow: 0 10px 28px -4px rgba(31, 35, 43, 0.08);
 }
 
 .glass-dropdown {
-  background: rgba(15, 20, 34, 0.95);
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(31, 35, 43, 0.1);
+  box-shadow: 0 16px 36px -10px rgba(31, 35, 43, 0.15);
+  color: #1e222a;
 }
 
 /* Flashcard 3D perspective & flip */

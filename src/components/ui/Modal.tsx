@@ -62,17 +62,17 @@ export const Modal: React.FC<ModalProps> = ({
         )}
       >
         {/* Subtle decorative glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-primary-500 to-transparent" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-[#7E79D8] to-transparent" />
 
         {/* Header */}
         <div className="flex items-start justify-between mb-5">
           <div>
-            {title && <h3 className="text-lg font-semibold text-slate-100">{title}</h3>}
-            {description && <p className="text-xs text-slate-400 mt-1">{description}</p>}
+            {title && <h3 className="text-lg font-bold text-[#1E222A]">{title}</h3>}
+            {description && <p className="text-xs text-slate-500 mt-1">{description}</p>}
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-200 p-1.5 rounded-lg hover:bg-surface-light transition-colors"
+            className="text-slate-400 hover:text-[#1E222A] p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>

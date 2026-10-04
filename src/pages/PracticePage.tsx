@@ -257,16 +257,16 @@ export const PracticePage: React.FC = () => {
   // Empty state: no documents uploaded
   if (documents.length === 0) {
     return (
-      <div className="glass-card rounded-3xl p-10 text-center max-w-xl mx-auto space-y-5 border border-primary-500/20">
-        <div className="w-16 h-16 rounded-2xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center mx-auto text-primary-400">
+      <div className="bg-white rounded-3xl p-10 text-center max-w-xl mx-auto space-y-5 border border-[#1E222A]/10 shadow-sm">
+        <div className="w-16 h-16 rounded-2xl bg-[#7E79D8]/10 border border-[#7E79D8]/20 flex items-center justify-center mx-auto text-[#7E79D8]">
           <BookOpen className="w-8 h-8" />
         </div>
-        <h2 className="text-xl font-bold text-white">No Study Materials Indexed Yet</h2>
-        <p className="text-sm text-slate-300">
+        <h2 className="text-xl font-bold text-[#1E222A]">No Study Materials Indexed Yet</h2>
+        <p className="text-sm text-slate-500">
           To generate AI-powered multiple-choice questions grounded in your course materials, please upload a PDF document first.
         </p>
         <Link to="/library">
-          <Button variant="glow" leftIcon={<FileText className="w-4 h-4" />}>
+          <Button variant="primary" leftIcon={<FileText className="w-4 h-4" />}>
             Go to Document Library
           </Button>
         </Link>
@@ -282,21 +282,21 @@ export const PracticePage: React.FC = () => {
       {/* Top Header & Actions Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
-            <CheckSquare className="w-6 h-6 text-primary-400" />
+          <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
+            <CheckSquare className="w-6 h-6 text-[#7E79D8]" />
             AI Practice & Question Drills
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500">
             Multiple-choice quizzes generated directly from your uploaded course PDFs using RAG & Gemini
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex bg-surface-subtle border border-surface-border rounded-xl p-1">
+          <div className="flex bg-white border border-[#1E222A]/10 rounded-xl p-1 shadow-sm">
             <button
               onClick={() => setActiveTab('quiz')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'quiz' ? 'bg-primary-600 text-white' : 'text-slate-400 hover:text-white'
+                activeTab === 'quiz' ? 'bg-[#7E79D8] text-white' : 'text-slate-500 hover:text-[#1E222A]'
               }`}
             >
               Current Quiz
@@ -304,7 +304,7 @@ export const PracticePage: React.FC = () => {
             <button
               onClick={() => setActiveTab('history')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                activeTab === 'history' ? 'bg-primary-600 text-white' : 'text-slate-400 hover:text-white'
+                activeTab === 'history' ? 'bg-[#7E79D8] text-white' : 'text-slate-500 hover:text-[#1E222A]'
               }`}
             >
               <History className="w-3.5 h-3.5" />
@@ -313,7 +313,7 @@ export const PracticePage: React.FC = () => {
           </div>
 
           <Button
-            variant="glow"
+            variant="primary"
             size="sm"
             onClick={() => setShowGenerator(true)}
             leftIcon={<Sparkles className="w-4 h-4" />}
@@ -613,7 +613,7 @@ export const PracticePage: React.FC = () => {
                   </div>
 
                   {/* Question Statement */}
-                  <h3 className="text-base sm:text-lg font-bold text-slate-100 leading-relaxed">
+                  <h3 className="text-base sm:text-lg font-bold text-[#1E222A] leading-relaxed">
                     {currentQ.question}
                   </h3>
 
@@ -627,24 +627,24 @@ export const PracticePage: React.FC = () => {
                           onClick={() => handleSelectOption(activeQuestionIdx, optIdx)}
                           className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between group ${
                             isSelected
-                              ? 'bg-primary-600/20 border-primary-500 text-white shadow-glow-primary/20'
-                              : 'bg-surface-subtle/80 border-surface-border hover:bg-surface-light hover:border-slate-600 text-slate-300'
+                              ? 'bg-[#7E79D8]/10 border-[#7E79D8] text-[#1E222A] font-medium shadow-sm'
+                              : 'bg-[#F5F6FA] border-[#1E222A]/10 hover:bg-[#F0F2F8] hover:border-[#7E79D8]/40 text-[#1E222A]'
                           }`}
                         >
                           <div className="flex items-center gap-3">
                             <span
                               className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold border transition-colors ${
                                 isSelected
-                                  ? 'bg-primary-600 text-white border-primary-400'
-                                  : 'bg-surface text-slate-400 border-surface-border group-hover:border-slate-500'
+                                  ? 'bg-[#7E79D8] text-white border-[#7E79D8]'
+                                  : 'bg-white text-slate-600 border-[#1E222A]/10 group-hover:border-[#7E79D8]/50'
                               }`}
                             >
                               {String.fromCharCode(65 + optIdx)}
                             </span>
-                            <span className="text-xs sm:text-sm font-medium">{opt}</span>
+                            <span className="text-xs sm:text-sm">{opt}</span>
                           </div>
                           {isSelected && (
-                            <CheckCircle2 className="w-4 h-4 text-primary-400 shrink-0" />
+                            <CheckCircle2 className="w-4 h-4 text-[#7E79D8] shrink-0" />
                           )}
                         </button>
                       );
@@ -760,11 +760,11 @@ export const PracticePage: React.FC = () => {
                     <Trophy className="w-8 h-8" />
                   </div>
 
-                  <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1E222A]">
                     Quiz Completed!
                   </h2>
 
-                  <p className="text-xs sm:text-sm text-slate-300">
+                  <p className="text-xs sm:text-sm text-slate-500">
                     {currentResult?.percentage && currentResult.percentage >= 70
                       ? 'Outstanding performance! You have mastered the core concepts of this section.'
                       : 'Good effort! Review the detailed question explanations below to reinforce weak areas.'}
@@ -772,7 +772,7 @@ export const PracticePage: React.FC = () => {
 
                   <div className="flex items-center justify-center gap-6 py-4">
                     <div>
-                      <span className="text-3xl font-extrabold text-primary-300">
+                      <span className="text-3xl font-extrabold text-[#7E79D8]">
                         {currentResult?.percentage}%
                       </span>
                       <span className="text-[11px] text-slate-400 block">Accuracy</span>

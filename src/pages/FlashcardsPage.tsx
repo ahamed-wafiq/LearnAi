@@ -248,16 +248,16 @@ export const FlashcardsPage: React.FC = () => {
   // Empty state: no documents uploaded
   if (documents.length === 0) {
     return (
-      <div className="glass-card rounded-3xl p-10 text-center max-w-xl mx-auto space-y-5 border border-primary-500/20">
-        <div className="w-16 h-16 rounded-2xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center mx-auto text-primary-400">
+      <div className="bg-white rounded-3xl p-10 text-center max-w-xl mx-auto space-y-5 border border-[#1E222A]/10 shadow-sm">
+        <div className="w-16 h-16 rounded-2xl bg-[#7E79D8]/10 border border-[#7E79D8]/20 flex items-center justify-center mx-auto text-[#7E79D8]">
           <BookOpen className="w-8 h-8" />
         </div>
-        <h2 className="text-xl font-bold text-white">No Study Materials Indexed Yet</h2>
-        <p className="text-sm text-slate-300">
+        <h2 className="text-xl font-bold text-[#1E222A]">No Study Materials Indexed Yet</h2>
+        <p className="text-sm text-slate-500">
           To generate active-recall flashcards grounded in your course materials, please upload a PDF document first.
         </p>
         <Link to="/library">
-          <Button variant="glow" leftIcon={<FileText className="w-4 h-4" />}>
+          <Button variant="primary" leftIcon={<FileText className="w-4 h-4" />}>
             Go to Document Library
           </Button>
         </Link>
@@ -274,11 +274,11 @@ export const FlashcardsPage: React.FC = () => {
       {/* Top Banner & Deck Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2.5">
-            <Layers className="w-6 h-6 text-primary-400" />
+          <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
+            <Layers className="w-6 h-6 text-[#7E79D8]" />
             AI Flashcards & Active Recall
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500">
             Self-paced spaced repetition flashcards extracted from your uploaded PDFs
           </p>
         </div>
@@ -569,14 +569,14 @@ export const FlashcardsPage: React.FC = () => {
 
                 {/* Front Content */}
                 <div className="py-8 text-center space-y-4">
-                  <h3 className="text-xl sm:text-2xl font-bold text-slate-100 leading-relaxed max-w-xl mx-auto">
+                  <h3 className="text-xl sm:text-2xl font-bold text-[#1E222A] leading-relaxed max-w-xl mx-auto">
                     {currentCard.front}
                   </h3>
                 </div>
 
                 <div className="flex items-center justify-between text-xs text-slate-400 pt-4 border-t border-surface-border/60">
                   <span className="flex items-center gap-1">
-                    <RotateCw className="w-3.5 h-3.5 text-primary-400" /> Click or press <kbd className="px-1.5 py-0.5 rounded bg-surface border border-surface-border font-mono text-[10px] text-slate-300">Space</kbd> to flip
+                    <RotateCw className="w-3.5 h-3.5 text-primary-400" /> Click or press <kbd className="px-1.5 py-0.5 rounded bg-surface border border-surface-border font-mono text-[10px] text-slate-600">Space</kbd> to flip
                   </span>
                   <span className="text-slate-500">Tap anywhere to reveal back</span>
                 </div>
@@ -585,10 +585,10 @@ export const FlashcardsPage: React.FC = () => {
               {/* BACK OF CARD */}
               <div className={`space-y-6 flex flex-col justify-between h-full ${!isFlipped ? 'hidden' : 'flex'}`}>
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <span className="text-xs font-mono uppercase tracking-widest text-emerald-400 font-semibold flex items-center gap-1.5">
+                  <span className="text-xs font-mono uppercase tracking-widest text-emerald-600 font-semibold flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Back • Answer & Citation
                   </span>
-                  <span className="text-[11px] font-mono text-slate-400 bg-surface px-2 py-0.5 rounded border border-surface-border flex items-center gap-1">
+                  <span className="text-[11px] font-mono text-slate-600 bg-surface px-2 py-0.5 rounded border border-surface-border flex items-center gap-1">
                     <FileText className="w-3 h-3 text-accent-cyan" />
                     {currentCard.filename} (Page {currentCard.page_number})
                   </span>
@@ -596,14 +596,14 @@ export const FlashcardsPage: React.FC = () => {
 
                 {/* Back Content */}
                 <div className="py-3 space-y-4 text-left">
-                  <div className="text-sm sm:text-base text-slate-100 font-medium leading-relaxed bg-surface/70 p-5 rounded-2xl border border-surface-border">
+                  <div className="text-sm sm:text-base text-[#1E222A] font-medium leading-relaxed bg-[#F5F6FA] p-5 rounded-2xl border border-[#1E222A]/10">
                     {currentCard.back}
                   </div>
 
                   {currentCard.excerpt && (
-                    <div className="p-3.5 rounded-xl bg-primary-500/10 border border-primary-500/20 text-xs text-primary-200">
-                      <span className="font-bold text-slate-300">Grounded Excerpt: </span>
-                      <span className="italic text-slate-300">"{currentCard.excerpt}"</span>
+                    <div className="p-3.5 rounded-xl bg-[#7E79D8]/10 border border-[#7E79D8]/20 text-xs text-[#5B54BD]">
+                      <span className="font-bold text-[#1E222A]">Grounded Excerpt: </span>
+                      <span className="italic text-slate-600">"{currentCard.excerpt}"</span>
                     </div>
                   )}
                 </div>

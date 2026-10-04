@@ -182,11 +182,11 @@ export const LibraryPage: React.FC = () => {
       {/* Top action & banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2.5">
-            <BookOpen className="w-6 h-6 text-primary-400" />
+          <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
+            <BookOpen className="w-6 h-6 text-[#7E79D8]" />
             Knowledge Library & Sources
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500">
             Upload PDFs for AI-powered RAG — ask questions grounded in your study materials
           </p>
         </div>
@@ -194,7 +194,7 @@ export const LibraryPage: React.FC = () => {
         <div className="flex items-center gap-2">
           {backendOnline === false ? (
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 text-[11px] text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-1.5">
+              <div className="flex items-center gap-1.5 text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-1.5">
                 <WifiOff className="w-3.5 h-3.5" />
                 Backend offline
               </div>
@@ -222,7 +222,7 @@ export const LibraryPage: React.FC = () => {
             </Button>
           )}
           <Button
-            variant="glow"
+            variant="primary"
             onClick={() => {
               if (backendOnline === false) {
                 setUploadError('Backend is offline. Start it with: python main.py in backend/');
@@ -240,7 +240,7 @@ export const LibraryPage: React.FC = () => {
       </div>
 
       {/* Filter and Search Controls */}
-      <div className="glass-card p-4 rounded-2xl border border-surface-border flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="bg-white p-4 rounded-2xl border border-[#1E222A]/10 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Search */}
         <div className="relative w-full md:w-80">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -249,7 +249,7 @@ export const LibraryPage: React.FC = () => {
             placeholder="Search by filename..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-surface-subtle border border-surface-border rounded-xl pl-9 pr-4 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all"
+            className="w-full bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl pl-9 pr-4 py-2 text-xs text-[#1E222A] placeholder-slate-400 focus:outline-none focus:border-[#7E79D8] focus:ring-1 focus:ring-[#7E79D8] transition-all"
           />
         </div>
 
@@ -320,25 +320,25 @@ export const LibraryPage: React.FC = () => {
                 {/* Title */}
                 <h3
                   onClick={() => navigate(`/study-room?doc=${doc.id}`)}
-                  className="text-sm font-bold text-slate-100 group-hover:text-primary-300 transition-colors line-clamp-2 cursor-pointer mb-2"
+                  className="text-sm font-bold text-[#1E222A] group-hover:text-[#7E79D8] transition-colors line-clamp-2 cursor-pointer mb-2"
                 >
                   {doc.filename}
                 </h3>
 
                 {/* Summary */}
-                <p className="text-xs text-slate-400 line-clamp-3 mb-4 leading-relaxed">
+                <p className="text-xs text-slate-500 line-clamp-3 mb-4 leading-relaxed">
                   {doc.total_pages} pages extracted • {doc.chunks_count} chunks indexed • {doc.file_size_mb} MB
                 </p>
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-1.5 mb-4">
-                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-surface-light text-slate-300 border border-surface-border">
+                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
                     #{doc.total_pages} pages
                   </span>
-                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-surface-light text-slate-300 border border-surface-border">
+                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
                     #{doc.chunks_count} chunks
                   </span>
-                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-surface-light text-slate-300 border border-surface-border">
+                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
                     Uploaded {doc.upload_time.split(' ')[0]}
                   </span>
                 </div>
@@ -410,11 +410,11 @@ export const LibraryPage: React.FC = () => {
                     </div>
                     <h4
                       onClick={() => navigate(`/study-room?doc=${doc.id}`)}
-                      className="text-sm font-bold text-slate-100 hover:text-primary-300 transition-colors cursor-pointer"
+                      className="text-sm font-bold text-[#1E222A] hover:text-[#7E79D8] transition-colors cursor-pointer"
                     >
                       {doc.filename}
                     </h4>
-                    <p className="text-xs text-slate-400 line-clamp-1 mt-1 max-w-xl">
+                    <p className="text-xs text-slate-500 line-clamp-1 mt-1 max-w-xl">
                       Uploaded {doc.upload_time} • Status: {doc.status}
                     </p>
                   </div>
@@ -432,7 +432,7 @@ export const LibraryPage: React.FC = () => {
                     href={getDocumentPdfUrl(doc.id)}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-2 rounded-xl bg-surface-subtle hover:bg-surface-light border border-surface-border text-slate-300 hover:text-white transition-colors"
+                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-[#1E222A] transition-colors"
                     title="View original PDF in new tab"
                   >
                     <ExternalLink className="w-4 h-4" />
@@ -500,10 +500,10 @@ export const LibraryPage: React.FC = () => {
                   <FileText className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-100 line-clamp-1">
+                  <p className="text-sm font-semibold text-[#1E222A] line-clamp-1">
                     {uploadFile.name}
                   </p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
+                  <p className="text-[11px] text-slate-500 mt-0.5">
                     {(uploadFile.size / (1024 * 1024)).toFixed(2)} MB • Ready to upload & index
                   </p>
                 </div>
@@ -513,18 +513,18 @@ export const LibraryPage: React.FC = () => {
                     e.stopPropagation();
                     setUploadFile(null);
                   }}
-                  className="text-[11px] text-rose-400 hover:text-rose-300 inline-flex items-center gap-1 mt-1 underline"
+                  className="text-[11px] text-rose-600 hover:text-rose-700 inline-flex items-center gap-1 mt-1 underline"
                 >
                   <X className="w-3 h-3" /> Choose another file
                 </button>
               </div>
             ) : (
               <div>
-                <Upload className="w-9 h-9 text-primary-400 mx-auto mb-2" />
-                <p className="text-sm font-semibold text-slate-200">
+                <Upload className="w-9 h-9 text-[#7E79D8] mx-auto mb-2" />
+                <p className="text-sm font-semibold text-[#1E222A]">
                   {isDragging ? 'Drop your PDF here' : 'Click to select or drag & drop PDF here'}
                 </p>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Extracts text, breaks into overlapping chunks, builds embeddings & indexes into FAISS
                 </p>
               </div>

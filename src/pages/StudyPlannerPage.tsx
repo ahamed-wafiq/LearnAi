@@ -219,25 +219,25 @@ export const StudyPlannerPage: React.FC = () => {
     return (
       <div className="space-y-8 animate-in fade-in duration-300">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2.5">
-            <CalendarIcon className="w-6 h-6 text-primary-400" />
+          <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
+            <CalendarIcon className="w-6 h-6 text-[#7E79D8]" />
             Intelligent Study Planner & Adaptive Schedule
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500">
             Balancing active spaced revision, weak topic remediation, and syllabus coverage
           </p>
         </div>
 
-        <div className="glass-card rounded-3xl p-10 text-center max-w-xl mx-auto space-y-5 border border-primary-500/20">
-          <div className="w-16 h-16 rounded-2xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center mx-auto text-primary-400">
+        <div className="bg-white rounded-3xl p-10 text-center max-w-xl mx-auto space-y-5 border border-[#1E222A]/10 shadow-sm">
+          <div className="w-16 h-16 rounded-2xl bg-[#7E79D8]/10 border border-[#7E79D8]/20 flex items-center justify-center mx-auto text-[#7E79D8]">
             <BookOpen className="w-8 h-8" />
           </div>
-          <h3 className="text-xl font-bold text-white">No Course Materials Uploaded</h3>
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          <h3 className="text-xl font-bold text-[#1E222A]">No Course Materials Uploaded</h3>
+          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
             LearnSphere extracts topics and generates personalized daily study sessions grounded in your actual course files. Upload a PDF to start scheduling.
           </p>
           <Link to="/library">
-            <Button variant="glow" leftIcon={<FileText className="w-4 h-4" />}>
+            <Button variant="primary" leftIcon={<FileText className="w-4 h-4" />}>
               Go to Document Library
             </Button>
           </Link>
@@ -252,26 +252,26 @@ export const StudyPlannerPage: React.FC = () => {
       <div className="space-y-8 animate-in fade-in duration-300">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2.5">
-              <CalendarIcon className="w-6 h-6 text-primary-400" />
+            <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
+              <CalendarIcon className="w-6 h-6 text-[#7E79D8]" />
               Intelligent Study Planner & Adaptive Schedule
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400">
+            <p className="text-xs sm:text-sm text-slate-500">
               Personalized spaced revision, weak topic remediation, and syllabus pacing
             </p>
           </div>
-          <Button variant="glow" onClick={() => setIsGoalModalOpen(true)} leftIcon={<Plus className="w-4 h-4" />}>
+          <Button variant="primary" onClick={() => setIsGoalModalOpen(true)} leftIcon={<Plus className="w-4 h-4" />}>
             Create Study Goal
           </Button>
         </div>
 
-        <div className="glass-card rounded-3xl p-10 text-center max-w-xl mx-auto space-y-5 border border-primary-500/20">
-          <div className="w-16 h-16 rounded-2xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center mx-auto text-primary-400">
+        <div className="bg-white rounded-3xl p-10 text-center max-w-xl mx-auto space-y-5 border border-[#1E222A]/10 shadow-sm">
+          <div className="w-16 h-16 rounded-2xl bg-[#7E79D8]/10 border border-[#7E79D8]/20 flex items-center justify-center mx-auto text-[#7E79D8]">
             <Target className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-xl font-bold text-white">Define Your Target Study Goal</h3>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <h3 className="text-xl font-bold text-[#1E222A]">Define Your Target Study Goal</h3>
+            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
               Set your target exam date, course subject, and daily study time budget. LearnSphere will automatically analyze your weak topics and overdue flashcards to construct your 7-day revision schedule.
             </p>
           </div>
@@ -434,11 +434,11 @@ export const StudyPlannerPage: React.FC = () => {
       {/* Top Header & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2.5">
-            <CalendarIcon className="w-6 h-6 text-primary-400" />
+          <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
+            <CalendarIcon className="w-6 h-6 text-[#7E79D8]" />
             Intelligent Study Planner & Calendar
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500">
             Balancing active spaced revision, weak topic remediation, and syllabus coverage
           </p>
         </div>
@@ -455,7 +455,7 @@ export const StudyPlannerPage: React.FC = () => {
           </Button>
 
           <Button
-            variant="glow"
+            variant="primary"
             size="sm"
             onClick={() => setIsGoalModalOpen(true)}
             leftIcon={<Plus className="w-3.5 h-3.5" />}

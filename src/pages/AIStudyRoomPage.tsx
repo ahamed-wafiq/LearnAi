@@ -272,13 +272,13 @@ export const AIStudyRoomPage: React.FC = () => {
   if (ragDocs.length === 0) {
     return (
       <div className="h-[calc(100vh-8rem)] flex items-center justify-center">
-        <div className="glass-card max-w-md w-full p-8 rounded-3xl border border-surface-border text-center space-y-6 shadow-2xl">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center">
-            <Upload className="w-8 h-8 text-primary-400" />
+        <div className="bg-white max-w-md w-full p-8 rounded-3xl border border-[#1E222A]/10 text-center space-y-6 shadow-sm">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-[#7E79D8]/10 border border-[#7E79D8]/20 flex items-center justify-center">
+            <Upload className="w-8 h-8 text-[#7E79D8]" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-100 mb-2">No Documents Indexed Yet</h2>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h2 className="text-xl font-bold text-[#1E222A] mb-2">No Documents Indexed Yet</h2>
+            <p className="text-xs text-slate-500 leading-relaxed">
               {backendOnline === false
                 ? 'The RAG backend is currently offline. Start it in backend/ with: python main.py'
                 : 'Upload a study PDF in your library to extract chunks, compute vector embeddings, and start Q&A with Gemini.'}
