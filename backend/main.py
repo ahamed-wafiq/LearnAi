@@ -30,6 +30,7 @@ from chunker import chunk_pages
 import embeddings
 from rag_engine import generate_answer, generate_quiz, generate_flashcards
 import analytics_engine
+import planner_engine
 
 # ── Load .env ────────────────────────────────────────────────────────────
 
@@ -147,6 +148,22 @@ class FlashcardProgressItem(BaseModel):
     status: str  # "known" | "review" | "unreviewed"
     rating: int | None = None
     reviews_count: int = 0
+
+
+class StudyGoalRequest(BaseModel):
+    id: str | None = None
+    title: str
+    subject_name: str = "Machine Learning & AI"
+    doc_id: str | None = None
+    doc_name: str | None = None
+    exam_date: str
+    daily_study_minutes: int = 45
+    target_mastery: int = 90
+
+
+class TaskStatusUpdateRequest(BaseModel):
+    status: str  # "completed" | "skipped" | "rescheduled" | "scheduled"
+    new_date: str | None = None
 
 
 # ── Endpoints ────────────────────────────────────────────────────────────
@@ -599,6 +616,59 @@ async def get_revision_schedule():
 async def recalculate_analytics():
     """Trigger manual re-computation of topic mastery and weakness model."""
     return analytics_engine.compute_learning_analytics()
+
+
+# ── Personalized Study Planner Endpoints ─────────────────────────────────
+
+@app.get("/api/planner/overview")
+async def get_planner_overview():
+    """Retrieve full study planner overview, daily checklist, and weekly calendar."""
+    return planner_engine.get_planner_overview()
+
+
+@app.get("/api/planner/goals")
+async def list_study_goals():
+    """List all saved study goals."""
+    return planner_engine.get_goals()
+
+
+@app.post("/api/planner/goals")
+async def create_study_goal(req: StudyGoalRequest):
+    """Create or update a study goal and generate an adaptive 7-day revision schedule."""
+    record = planner_engine.save_goal(req.model_dump())
+    return record
+
+
+@app.delete("/api/planner/goals/{goal_id}")
+async def delete_study_goal(goal_id: str):
+    """Delete a study goal and its associated tasks."""
+    planner_engine.delete_goal(goal_id)
+    return {"message": "Goal deleted successfully."}
+
+
+@app.get("/api/planner/tasks")
+async def list_planner_tasks(goal_id: str | None = None, date: str | None = None):
+    """Get planner tasks filtered by goal or date."""
+    return planner_engine.get_tasks(goal_id=goal_id, date_str=date)
+
+
+@app.patch("/api/planner/tasks/{task_id}")
+async def update_planner_task(task_id: str, req: TaskStatusUpdateRequest):
+    """Update task status (mark completed, skip, or reschedule)."""
+    updated = planner_engine.update_task_status(task_id, req.status, req.new_date)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Task not found.")
+    return updated
+
+
+@app.post("/api/planner/reschedule")
+async def recalculate_schedule():
+    """Recalculate study schedule based on updated analytics and quiz progress."""
+    goals = planner_engine.get_goals()
+    if not goals:
+        raise HTTPException(status_code=400, detail="No active study goal found. Create a goal first.")
+    new_tasks = planner_engine.generate_adaptive_schedule(goals[0])
+    return {"message": "Schedule recalculated successfully", "tasks_count": len(new_tasks)}
 
 
 # ── Run with: python main.py ─────────────────────────────────────────────

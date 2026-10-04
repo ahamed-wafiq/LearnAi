@@ -494,3 +494,150 @@ export async function recalculateAnalytics(): Promise<LearningAnalyticsPayload> 
   return res.json();
 }
 
+// ── Personalized Study Planner Types & Methods ───────────────────────────
+
+export interface StudyGoal {
+  id: string;
+  title: string;
+  subject_name: string;
+  doc_id?: string | null;
+  doc_name: string;
+  exam_date: string;
+  daily_study_minutes: number;
+  target_mastery: number;
+  created_at: number;
+  updated_at: number;
+}
+
+export interface PlannerTask {
+  id: string;
+  goal_id: string;
+  date: string;
+  time: string;
+  title: string;
+  topic: string;
+  type: 'revision' | 'quiz' | 'flashcards' | 'reading';
+  priority: 'high' | 'medium' | 'low';
+  duration_minutes: number;
+  status: 'scheduled' | 'completed' | 'skipped' | 'rescheduled';
+  reason: string;
+  doc_name: string;
+  page_number: number;
+  action_url: string;
+  created_at: number;
+  completed_at?: number | null;
+}
+
+export interface PlannerOverview {
+  has_goals: boolean;
+  has_documents: boolean;
+  message?: string;
+  goals: StudyGoal[];
+  active_goal?: StudyGoal;
+  today_stats: {
+    total: number;
+    completed: number;
+    percentage: number;
+    minutes_planned: number;
+    minutes_spent: number;
+    daily_budget?: number;
+  };
+  today_tasks: PlannerTask[];
+  week_days: {
+    date: string;
+    day: string;
+    day_number: number;
+    is_today: boolean;
+    tasks_count: number;
+    completed_count: number;
+  }[];
+  weekly_tasks: PlannerTask[];
+  upcoming_deadlines: {
+    goal_id: string;
+    title: string;
+    subject_name: string;
+    exam_date: string;
+    days_remaining: number;
+    is_urgent: boolean;
+    target_mastery: number;
+  }[];
+}
+
+/** Get full planner overview, daily checklist, and weekly calendar */
+export async function getPlannerOverview(): Promise<PlannerOverview> {
+  const res = await fetch(`${API_BASE}/planner/overview`);
+  if (!res.ok) throw new Error('Failed to load planner overview');
+  return res.json();
+}
+
+/** Get all study goals */
+export async function listStudyGoals(): Promise<StudyGoal[]> {
+  const res = await fetch(`${API_BASE}/planner/goals`);
+  if (!res.ok) throw new Error('Failed to load study goals');
+  return res.json();
+}
+
+/** Create or update a study goal */
+export async function createStudyGoal(goal: {
+  id?: string;
+  title: string;
+  subject_name?: string;
+  doc_id?: string | null;
+  doc_name?: string;
+  exam_date: string;
+  daily_study_minutes?: number;
+  target_mastery?: number;
+}): Promise<StudyGoal> {
+  const res = await fetch(`${API_BASE}/planner/goals`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(goal),
+  });
+  if (!res.ok) throw new Error('Failed to create study goal');
+  return res.json();
+}
+
+/** Delete a study goal */
+export async function deleteStudyGoal(goalId: string): Promise<{ message: string }> {
+  const res = await fetch(`${API_BASE}/planner/goals/${encodeURIComponent(goalId)}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to delete study goal');
+  return res.json();
+}
+
+/** List planner tasks */
+export async function listPlannerTasks(goalId?: string, date?: string): Promise<PlannerTask[]> {
+  let url = `${API_BASE}/planner/tasks`;
+  const params: string[] = [];
+  if (goalId) params.push(`goal_id=${encodeURIComponent(goalId)}`);
+  if (date) params.push(`date=${encodeURIComponent(date)}`);
+  if (params.length) url += `?${params.join('&')}`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to load planner tasks');
+  return res.json();
+}
+
+/** Update task status (complete, skip, reschedule) */
+export async function updatePlannerTask(
+  taskId: string,
+  status: 'completed' | 'skipped' | 'rescheduled' | 'scheduled',
+  newDate?: string
+): Promise<PlannerTask> {
+  const res = await fetch(`${API_BASE}/planner/tasks/${encodeURIComponent(taskId)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status, new_date: newDate || null }),
+  });
+  if (!res.ok) throw new Error('Failed to update task status');
+  return res.json();
+}
+
+/** Recalculate adaptive schedule based on updated progress */
+export async function reschedulePlanner(): Promise<{ message: string; tasks_count: number }> {
+  const res = await fetch(`${API_BASE}/planner/reschedule`, { method: 'POST' });
+  if (!res.ok) throw new Error('Failed to reschedule study plan');
+  return res.json();
+}
+
