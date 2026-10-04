@@ -28,27 +28,42 @@ from config import UPLOADS_DIR, DATA_DIR
 from pdf_parser import extract_text_from_pdf
 from chunker import chunk_pages
 import embeddings
-from rag_engine import generate_answer
+from rag_engine import generate_answer, generate_quiz, generate_flashcards
 
 # ── Load .env ────────────────────────────────────────────────────────────
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
 
-# ── Document registry (persisted as JSON) ────────────────────────────────
+# ── Document registry & storage (persisted as JSON) ──────────────────────
 
 DOCS_REGISTRY_FILE = DATA_DIR / "documents.json"
+QUIZZES_FILE = DATA_DIR / "quizzes.json"
+QUIZ_RESULTS_FILE = DATA_DIR / "quiz_results.json"
+FLASHCARD_DECKS_FILE = DATA_DIR / "flashcard_decks.json"
+FLASHCARD_PROGRESS_FILE = DATA_DIR / "flashcard_progress.json"
+
+
+def _load_json_file(file_path: Path, default):
+    if file_path.exists():
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return default
+    return default
+
+
+def _save_json_file(file_path: Path, data):
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
 
 
 def _load_docs_registry() -> list[dict]:
-    if DOCS_REGISTRY_FILE.exists():
-        with open(DOCS_REGISTRY_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
+    return _load_json_file(DOCS_REGISTRY_FILE, [])
 
 
 def _save_docs_registry(docs: list[dict]) -> None:
-    with open(DOCS_REGISTRY_FILE, "w", encoding="utf-8") as f:
-        json.dump(docs, f, indent=2, ensure_ascii=False)
+    _save_json_file(DOCS_REGISTRY_FILE, docs)
 
 
 _documents: list[dict] = []
@@ -97,6 +112,40 @@ class AskResponse(BaseModel):
     citations: list[dict]
     key_takeaways: list[str]
     follow_up_questions: list[str]
+
+
+class GenerateQuizRequest(BaseModel):
+    doc_id: str | None = None
+    num_questions: int = 5
+    difficulty: str = "Medium"
+    topic: str | None = None
+
+
+class SaveQuizResultRequest(BaseModel):
+    quiz_id: str
+    doc_id: str | None = None
+    doc_name: str | None = None
+    score: int
+    total: int
+    percentage: float
+    time_taken_seconds: int = 0
+    user_answers: dict[str, int] = {}
+    questions: list[dict] = []
+
+
+class GenerateFlashcardsRequest(BaseModel):
+    doc_id: str | None = None
+    num_cards: int = 6
+    difficulty: str = "medium"
+    topic: str | None = None
+
+
+class FlashcardProgressItem(BaseModel):
+    card_id: str
+    deck_id: str
+    status: str  # "known" | "review" | "unreviewed"
+    rating: int | None = None
+    reviews_count: int = 0
 
 
 # ── Endpoints ────────────────────────────────────────────────────────────
@@ -333,6 +382,196 @@ async def ask_question(req: AskRequest):
         raise HTTPException(status_code=500, detail=f"Gemini API error: {e}")
 
     return AskResponse(**response)
+
+
+# ── Practice & Quiz Endpoints ────────────────────────────────────────────
+
+@app.post("/api/practice/generate")
+async def create_quiz(req: GenerateQuizRequest):
+    """Generate multiple-choice quiz questions grounded in uploaded document chunks."""
+    if not os.getenv("GEMINI_API_KEY"):
+        raise HTTPException(status_code=500, detail="GEMINI_API_KEY is not configured.")
+
+    if not _documents:
+        raise HTTPException(status_code=400, detail="No documents uploaded yet. Please upload a PDF first.")
+
+    doc_info = None
+    if req.doc_id:
+        doc_info = next((d for d in _documents if d["id"] == req.doc_id), None)
+        if not doc_info:
+            raise HTTPException(status_code=404, detail="Selected document not found.")
+
+    chunks = embeddings.get_document_chunks(req.doc_id)
+    if not chunks:
+        raise HTTPException(
+            status_code=400,
+            detail="No text chunks found for the selected document. Ensure the PDF contains readable text.",
+        )
+
+    try:
+        quiz_data = generate_quiz(
+            chunks,
+            num_questions=req.num_questions,
+            difficulty=req.difficulty,
+            topic=req.topic,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Quiz generation error: {e}")
+
+    quiz_id = f"quiz-{uuid.uuid4().hex[:8]}"
+    doc_name = doc_info["filename"] if doc_info else "All Documents"
+    record = {
+        "id": quiz_id,
+        "doc_id": req.doc_id,
+        "doc_name": doc_name,
+        "difficulty": req.difficulty,
+        "topic": req.topic or f"Concepts from {doc_name}",
+        "questions": quiz_data["questions"],
+        "total_questions": len(quiz_data["questions"]),
+        "created_at": time.time(),
+    }
+
+    quizzes = _load_json_file(QUIZZES_FILE, [])
+    quizzes.insert(0, record)
+    _save_json_file(QUIZZES_FILE, quizzes)
+
+    return record
+
+
+@app.get("/api/practice/quizzes")
+async def list_quizzes(doc_id: str | None = None):
+    """List previously generated quizzes."""
+    quizzes = _load_json_file(QUIZZES_FILE, [])
+    if doc_id:
+        quizzes = [q for q in quizzes if q.get("doc_id") == doc_id]
+    return quizzes
+
+
+@app.post("/api/practice/results")
+async def record_quiz_result(req: SaveQuizResultRequest):
+    """Save user quiz attempt and score."""
+    result_id = f"res-{uuid.uuid4().hex[:8]}"
+    record = {
+        "id": result_id,
+        "quiz_id": req.quiz_id,
+        "doc_id": req.doc_id,
+        "doc_name": req.doc_name or "General",
+        "score": req.score,
+        "total": req.total,
+        "percentage": req.percentage,
+        "time_taken_seconds": req.time_taken_seconds,
+        "user_answers": req.user_answers,
+        "questions": req.questions,
+        "completed_at": time.time(),
+    }
+
+    results = _load_json_file(QUIZ_RESULTS_FILE, [])
+    results.insert(0, record)
+    _save_json_file(QUIZ_RESULTS_FILE, results)
+
+    return record
+
+
+@app.get("/api/practice/results")
+async def list_quiz_results():
+    """Get all completed quiz attempts."""
+    results = _load_json_file(QUIZ_RESULTS_FILE, [])
+    return results
+
+
+# ── Flashcard Endpoints ──────────────────────────────────────────────────
+
+@app.post("/api/flashcards/generate")
+async def create_flashcards(req: GenerateFlashcardsRequest):
+    """Generate study flashcards grounded in uploaded document chunks."""
+    if not os.getenv("GEMINI_API_KEY"):
+        raise HTTPException(status_code=500, detail="GEMINI_API_KEY is not configured.")
+
+    if not _documents:
+        raise HTTPException(status_code=400, detail="No documents uploaded yet. Please upload a PDF first.")
+
+    doc_info = None
+    if req.doc_id:
+        doc_info = next((d for d in _documents if d["id"] == req.doc_id), None)
+        if not doc_info:
+            raise HTTPException(status_code=404, detail="Selected document not found.")
+
+    chunks = embeddings.get_document_chunks(req.doc_id)
+    if not chunks:
+        raise HTTPException(
+            status_code=400,
+            detail="No text chunks found for the selected document. Ensure the PDF contains readable text.",
+        )
+
+    try:
+        card_data = generate_flashcards(
+            chunks,
+            num_cards=req.num_cards,
+            difficulty=req.difficulty,
+            topic=req.topic,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Flashcard generation error: {e}")
+
+    deck_id = f"deck-{uuid.uuid4().hex[:8]}"
+    doc_name = doc_info["filename"] if doc_info else "All Documents"
+    record = {
+        "id": deck_id,
+        "doc_id": req.doc_id,
+        "doc_name": doc_name,
+        "title": req.topic or f"Flashcards: {doc_name}",
+        "difficulty": req.difficulty,
+        "cards": card_data["flashcards"],
+        "total_cards": len(card_data["flashcards"]),
+        "created_at": time.time(),
+    }
+
+    decks = _load_json_file(FLASHCARD_DECKS_FILE, [])
+    decks.insert(0, record)
+    _save_json_file(FLASHCARD_DECKS_FILE, decks)
+
+    return record
+
+
+@app.get("/api/flashcards/decks")
+async def list_flashcard_decks(doc_id: str | None = None):
+    """List all generated flashcard decks."""
+    decks = _load_json_file(FLASHCARD_DECKS_FILE, [])
+    if doc_id:
+        decks = [d for d in decks if d.get("doc_id") == doc_id]
+    return decks
+
+
+@app.post("/api/flashcards/progress")
+async def update_flashcard_progress(item: FlashcardProgressItem):
+    """Save mastery rating (known / review) for a flashcard."""
+    progress = _load_json_file(FLASHCARD_PROGRESS_FILE, {})
+
+    current = progress.get(item.card_id, {
+        "card_id": item.card_id,
+        "deck_id": item.deck_id,
+        "reviews_count": 0,
+    })
+
+    current["deck_id"] = item.deck_id
+    current["status"] = item.status
+    current["rating"] = item.rating
+    current["reviews_count"] = current.get("reviews_count", 0) + 1
+    current["last_reviewed_at"] = time.time()
+
+    progress[item.card_id] = current
+    _save_json_file(FLASHCARD_PROGRESS_FILE, progress)
+
+    return current
+
+
+@app.get("/api/flashcards/progress")
+async def get_flashcard_progress(deck_id: str | None = None):
+    """Get flashcard learning progress map."""
+    progress = _load_json_file(FLASHCARD_PROGRESS_FILE, {})
+    if deck_id:
+        return {k: v for k, v in progress.items() if v.get("deck_id") == deck_id}
+    return progress
 
 
 # ── Run with: python main.py ─────────────────────────────────────────────

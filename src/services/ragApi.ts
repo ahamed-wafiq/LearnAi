@@ -182,3 +182,200 @@ export function getDocumentPdfUrl(docId: string): string {
   return `${API_BASE}/documents/${encodeURIComponent(docId)}/pdf`;
 }
 
+// ── Practice & Flashcards Types & Methods ────────────────────────────────
+
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correct_index: number;
+  explanation: string;
+  topic: string;
+  difficulty: string;
+  filename: string;
+  page_number: number;
+  excerpt?: string;
+}
+
+export interface GeneratedQuiz {
+  id: string;
+  doc_id?: string | null;
+  doc_name: string;
+  difficulty: string;
+  topic: string;
+  questions: QuizQuestion[];
+  total_questions: number;
+  created_at: number;
+}
+
+export interface QuizResultRecord {
+  id: string;
+  quiz_id: string;
+  doc_id?: string | null;
+  doc_name: string;
+  score: number;
+  total: number;
+  percentage: number;
+  time_taken_seconds: number;
+  user_answers: Record<string, number>;
+  questions: QuizQuestion[];
+  completed_at: number;
+}
+
+export interface GeneratedFlashcard {
+  id: string;
+  front: string;
+  back: string;
+  topic: string;
+  difficulty: string;
+  filename: string;
+  page_number: number;
+  excerpt?: string;
+}
+
+export interface GeneratedFlashcardDeck {
+  id: string;
+  doc_id?: string | null;
+  doc_name: string;
+  title: string;
+  difficulty: string;
+  cards: GeneratedFlashcard[];
+  total_cards: number;
+  created_at: number;
+}
+
+export interface FlashcardProgress {
+  card_id: string;
+  deck_id: string;
+  status: 'known' | 'review' | 'unreviewed';
+  rating?: number | null;
+  reviews_count: number;
+  last_reviewed_at?: number;
+}
+
+/** Generate a quiz with MCQs using RAG and Gemini */
+export async function generateQuiz(options: {
+  docId?: string;
+  numQuestions?: number;
+  difficulty?: string;
+  topic?: string;
+}): Promise<GeneratedQuiz> {
+  const res = await fetch(`${API_BASE}/practice/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      doc_id: options.docId || null,
+      num_questions: options.numQuestions || 5,
+      difficulty: options.difficulty || 'Medium',
+      topic: options.topic || null,
+    }),
+  });
+
+  if (!res.ok) {
+    let msg = 'Failed to generate quiz';
+    try {
+      const err = await res.json();
+      msg = err.detail || msg;
+    } catch {
+      msg = `Server error ${res.status}: ${res.statusText}`;
+    }
+    throw new Error(msg);
+  }
+
+  return res.json();
+}
+
+/** Get list of saved quizzes */
+export async function listQuizzes(docId?: string): Promise<GeneratedQuiz[]> {
+  const url = docId ? `${API_BASE}/practice/quizzes?doc_id=${encodeURIComponent(docId)}` : `${API_BASE}/practice/quizzes`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to fetch quizzes');
+  return res.json();
+}
+
+/** Save a quiz attempt score and details */
+export async function saveQuizResult(
+  result: Omit<QuizResultRecord, 'id' | 'completed_at'>
+): Promise<QuizResultRecord> {
+  const res = await fetch(`${API_BASE}/practice/results`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(result),
+  });
+
+  if (!res.ok) throw new Error('Failed to save quiz result');
+  return res.json();
+}
+
+/** List past quiz results */
+export async function listQuizResults(): Promise<QuizResultRecord[]> {
+  const res = await fetch(`${API_BASE}/practice/results`);
+  if (!res.ok) throw new Error('Failed to fetch quiz results');
+  return res.json();
+}
+
+/** Generate flashcards using RAG and Gemini */
+export async function generateFlashcards(options: {
+  docId?: string;
+  numCards?: number;
+  difficulty?: string;
+  topic?: string;
+}): Promise<GeneratedFlashcardDeck> {
+  const res = await fetch(`${API_BASE}/flashcards/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      doc_id: options.docId || null,
+      num_cards: options.numCards || 6,
+      difficulty: options.difficulty || 'medium',
+      topic: options.topic || null,
+    }),
+  });
+
+  if (!res.ok) {
+    let msg = 'Failed to generate flashcards';
+    try {
+      const err = await res.json();
+      msg = err.detail || msg;
+    } catch {
+      msg = `Server error ${res.status}: ${res.statusText}`;
+    }
+    throw new Error(msg);
+  }
+
+  return res.json();
+}
+
+/** Get list of generated flashcard decks */
+export async function listFlashcardDecks(docId?: string): Promise<GeneratedFlashcardDeck[]> {
+  const url = docId ? `${API_BASE}/flashcards/decks?doc_id=${encodeURIComponent(docId)}` : `${API_BASE}/flashcards/decks`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to fetch flashcard decks');
+  return res.json();
+}
+
+/** Save flashcard mastery progress (Known / Review Again) */
+export async function saveFlashcardProgress(item: {
+  card_id: string;
+  deck_id: string;
+  status: string;
+  rating?: number | null;
+}): Promise<FlashcardProgress> {
+  const res = await fetch(`${API_BASE}/flashcards/progress`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(item),
+  });
+
+  if (!res.ok) throw new Error('Failed to update flashcard progress');
+  return res.json();
+}
+
+/** Get flashcard progress state */
+export async function getFlashcardProgress(deckId?: string): Promise<Record<string, FlashcardProgress>> {
+  const url = deckId ? `${API_BASE}/flashcards/progress?deck_id=${encodeURIComponent(deckId)}` : `${API_BASE}/flashcards/progress`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to fetch flashcard progress');
+  return res.json();
+}
+

@@ -165,3 +165,12 @@ def get_index_stats() -> dict:
         "total_chunks": len(_chunks_meta),
         "total_documents": len(doc_ids),
     }
+
+
+def get_document_chunks(doc_id: str | None = None) -> list[dict]:
+    """Return all chunks belonging to a document, or all indexed chunks if doc_id is None."""
+    ensure_index_loaded()
+    if doc_id:
+        return [c for c in _chunks_meta if c.get("doc_id") == doc_id]
+    return list(_chunks_meta)
+
