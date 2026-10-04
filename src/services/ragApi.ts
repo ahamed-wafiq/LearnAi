@@ -379,3 +379,118 @@ export async function getFlashcardProgress(deckId?: string): Promise<Record<stri
   return res.json();
 }
 
+// ── ML Learning Analytics Types & Methods ────────────────────────────────
+
+export interface TopicAnalytics {
+  topic: string;
+  mastery: number;
+  quiz_accuracy: number;
+  quiz_attempts: number;
+  cards_known: number;
+  cards_review: number;
+  cards_total: number;
+  decay_days: number;
+  classification: 'strong' | 'consolidating' | 'weak';
+  weakness_probability: number;
+  explanation: string;
+  source_doc: string;
+  page_number: number;
+}
+
+export interface WeakTopicItem {
+  topic: string;
+  mastery: number;
+  weakness_probability: number;
+  reason: string;
+  source_doc: string;
+  page_number: number;
+  mistakes_count: number;
+}
+
+export interface RevisionTaskItem {
+  id: string;
+  title: string;
+  topic: string;
+  doc_name: string;
+  page_number: number;
+  priority: 'high' | 'medium' | 'low';
+  type: 'flashcards' | 'quiz' | 'reading';
+  estimated_minutes: number;
+  reason: string;
+  action_url: string;
+}
+
+export interface SpacedRepetitionCard {
+  card_id: string;
+  deck_id: string;
+  deck_title: string;
+  front: string;
+  back: string;
+  topic: string;
+  filename: string;
+  page_number: number;
+  status: string;
+  rating: number;
+  interval_days: number;
+  due_timestamp: number;
+  is_overdue: boolean;
+  priority_weight: number;
+}
+
+export interface MLDiagnostics {
+  model_type: 'heuristic_baseline' | 'scikit_learn_logistic_regression';
+  samples_count: number;
+  min_samples_required: number;
+  is_trained: boolean;
+  status_note: string;
+}
+
+export interface LearningAnalyticsPayload {
+  has_data: boolean;
+  message?: string;
+  overall_mastery: number;
+  retention_rate: number;
+  total_quizzes_completed: number;
+  total_questions_answered: number;
+  total_flashcards_reviewed: number;
+  topics: TopicAnalytics[];
+  strong_topics: string[];
+  weak_topics: WeakTopicItem[];
+  accuracy_trend: { date: string; score: number; doc_name: string }[];
+  revision_tasks: RevisionTaskItem[];
+  spaced_repetition: {
+    due_today_count: number;
+    due_this_week_count: number;
+    total_cards: number;
+    cards: SpacedRepetitionCard[];
+  };
+  ml_diagnostics: MLDiagnostics;
+  updated_at: number;
+}
+
+/** Fetch full ML Learning Analytics */
+export async function getLearningAnalytics(): Promise<LearningAnalyticsPayload> {
+  const res = await fetch(`${API_BASE}/analytics`);
+  if (!res.ok) throw new Error('Failed to load learning analytics');
+  return res.json();
+}
+
+/** Fetch personalized revision tasks and spaced-repetition cards */
+export async function getRevisionSchedule(): Promise<{
+  revision_tasks: RevisionTaskItem[];
+  spaced_repetition: LearningAnalyticsPayload['spaced_repetition'];
+  weak_topics: WeakTopicItem[];
+  ml_diagnostics: MLDiagnostics;
+}> {
+  const res = await fetch(`${API_BASE}/analytics/revisions`);
+  if (!res.ok) throw new Error('Failed to load revision schedule');
+  return res.json();
+}
+
+/** Force recalculate learning analytics and ML weakness model */
+export async function recalculateAnalytics(): Promise<LearningAnalyticsPayload> {
+  const res = await fetch(`${API_BASE}/analytics/recalculate`, { method: 'POST' });
+  if (!res.ok) throw new Error('Failed to recalculate analytics');
+  return res.json();
+}
+

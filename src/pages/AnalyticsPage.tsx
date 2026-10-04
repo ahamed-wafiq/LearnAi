@@ -10,7 +10,18 @@ import {
   Sparkles,
   Layers,
   Zap,
-  ShieldCheck
+  ShieldCheck,
+  RotateCcw,
+  BookOpen,
+  FileText,
+  AlertCircle,
+  HelpCircle,
+  RefreshCw,
+  ArrowRight,
+  Flame,
+  Calendar,
+  ChevronRight,
+  CheckSquare
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -22,35 +33,60 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
-  RadarChart,
-  Radar,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis
+  Legend
 } from 'recharts';
-import { StudyService } from '../services/studyService';
-import { AnalyticsData } from '../types';
+import {
+  getLearningAnalytics,
+  recalculateAnalytics,
+  LearningAnalyticsPayload,
+  TopicAnalytics,
+  WeakTopicItem,
+  RevisionTaskItem,
+  SpacedRepetitionCard
+} from '../services/ragApi';
 import { StatsCard } from '../components/ui/StatsCard';
 import { Badge } from '../components/ui/Badge';
 import { Skeleton } from '../components/ui/Skeleton';
+import { Button } from '../components/ui/Button';
+import { Link } from 'react-router-dom';
 
 export const AnalyticsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [analytics, setAnalytics] = useState<LearningAnalyticsPayload | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [showMLModal, setShowMLModal] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await StudyService.getAnalytics();
-        setAnalytics(data);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    fetchAnalyticsData();
   }, []);
 
-  if (loading || !analytics) {
+  const fetchAnalyticsData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getLearningAnalytics();
+      setAnalytics(data);
+    } catch (err: any) {
+      setError(err.message || 'Failed to load learning analytics');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRecalculate = async () => {
+    setRefreshing(true);
+    try {
+      const fresh = await recalculateAnalytics();
+      setAnalytics(fresh);
+    } catch (err: any) {
+      setError(err.message || 'Failed to recalculate analytics');
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  if (loading) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
@@ -64,54 +100,262 @@ export const AnalyticsPage: React.FC = () => {
     );
   }
 
+  // Error state
+  if (error && !analytics) {
+    return (
+      <div className="glass-card rounded-2xl p-8 text-center max-w-lg mx-auto space-y-4 border border-rose-500/30">
+        <div className="w-12 h-12 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto">
+          <AlertCircle className="w-6 h-6" />
+        </div>
+        <h3 className="text-base font-bold text-white">Analytics Unavailable</h3>
+        <p className="text-xs text-slate-400 leading-relaxed">{error}</p>
+        <Button variant="glow" size="sm" onClick={fetchAnalyticsData} leftIcon={<RefreshCw className="w-4 h-4" />}>
+          Retry Connection
+        </Button>
+      </div>
+    );
+  }
+
+  // Empty state: no quiz or flashcard history exists
+  if (!analytics || !analytics.has_data || analytics.topics.length === 0) {
+    return (
+      <div className="space-y-8 animate-in fade-in duration-300">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2.5">
+            <BarChart3 className="w-6 h-6 text-primary-400" />
+            Learning Analytics & ML Mastery
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400">
+            Real-time mastery tracking, scikit-learn weakness predictions, and spaced repetition
+          </p>
+        </div>
+
+        <div className="glass-card rounded-3xl p-10 text-center max-w-2xl mx-auto space-y-5 border border-primary-500/20">
+          <div className="w-16 h-16 rounded-2xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center mx-auto text-primary-400">
+            <Brain className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-xl font-bold text-white">No Quiz or Review Activity Recorded Yet</h3>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
+              LearnSphere calculates real topic mastery and predictive weakness models from your actual study history. Take your first quiz or review flashcards to populate this dashboard.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <Link to="/practice">
+              <Button variant="glow" leftIcon={<CheckSquare className="w-4 h-4" />}>
+                Take Practice Quiz
+              </Button>
+            </Link>
+            <Link to="/flashcards">
+              <Button variant="secondary" leftIcon={<Layers className="w-4 h-4" />}>
+                Review Flashcards
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const {
+    overall_mastery,
+    retention_rate,
+    total_quizzes_completed,
+    total_questions_answered,
+    total_flashcards_reviewed,
+    topics,
+    strong_topics,
+    weak_topics,
+    accuracy_trend,
+    revision_tasks,
+    spaced_repetition,
+    ml_diagnostics
+  } = analytics;
+
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
-      {/* Top Banner */}
-      <div>
-        <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2.5">
-          <BarChart3 className="w-6 h-6 text-primary-400" />
-          Learning Analytics & Mastery Heatmap
-        </h2>
-        <p className="text-xs sm:text-sm text-slate-400">
-          Cognitive retention decay tracking and objective performance metrics
-        </p>
+      {/* Top Banner & ML Diagnostic Controls */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2.5">
+            <BarChart3 className="w-6 h-6 text-primary-400" />
+            Learning Analytics & ML Mastery
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400">
+            Predictive weakness modeling, cognitive retention decay, and personalized revision scheduling
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {/* ML Model Status Pill */}
+          <button
+            onClick={() => setShowMLModal(true)}
+            className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all ${
+              ml_diagnostics.is_trained
+                ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/25'
+                : 'bg-primary-500/15 border-primary-500/40 text-primary-300 hover:bg-primary-500/25'
+            }`}
+          >
+            <Brain className="w-3.5 h-3.5 text-accent-cyan" />
+            <span>
+              {ml_diagnostics.is_trained ? 'Scikit-Learn ML Active' : 'Heuristic Baseline Active'}
+            </span>
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-white/10">
+              {ml_diagnostics.samples_count}/{ml_diagnostics.min_samples_required} samples
+            </span>
+          </button>
+
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleRecalculate}
+            disabled={refreshing}
+            leftIcon={<RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />}
+          >
+            Recalculate
+          </Button>
+        </div>
       </div>
 
-      {/* KPI Stats */}
+      {/* ML DIAGNOSTICS MODAL */}
+      {showMLModal && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="glass-card w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-primary-500/30 space-y-5 shadow-2xl animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center text-primary-400">
+                  <Brain className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">ML Model Diagnostics</h3>
+                  <p className="text-xs text-slate-400">Topic-level weakness prediction architecture</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowMLModal(false)}
+                className="text-slate-400 hover:text-white text-lg font-bold"
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="space-y-3.5 text-xs text-slate-300">
+              <div className="p-3.5 rounded-xl bg-surface-subtle border border-surface-border space-y-1.5">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Current Model State</span>
+                <p className="font-semibold text-slate-100">{ml_diagnostics.status_note}</p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-surface-subtle border border-surface-border space-y-2">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Pipeline Specification</span>
+                <ul className="space-y-1.5 text-slate-300">
+                  <li>• <strong>Algorithm:</strong> {ml_diagnostics.is_trained ? 'scikit-learn LogisticRegression (calibrated probabilities)' : 'Statistical Heuristic Baseline (sample threshold < 8)'}</li>
+                  <li>• <strong>Training Samples:</strong> {ml_diagnostics.samples_count} collected (min. {ml_diagnostics.min_samples_required} required for ML training)</li>
+                  <li>• <strong>Features:</strong> Quiz Error Rate, Flashcard Distress Rate, Time Decay Interval, Difficulty Scaling Factor, Attempt Volume</li>
+                  <li>• <strong>Validation Note:</strong> Predictions are adaptive estimates to guide revision and are never presented as guaranteed scores.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <Button variant="glow" size="sm" onClick={() => setShowMLModal(false)}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* KPI Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
-          title="Overall Mastery"
-          value={`${analytics.overallMastery}%`}
-          subtitle="Top tier across 5 subjects"
-          trend={{ value: '+5.4% this month', isPositive: true }}
+          title="Overall Topic Mastery"
+          value={`${overall_mastery}%`}
+          subtitle={`Across ${topics.length} active topics`}
+          trend={{ value: `${strong_topics.length} Mastered`, isPositive: true }}
           icon={Award}
           colorVariant="violet"
         />
         <StatsCard
-          title="Retention Rate"
-          value={`${analytics.retentionRate}%`}
-          subtitle="Calculated over 30 days"
-          trend={{ value: 'Above baseline (+9%)', isPositive: true }}
-          icon={Brain}
-          colorVariant="cyan"
-        />
-        <StatsCard
-          title="Total Study Hours"
-          value={`${analytics.totalStudyHours}h`}
-          subtitle="Across 38 active sessions"
-          trend={{ value: '+8.2h vs past month', isPositive: true }}
-          icon={Clock}
-          colorVariant="blue"
-        />
-        <StatsCard
-          title="Quizzes Passed"
-          value={analytics.quizzesCompleted}
-          subtitle="Average score: 84%"
-          trend={{ value: '14 Perfect Scores', isPositive: true }}
+          title="Quiz Accuracy"
+          value={`${retention_rate}%`}
+          subtitle={`${total_questions_answered} questions answered`}
+          trend={{ value: `${total_quizzes_completed} Quizzes Completed`, isPositive: true }}
           icon={ShieldCheck}
           colorVariant="emerald"
         />
+        <StatsCard
+          title="Flashcards In Review"
+          value={spaced_repetition.due_today_count}
+          subtitle={`${spaced_repetition.total_cards} cards scheduled`}
+          trend={{ value: `${spaced_repetition.due_this_week_count} due this week`, isPositive: false }}
+          icon={RotateCcw}
+          colorVariant="cyan"
+        />
+        <StatsCard
+          title="Active Weak Topics"
+          value={weak_topics.length}
+          subtitle="Identified for revision"
+          trend={{ value: weak_topics.length === 0 ? 'All topics steady' : 'Needs attention', isPositive: weak_topics.length === 0 }}
+          icon={AlertTriangle}
+          colorVariant="blue"
+        />
       </div>
+
+      {/* Weak Topics & Revision Recommendations Alert Section */}
+      {weak_topics.length > 0 && (
+        <div className="glass-card rounded-2xl p-6 border border-rose-500/30 bg-gradient-to-br from-rose-500/5 to-transparent space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-rose-400" />
+                Predicted Weak Topics Requiring Focus
+              </h3>
+              <p className="text-xs text-slate-400">
+                Topics flagged by the {ml_diagnostics.model_type === 'heuristic_baseline' ? 'heuristic baseline' : 'scikit-learn predictor'} based on past mistakes and flashcard reviews
+              </p>
+            </div>
+            <span className="text-[11px] text-slate-400 italic">
+              *Probabilistic estimates to guide your revision, not fixed assessments.
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+            {weak_topics.map((wt, idx) => (
+              <div key={idx} className="p-4 rounded-xl bg-surface/80 border border-surface-border space-y-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-100">{wt.topic}</h4>
+                    <span className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                      <FileText className="w-3 h-3 text-accent-cyan" />
+                      {wt.source_doc} (Page {wt.page_number})
+                    </span>
+                  </div>
+                  <Badge variant="danger" size="sm">
+                    {wt.weakness_probability}% Weakness Risk
+                  </Badge>
+                </div>
+
+                <div className="p-2.5 rounded-lg bg-surface-subtle text-xs text-slate-300 leading-relaxed border border-surface-border">
+                  <span className="font-bold text-rose-300">Why recommended: </span>
+                  {wt.reason}
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-xs text-slate-400">
+                    Mastery: <strong className="text-rose-400">{wt.mastery}%</strong>
+                  </span>
+                  <Link to={`/practice`}>
+                    <Button variant="glow" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
+                      Drill Topic
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Topic Mastery Heatmap Matrix */}
       <div className="glass-card rounded-2xl p-6 border border-surface-border space-y-4">
@@ -119,32 +363,32 @@ export const AnalyticsPage: React.FC = () => {
           <div>
             <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
               <Zap className="w-4 h-4 text-accent-cyan" />
-              Skill & Concept Mastery Heatmap
+              Topic & Skill Mastery Heatmap
             </h3>
             <p className="text-xs text-slate-400">
-              Color intensity indicates recall stability; badges show estimated memory decay timeline
+              Calculated from quiz accuracy (55%), flashcard retention (30%), and exponential time decay (15%)
             </p>
           </div>
 
           <div className="flex items-center gap-3 text-xs text-slate-400">
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-md bg-emerald-500/20 border border-emerald-500/50" /> &gt;80% Mastered
+              <span className="w-3 h-3 rounded-md bg-emerald-500/20 border border-emerald-500/50" /> &ge;80% Strong
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-md bg-amber-500/20 border border-amber-500/50" /> 50-80% Consolidating
+              <span className="w-3 h-3 rounded-md bg-amber-500/20 border border-amber-500/50" /> 55-79% Consolidating
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-md bg-rose-500/20 border border-rose-500/50" /> &lt;50% At Risk
+              <span className="w-3 h-3 rounded-md bg-rose-500/20 border border-rose-500/50" /> &lt;55% Needs Revision
             </span>
           </div>
         </div>
 
         {/* Heatmap Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 pt-2">
-          {analytics.masteryHeatmap.map((item, idx) => {
-            const isHigh = item.level >= 80;
-            const isMid = item.level >= 50 && item.level < 80;
-            const isLow = item.level < 50;
+          {topics.map((item, idx) => {
+            const isHigh = item.classification === 'strong';
+            const isMid = item.classification === 'consolidating';
+            const isLow = item.classification === 'weak';
 
             return (
               <div
@@ -159,43 +403,42 @@ export const AnalyticsPage: React.FC = () => {
               >
                 <div>
                   <div className="flex items-center justify-between gap-1 mb-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                      {item.category}
-                    </span>
-                    <span
-                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                        item.decayDays <= 2
-                          ? 'bg-rose-500/20 text-rose-300'
-                          : 'bg-surface-light text-slate-400'
-                      }`}
+                    <Badge
+                      variant={isHigh ? 'success' : isMid ? 'warning' : 'danger'}
+                      size="sm"
                     >
-                      Decay in {item.decayDays}d
+                      {item.classification}
+                    </Badge>
+                    <span className="text-[10px] text-slate-400 bg-surface-light px-1.5 py-0.5 rounded">
+                      Decay in {item.decay_days}d
                     </span>
                   </div>
 
                   <h4 className="text-xs font-bold text-slate-200 line-clamp-2">
-                    {item.skill}
+                    {item.topic}
                   </h4>
+
+                  <span className="text-[10px] text-slate-400 flex items-center gap-1 mt-1 truncate">
+                    <BookOpen className="w-3 h-3 text-accent-cyan shrink-0" />
+                    {item.source_doc} (p. {item.page_number})
+                  </span>
                 </div>
 
-                <div className="mt-3 pt-3 border-t border-surface-border/50 flex items-center justify-between">
-                  <div className="flex-1 mr-3">
-                    <div className="w-full h-1.5 bg-surface-light rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full ${
-                          isHigh ? 'bg-emerald-400' : isMid ? 'bg-amber-400' : 'bg-rose-400'
-                        }`}
-                        style={{ width: `${item.level}%` }}
-                      />
-                    </div>
+                <div className="mt-3 pt-3 border-t border-surface-border/50">
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className="text-[11px] text-slate-400">Mastery</span>
+                    <span className={`font-bold ${isHigh ? 'text-emerald-400' : isMid ? 'text-amber-400' : 'text-rose-400'}`}>
+                      {item.mastery}%
+                    </span>
                   </div>
-                  <span
-                    className={`text-xs font-bold ${
-                      isHigh ? 'text-emerald-400' : isMid ? 'text-amber-400' : 'text-rose-400'
-                    }`}
-                  >
-                    {item.level}%
-                  </span>
+                  <div className="w-full h-1.5 bg-surface-light rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${
+                        isHigh ? 'bg-emerald-400' : isMid ? 'bg-amber-400' : 'bg-rose-400'
+                      }`}
+                      style={{ width: `${item.mastery}%` }}
+                    />
+                  </div>
                 </div>
               </div>
             );
@@ -206,68 +449,74 @@ export const AnalyticsPage: React.FC = () => {
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Quiz Score History Line Chart */}
-        <div className="glass-card rounded-2xl p-6 border border-surface-border">
-          <div className="flex items-center justify-between mb-6">
+        <div className="glass-card rounded-2xl p-6 border border-surface-border space-y-4">
+          <div className="flex items-center justify-between">
             <div>
               <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-primary-400" />
                 Quiz Score Progression
               </h3>
               <p className="text-xs text-slate-400">
-                Score performance over consecutive drill sessions
+                Score performance across consecutive drill sessions
               </p>
             </div>
-            <Badge variant="success" size="sm">Upward Trend</Badge>
+            <Badge variant="cyan" size="sm">{accuracy_trend.length} Sessions</Badge>
           </div>
 
           <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={analytics.quizHistory}
-                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="scoreGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="date" stroke="#64748b" fontSize={11} tickLine={false} />
-                <YAxis domain={[40, 100]} stroke="#64748b" fontSize={11} tickLine={false} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#0f1422',
-                    borderColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: '12px',
-                    color: '#f8fafc',
-                    fontSize: '12px'
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="score"
-                  stroke="#8B5CF6"
-                  strokeWidth={2.5}
-                  fillOpacity={1}
-                  fill="url(#scoreGrad)"
-                  name="Score %"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            {accuracy_trend.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={accuracy_trend}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="scoreGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="date" stroke="#64748b" fontSize={11} tickLine={false} />
+                  <YAxis domain={[0, 100]} stroke="#64748b" fontSize={11} tickLine={false} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#0f1422',
+                      borderColor: 'rgba(255,255,255,0.1)',
+                      borderRadius: '12px',
+                      color: '#f8fafc',
+                      fontSize: '12px'
+                    }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="score"
+                    stroke="#8B5CF6"
+                    strokeWidth={2.5}
+                    fillOpacity={1}
+                    fill="url(#scoreGrad)"
+                    name="Score %"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full flex items-center justify-center text-xs text-slate-500">
+                No quiz score history recorded yet.
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Subject Mastery & Study Time Comparison */}
-        <div className="glass-card rounded-2xl p-6 border border-surface-border">
-          <div className="flex items-center justify-between mb-6">
+        {/* Topic Mastery & Quiz Accuracy Comparison */}
+        <div className="glass-card rounded-2xl p-6 border border-surface-border space-y-4">
+          <div className="flex items-center justify-between">
             <div>
               <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
                 <Brain className="w-4 h-4 text-accent-cyan" />
-                Subject Mastery & Time Allocation
+                Topic Mastery vs Quiz Accuracy
               </h3>
               <p className="text-xs text-slate-400">
-                Mastery % compared against total hours dedicated
+                Comparison of calculated mastery against raw quiz accuracy
               </p>
             </div>
           </div>
@@ -275,11 +524,11 @@ export const AnalyticsPage: React.FC = () => {
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
-                data={analytics.subjectMastery}
+                data={topics}
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="subject" stroke="#64748b" fontSize={10} tickLine={false} />
+                <XAxis dataKey="topic" stroke="#64748b" fontSize={9} tickLine={false} />
                 <YAxis domain={[0, 100]} stroke="#64748b" fontSize={11} tickLine={false} />
                 <Tooltip
                   contentStyle={{
@@ -290,11 +539,127 @@ export const AnalyticsPage: React.FC = () => {
                     fontSize: '12px'
                   }}
                 />
+                <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
                 <Bar dataKey="mastery" fill="#06B6D4" radius={[6, 6, 0, 0]} name="Mastery %" />
-                <Bar dataKey="accuracy" fill="#8B5CF6" radius={[6, 6, 0, 0]} name="Accuracy %" />
+                <Bar dataKey="quiz_accuracy" fill="#8B5CF6" radius={[6, 6, 0, 0]} name="Accuracy %" />
               </BarChart>
             </ResponsiveContainer>
           </div>
+        </div>
+      </div>
+
+      {/* Personalized Revision Tasks & Spaced Repetition Flashcards */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Recommended Revision Tasks (7 cols) */}
+        <div className="lg:col-span-7 glass-card rounded-2xl p-6 border border-surface-border space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-accent-cyan" />
+                Personalized Revision Tasks
+              </h3>
+              <p className="text-xs text-slate-400">
+                Targeted review items generated from past mistakes and weakness patterns
+              </p>
+            </div>
+            <Badge variant="primary" size="sm">{revision_tasks.length} Tasks</Badge>
+          </div>
+
+          {revision_tasks.length === 0 ? (
+            <div className="p-8 text-center text-xs text-slate-400">
+              No revision tasks needed right now. All topics have strong retention!
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {revision_tasks.map((task) => (
+                <div key={task.id} className="p-4 rounded-xl bg-surface-subtle border border-surface-border space-y-2.5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-100">{task.title}</span>
+                        <Badge variant={task.priority === 'high' ? 'danger' : 'warning'} size="sm">
+                          {task.priority} priority
+                        </Badge>
+                      </div>
+                      <span className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                        <FileText className="w-3 h-3 text-accent-cyan" />
+                        {task.doc_name} (Page {task.page_number}) • ~{task.estimated_minutes} mins
+                      </span>
+                    </div>
+
+                    <Link to={task.action_url}>
+                      <Button variant="glow" size="sm" rightIcon={<ArrowRight className="w-3 h-3" />}>
+                        Review
+                      </Button>
+                    </Link>
+                  </div>
+
+                  <p className="text-xs text-slate-300 leading-relaxed bg-surface/60 p-2.5 rounded-lg border border-surface-border/60">
+                    <span className="font-bold text-primary-300">Target Reason: </span>
+                    {task.reason}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Spaced-Repetition Schedule (5 cols) */}
+        <div className="lg:col-span-5 glass-card rounded-2xl p-6 border border-surface-border space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Clock className="w-4 h-4 text-primary-400" />
+                Spaced Repetition Schedule
+              </h3>
+              <p className="text-xs text-slate-400">
+                Prioritizing cards marked 'Review Again'
+              </p>
+            </div>
+            <Link to="/flashcards">
+              <Button variant="secondary" size="sm">
+                Study Deck
+              </Button>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-center">
+            <div className="p-3 rounded-xl bg-surface-subtle border border-surface-border">
+              <span className="text-lg font-bold text-rose-400 block">{spaced_repetition.due_today_count}</span>
+              <span className="text-[11px] text-slate-400">Due Now / Today</span>
+            </div>
+            <div className="p-3 rounded-xl bg-surface-subtle border border-surface-border">
+              <span className="text-lg font-bold text-amber-400 block">{spaced_repetition.due_this_week_count}</span>
+              <span className="text-[11px] text-slate-400">Due This Week</span>
+            </div>
+          </div>
+
+          {spaced_repetition.cards.length === 0 ? (
+            <div className="p-6 text-center text-xs text-slate-400">
+              No flashcards in review rotation. Create cards from the Library to start spaced repetition.
+            </div>
+          ) : (
+            <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1 scrollbar-none">
+              {spaced_repetition.cards.slice(0, 6).map((c, idx) => (
+                <div key={idx} className="p-3 rounded-xl bg-surface-subtle border border-surface-border space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-semibold text-primary-400 truncate max-w-[170px]">
+                      {c.topic}
+                    </span>
+                    <Badge variant={c.status === 'review' ? 'danger' : c.is_overdue ? 'warning' : 'neutral'} size="sm">
+                      {c.status === 'review' ? 'Review Again' : c.is_overdue ? 'Due Today' : `In ${c.interval_days}d`}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-slate-200 line-clamp-2 font-medium">
+                    {c.front}
+                  </p>
+                  <span className="text-[10px] text-slate-400 block">
+                    Source: {c.filename} (p. {c.page_number})
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

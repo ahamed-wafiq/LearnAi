@@ -29,6 +29,7 @@ from pdf_parser import extract_text_from_pdf
 from chunker import chunk_pages
 import embeddings
 from rag_engine import generate_answer, generate_quiz, generate_flashcards
+import analytics_engine
 
 # ── Load .env ────────────────────────────────────────────────────────────
 
@@ -572,6 +573,32 @@ async def get_flashcard_progress(deck_id: str | None = None):
     if deck_id:
         return {k: v for k, v in progress.items() if v.get("deck_id") == deck_id}
     return progress
+
+
+# ── ML Learning Analytics & Spaced Repetition Endpoints ──────────────────
+
+@app.get("/api/analytics")
+async def get_learning_analytics():
+    """Retrieve computed topic mastery, weakness predictions, and trends."""
+    return analytics_engine.compute_learning_analytics()
+
+
+@app.get("/api/analytics/revisions")
+async def get_revision_schedule():
+    """Retrieve personalized revision recommendations and spaced-repetition flashcards."""
+    analytics = analytics_engine.compute_learning_analytics()
+    return {
+        "revision_tasks": analytics.get("revision_tasks", []),
+        "spaced_repetition": analytics.get("spaced_repetition", {}),
+        "weak_topics": analytics.get("weak_topics", []),
+        "ml_diagnostics": analytics.get("ml_diagnostics", {}),
+    }
+
+
+@app.post("/api/analytics/recalculate")
+async def recalculate_analytics():
+    """Trigger manual re-computation of topic mastery and weakness model."""
+    return analytics_engine.compute_learning_analytics()
 
 
 # ── Run with: python main.py ─────────────────────────────────────────────
