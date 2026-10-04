@@ -302,13 +302,13 @@ export const StudyPlannerPage: React.FC = () => {
                 <Target className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-white">Configure Study Goal & Schedule</h3>
-                <p className="text-xs text-slate-400">Adaptive exam deadline & daily time allocation</p>
+                <h3 className="text-base font-bold text-[#1E222A]">Configure Study Goal & Schedule</h3>
+                <p className="text-xs text-slate-500">Adaptive exam deadline & daily time allocation</p>
               </div>
             </div>
             <button
               onClick={() => setIsGoalModalOpen(false)}
-              className="text-slate-400 hover:text-white text-lg font-bold"
+              className="text-slate-400 hover:text-[#1E222A] text-lg font-bold"
             >
               &times;
             </button>
@@ -316,49 +316,49 @@ export const StudyPlannerPage: React.FC = () => {
 
           <form onSubmit={handleSaveGoal} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-200">Goal / Exam Title</label>
+              <label className="text-xs font-semibold text-[#1E222A]">Goal / Exam Title</label>
               <input
                 type="text"
                 value={goalTitle}
                 onChange={(e) => setGoalTitle(e.target.value)}
                 placeholder="e.g. Machine Learning Final Exam"
                 required
-                className="w-full bg-surface-subtle border border-surface-border rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-primary-500"
+                className="w-full bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl px-3.5 py-2.5 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-200">Subject Name</label>
+                <label className="text-xs font-semibold text-[#1E222A]">Subject Name</label>
                 <input
                   type="text"
                   value={goalSubject}
                   onChange={(e) => setGoalSubject(e.target.value)}
                   placeholder="e.g. Machine Learning"
                   required
-                  className="w-full bg-surface-subtle border border-surface-border rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-primary-500"
+                  className="w-full bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl px-3.5 py-2.5 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-200">Exam / Target Date</label>
+                <label className="text-xs font-semibold text-[#1E222A]">Exam / Target Date</label>
                 <input
                   type="date"
                   value={goalExamDate}
                   min={new Date().toISOString().split('T')[0]}
                   onChange={(e) => setGoalExamDate(e.target.value)}
                   required
-                  className="w-full bg-surface-subtle border border-surface-border rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-primary-500"
+                  className="w-full bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl px-3.5 py-2.5 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-200">Source Course Document</label>
+              <label className="text-xs font-semibold text-[#1E222A]">Source Course Document</label>
               <select
                 value={goalDocId}
                 onChange={(e) => setGoalDocId(e.target.value)}
-                className="w-full bg-surface-subtle border border-surface-border rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-primary-500"
+                className="w-full bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl px-3.5 py-2.5 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
               >
                 <option value="">All Uploaded Documents</option>
                 {documents.map((d) => (
@@ -370,9 +370,9 @@ export const StudyPlannerPage: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-200 flex items-center justify-between">
+              <label className="text-xs font-semibold text-[#1E222A] flex items-center justify-between">
                 <span>Daily Available Study Time</span>
-                <span className="text-primary-400 font-mono font-bold">{dailyMinutes} minutes / day</span>
+                <span className="text-[#7E79D8] font-mono font-bold">{dailyMinutes} minutes / day</span>
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {[30, 45, 60, 90].map((mins) => (
@@ -382,8 +382,8 @@ export const StudyPlannerPage: React.FC = () => {
                     onClick={() => setDailyMinutes(mins)}
                     className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
                       dailyMinutes === mins
-                        ? 'bg-primary-600 text-white border-primary-500 shadow-glow-primary'
-                        : 'bg-surface-subtle text-slate-400 border-surface-border hover:bg-surface-light'
+                        ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
+                        : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
                     }`}
                   >
                     {mins}m
@@ -393,9 +393,9 @@ export const StudyPlannerPage: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-200 flex items-center justify-between">
+              <label className="text-xs font-semibold text-[#1E222A] flex items-center justify-between">
                 <span>Target Mastery Level</span>
-                <span className="text-accent-cyan font-mono font-bold">{targetMastery}%</span>
+                <span className="text-[#06b6d4] font-mono font-bold">{targetMastery}%</span>
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {[80, 90, 95].map((mast) => (
@@ -405,8 +405,8 @@ export const StudyPlannerPage: React.FC = () => {
                     onClick={() => setTargetMastery(mast)}
                     className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
                       targetMastery === mast
-                        ? 'bg-primary-600 text-white border-primary-500 shadow-glow-primary'
-                        : 'bg-surface-subtle text-slate-400 border-surface-border hover:bg-surface-light'
+                        ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
+                        : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
                     }`}
                   >
                     {mast}% Mastery
@@ -415,7 +415,7 @@ export const StudyPlannerPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-surface-border">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#1E222A]/10">
               <Button type="button" variant="secondary" size="sm" onClick={() => setIsGoalModalOpen(false)}>
                 Cancel
               </Button>
@@ -518,26 +518,26 @@ export const StudyPlannerPage: React.FC = () => {
       <div className="glass-card p-5 rounded-2xl border border-surface-border flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-primary-500/10 text-primary-400 border border-primary-500/20">
-            <Sparkles className="w-5 h-5 text-accent-cyan" />
+            <Sparkles className="w-5 h-5 text-[#7E79D8]" />
           </div>
           <div>
-            <h4 className="text-xs font-bold text-slate-200">
+            <h4 className="text-xs font-bold text-[#1E222A]">
               Today's Revision Goals ({today_stats.completed} of {today_stats.total} Completed)
             </h4>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-slate-500">
               {today_stats.minutes_spent} of {today_stats.minutes_planned} minutes studied today
             </p>
           </div>
         </div>
 
         <div className="w-full md:w-72 flex items-center gap-3">
-          <div className="flex-1 h-2 bg-surface-light rounded-full overflow-hidden">
+          <div className="flex-1 h-2 bg-[#F0F2F8] rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-primary-500 to-emerald-400 rounded-full transition-all duration-300"
+              className="h-full bg-gradient-to-r from-[#7E79D8] to-emerald-400 rounded-full transition-all duration-300"
               style={{ width: `${today_stats.percentage}%` }}
             />
           </div>
-          <span className="text-xs font-mono font-bold text-primary-300">
+          <span className="text-xs font-mono font-bold text-[#7E79D8]">
             {today_stats.percentage}%
           </span>
         </div>
@@ -547,14 +547,14 @@ export const StudyPlannerPage: React.FC = () => {
       <div className="glass-card rounded-2xl p-6 border border-surface-border space-y-6">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-3">
-            <CalendarRange className="w-5 h-5 text-primary-400" />
-            <h3 className="text-base font-bold text-slate-100">
+            <CalendarRange className="w-5 h-5 text-[#7E79D8]" />
+            <h3 className="text-base font-bold text-[#1E222A]">
               Weekly Revision Calendar
             </h3>
             <Badge variant="cyan" size="sm">7-Day Adaptive Horizon</Badge>
           </div>
-          <span className="text-xs text-slate-400">
-            Selected: <strong className="text-white">{selectedDate}</strong> ({selectedDayInfo ? `${selectedDayInfo.day}, ${selectedDate}` : ''})
+          <span className="text-xs text-slate-500">
+            Selected: <strong className="text-[#1E222A]">{selectedDate}</strong> ({selectedDayInfo ? `${selectedDayInfo.day}, ${selectedDate}` : ''})
           </span>
         </div>
 
@@ -568,17 +568,17 @@ export const StudyPlannerPage: React.FC = () => {
                 onClick={() => setSelectedDate(d.date)}
                 className={`p-3 rounded-xl border text-center transition-all ${
                   isSelected
-                    ? 'bg-primary-600/25 border-primary-500 text-white shadow-glow-primary/20 ring-1 ring-primary-500'
+                    ? 'bg-[#7E79D8] border-[#7E79D8] text-white shadow-sm ring-2 ring-[#7E79D8]/30'
                     : d.is_today
-                    ? 'bg-surface-light border-primary-500/40 text-slate-200'
-                    : 'bg-surface-subtle border-surface-border text-slate-400 hover:bg-surface-light hover:text-white'
+                    ? 'bg-[#F0F2F8] border-[#7E79D8]/40 text-[#1E222A]'
+                    : 'bg-[#F5F6FA] border-[#1E222A]/10 text-slate-600 hover:bg-slate-200 hover:text-[#1E222A]'
                 }`}
               >
                 <span className="text-[11px] font-semibold block">{d.day}</span>
                 <span className="text-sm font-bold block mt-0.5">{d.day_number}</span>
                 <div className="mt-1 flex items-center justify-center gap-1">
                   {d.is_today && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent-cyan" title="Today" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#06b6d4]" title="Today" />
                   )}
                   <span className="text-[10px] text-slate-400">
                     {d.completed_count}/{d.tasks_count}
@@ -592,18 +592,18 @@ export const StudyPlannerPage: React.FC = () => {
         {/* Selected Day's Task List */}
         <div className="space-y-3 pt-2">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            <h4 className="text-xs font-bold text-[#1E222A] uppercase tracking-wider">
               Tasks for {selectedDayInfo?.day || 'Day'} ({displayTasks.length} Sessions)
             </h4>
             {selectedDayInfo?.is_today && (
-              <span className="text-xs text-emerald-400 font-semibold flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" /> Today's Focus
+              <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Today's Focus
               </span>
             )}
           </div>
 
           {displayTasks.length === 0 ? (
-            <div className="p-8 rounded-xl bg-surface-subtle/50 border border-surface-border text-center text-xs text-slate-400 space-y-2">
+            <div className="p-8 rounded-xl bg-[#F5F6FA] border border-[#1E222A]/10 text-center text-xs text-slate-500 space-y-2">
               <p>No study sessions scheduled for this date.</p>
               <Button variant="secondary" size="sm" onClick={handleRecalculateSchedule} leftIcon={<Sparkles className="w-3.5 h-3.5" />}>
                 Populate Schedule
@@ -622,20 +622,20 @@ export const StudyPlannerPage: React.FC = () => {
                       isDone
                         ? 'bg-emerald-500/5 border-emerald-500/30 opacity-75'
                         : isSkipped
-                        ? 'bg-surface-subtle/40 border-surface-border opacity-50'
-                        : 'bg-surface-subtle/80 border-surface-border hover:border-slate-600'
+                        ? 'bg-slate-100/50 border-[#1E222A]/10 opacity-50'
+                        : 'bg-[#F8F9FD] border-[#1E222A]/10 hover:border-[#7E79D8]'
                     }`}
                   >
                     <div className="flex items-start gap-3.5">
                       <button
                         onClick={() => handleToggleTaskStatus(t)}
-                        className="mt-0.5 text-primary-400 hover:text-primary-300 transition-colors shrink-0"
+                        className="mt-0.5 text-[#7E79D8] hover:text-[#5B54BD] transition-colors shrink-0"
                         title={isDone ? 'Mark incomplete' : 'Mark completed'}
                       >
                         {isDone ? (
-                          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                          <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                         ) : (
-                          <Circle className="w-5 h-5 text-slate-500 hover:text-slate-300" />
+                          <Circle className="w-5 h-5 text-slate-400 hover:text-slate-600" />
                         )}
                       </button>
 
@@ -643,7 +643,7 @@ export const StudyPlannerPage: React.FC = () => {
                         <div className="flex items-center gap-2 flex-wrap">
                           <span
                             className={`text-sm font-bold ${
-                              isDone ? 'line-through text-slate-400' : 'text-slate-100'
+                              isDone ? 'line-through text-slate-400' : 'text-[#1E222A]'
                             }`}
                           >
                             {t.title}
@@ -678,19 +678,19 @@ export const StudyPlannerPage: React.FC = () => {
                           {isSkipped && <Badge variant="neutral" size="sm">Skipped</Badge>}
                         </div>
 
-                        <div className="flex items-center gap-2 text-xs text-slate-400 flex-wrap">
+                        <div className="flex items-center gap-2 text-xs text-slate-500 flex-wrap">
                           <span className="flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5 text-primary-400" /> {t.time} ({t.duration_minutes} mins)
+                            <Clock className="w-3.5 h-3.5 text-[#7E79D8]" /> {t.time} ({t.duration_minutes} mins)
                           </span>
                           <span>•</span>
                           <span className="flex items-center gap-1">
-                            <FileText className="w-3.5 h-3.5 text-accent-cyan" /> {t.doc_name} (p. {t.page_number})
+                            <FileText className="w-3.5 h-3.5 text-[#06b6d4]" /> {t.doc_name} (p. {t.page_number})
                           </span>
                         </div>
 
                         {t.reason && (
-                          <p className="text-[11px] text-slate-300 leading-relaxed bg-surface/50 p-2 rounded-lg border border-surface-border/50 mt-1 max-w-2xl">
-                            <span className="font-semibold text-primary-300">Adaptive Reason: </span>
+                          <p className="text-[11px] text-slate-600 leading-relaxed bg-white p-2 rounded-lg border border-[#1E222A]/5 mt-1 max-w-2xl">
+                            <span className="font-semibold text-[#7E79D8]">Adaptive Reason: </span>
                             {t.reason}
                           </p>
                         )}
@@ -703,14 +703,14 @@ export const StudyPlannerPage: React.FC = () => {
                         <>
                           <button
                             onClick={() => handleSkipTask(t)}
-                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white border border-surface-border hover:bg-surface-light flex items-center gap-1 transition-all"
+                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:text-[#1E222A] border border-[#1E222A]/10 hover:bg-slate-200 flex items-center gap-1 transition-all"
                             title="Skip this task"
                           >
                             <SkipForward className="w-3.5 h-3.5" /> Skip
                           </button>
                           <button
                             onClick={() => handleRescheduleTask(t)}
-                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-amber-300 border border-surface-border hover:bg-amber-500/10 flex items-center gap-1 transition-all"
+                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:text-amber-700 border border-[#1E222A]/10 hover:bg-amber-50 flex items-center gap-1 transition-all"
                             title="Reschedule to tomorrow"
                           >
                             <RotateCcw className="w-3.5 h-3.5" /> Tomorrow

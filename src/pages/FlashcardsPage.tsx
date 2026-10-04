@@ -34,9 +34,13 @@ import {
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Skeleton } from '../components/ui/Skeleton';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 export const FlashcardsPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const deckParam = searchParams.get('deck');
+  const topicParam = searchParams.get('topic');
+
   const [documents, setDocuments] = useState<RAGDocument[]>([]);
   const [decks, setDecks] = useState<GeneratedFlashcardDeck[]>([]);
   const [currentDeck, setCurrentDeck] = useState<GeneratedFlashcardDeck | null>(null);
@@ -50,7 +54,7 @@ export const FlashcardsPage: React.FC = () => {
   const [selectedDocId, setSelectedDocId] = useState<string>('');
   const [numCards, setNumCards] = useState<number>(6);
   const [difficulty, setDifficulty] = useState<string>('medium');
-  const [topicPrompt, setTopicPrompt] = useState<string>('');
+  const [topicPrompt, setTopicPrompt] = useState<string>(topicParam || '');
 
   // Study session state
   const [activeCards, setActiveCards] = useState<GeneratedFlashcard[]>([]);
@@ -61,7 +65,7 @@ export const FlashcardsPage: React.FC = () => {
 
   useEffect(() => {
     loadInitialData();
-  }, []);
+  }, [deckParam, topicParam]);
 
   const loadInitialData = async () => {
     setLoading(true);
@@ -80,6 +84,28 @@ export const FlashcardsPage: React.FC = () => {
 
       setDecks(savedDecks);
       setProgressMap(progress);
+
+      if (deckParam) {
+        const found = savedDecks.find(d => d.id === deckParam);
+        if (found) {
+          selectDeck(found, found.cards, 'all');
+          return;
+        }
+      }
+
+      if (topicParam) {
+        setTopicPrompt(topicParam);
+        const matchingDeck = savedDecks.find(d => 
+          d.title.toLowerCase().includes(topicParam.toLowerCase()) ||
+          d.cards.some(c => c.topic.toLowerCase().includes(topicParam.toLowerCase()))
+        );
+        if (matchingDeck) {
+          selectDeck(matchingDeck, matchingDeck.cards, 'all');
+          return;
+        } else {
+          setShowGenerator(true);
+        }
+      }
 
       if (savedDecks.length > 0) {
         selectDeck(savedDecks[0], savedDecks[0].cards, 'all');
@@ -333,16 +359,16 @@ export const FlashcardsPage: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center text-primary-400">
-                  <Sparkles className="w-5 h-5" />
+                  <Sparkles className="w-5 h-5 text-[#7E79D8]" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white">Generate Flashcard Deck</h3>
-                  <p className="text-xs text-slate-400">Extract active-recall cards from PDF chunks</p>
+                  <h3 className="text-base font-bold text-[#1E222A]">Generate Flashcard Deck</h3>
+                  <p className="text-xs text-slate-500">Extract active-recall cards from PDF chunks</p>
                 </div>
               </div>
               <button
                 onClick={() => !generating && setShowGenerator(false)}
-                className="text-slate-400 hover:text-white text-lg font-bold"
+                className="text-slate-400 hover:text-[#1E222A] text-lg font-bold"
               >
                 &times;
               </button>
@@ -351,15 +377,15 @@ export const FlashcardsPage: React.FC = () => {
             <div className="space-y-4">
               {/* Document Selector */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-200 flex items-center justify-between">
+                <label className="text-xs font-semibold text-[#1E222A] flex items-center justify-between">
                   <span>Source Document</span>
-                  <span className="text-[11px] text-primary-400">{documents.length} PDF(s) available</span>
+                  <span className="text-[11px] text-[#7E79D8]">{documents.length} PDF(s) available</span>
                 </label>
                 <select
                   value={selectedDocId}
                   onChange={(e) => setSelectedDocId(e.target.value)}
                   disabled={generating}
-                  className="w-full bg-surface-subtle border border-surface-border rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-primary-500"
+                  className="w-full bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl px-3.5 py-2.5 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
                 >
                   <option value="">All Uploaded Documents</option>
                   {documents.map((doc) => (
@@ -372,7 +398,7 @@ export const FlashcardsPage: React.FC = () => {
 
               {/* Number of Cards */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-200">Number of Flashcards</label>
+                <label className="text-xs font-semibold text-[#1E222A]">Number of Flashcards</label>
                 <div className="grid grid-cols-3 gap-2">
                   {[4, 6, 10].map((num) => (
                     <button
@@ -382,8 +408,8 @@ export const FlashcardsPage: React.FC = () => {
                       onClick={() => setNumCards(num)}
                       className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
                         numCards === num
-                          ? 'bg-primary-600 text-white border-primary-500 shadow-glow-primary'
-                          : 'bg-surface-subtle text-slate-400 border-surface-border hover:bg-surface-light'
+                          ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
+                          : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
                       }`}
                     >
                       {num} Cards
@@ -394,7 +420,7 @@ export const FlashcardsPage: React.FC = () => {
 
               {/* Difficulty Level */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-200">Target Difficulty</label>
+                <label className="text-xs font-semibold text-[#1E222A]">Target Difficulty</label>
                 <div className="grid grid-cols-3 gap-2">
                   {['easy', 'medium', 'hard'].map((diff) => (
                     <button
@@ -404,8 +430,8 @@ export const FlashcardsPage: React.FC = () => {
                       onClick={() => setDifficulty(diff)}
                       className={`py-2 rounded-xl text-xs font-semibold border capitalize transition-all ${
                         difficulty === diff
-                          ? 'bg-primary-600 text-white border-primary-500 shadow-glow-primary'
-                          : 'bg-surface-subtle text-slate-400 border-surface-border hover:bg-surface-light'
+                          ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
+                          : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
                       }`}
                     >
                       {diff}
@@ -462,13 +488,13 @@ export const FlashcardsPage: React.FC = () => {
               onClick={() => selectDeck(deck, deck.cards, 'all')}
               className={`px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border flex items-center gap-2.5 ${
                 currentDeck?.id === deck.id
-                  ? 'bg-primary-600 text-white border-primary-500 shadow-glow-primary'
-                  : 'bg-surface text-slate-300 border-surface-border hover:bg-surface-light hover:text-white'
+                  ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
+                  : 'bg-white text-slate-700 border-[#1E222A]/10 hover:bg-slate-50 hover:text-[#1E222A]'
               }`}
             >
-              <FileText className="w-3.5 h-3.5 text-accent-cyan" />
+              <FileText className="w-3.5 h-3.5 text-[#7E79D8]" />
               <span>{deck.title}</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10">
+              <span className={`text-[10px] px-2 py-0.5 rounded-full ${currentDeck?.id === deck.id ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'}`}>
                 {deck.cards.length} cards
               </span>
             </button>
@@ -484,8 +510,8 @@ export const FlashcardsPage: React.FC = () => {
               onClick={() => applyFilter('all')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
                 filterMode === 'all'
-                  ? 'bg-primary-600 text-white border-primary-500'
-                  : 'bg-surface-subtle text-slate-400 border-surface-border hover:text-white'
+                  ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
+                  : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
               }`}
             >
               All Cards ({currentDeck.cards.length})
@@ -494,28 +520,28 @@ export const FlashcardsPage: React.FC = () => {
               onClick={() => applyFilter('review')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1.5 ${
                 filterMode === 'review'
-                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                  : 'bg-surface-subtle text-slate-400 border-surface-border hover:text-white'
+                  ? 'bg-amber-100 text-amber-800 border-amber-300 font-bold'
+                  : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
               }`}
             >
-              <RotateCcw className="w-3 h-3 text-amber-400" />
+              <RotateCcw className="w-3 h-3 text-amber-500" />
               Review Again ({reviewCount})
             </button>
             <button
               onClick={() => applyFilter('known')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1.5 ${
                 filterMode === 'known'
-                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                  : 'bg-surface-subtle text-slate-400 border-surface-border hover:text-white'
+                  ? 'bg-emerald-100 text-emerald-800 border-emerald-300 font-bold'
+                  : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
               }`}
             >
-              <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+              <CheckCircle2 className="w-3 h-3 text-emerald-500" />
               Known ({knownCount})
             </button>
           </div>
 
-          <div className="text-xs text-slate-400">
-            Mastery: <strong className="text-emerald-400">{currentDeck.cards.length > 0 ? Math.round((knownCount / currentDeck.cards.length) * 100) : 0}%</strong>
+          <div className="text-xs text-slate-500">
+            Mastery: <strong className="text-emerald-600 font-bold">{currentDeck.cards.length > 0 ? Math.round((knownCount / currentDeck.cards.length) * 100) : 0}%</strong>
           </div>
         </div>
       )}

@@ -41,6 +41,7 @@ export const AppLayout: React.FC = () => {
     { label: 'Flashcards', path: '/flashcards', icon: Layers },
     { label: 'Analytics', path: '/analytics', icon: BarChart3 },
     { label: 'Planner', path: '/planner', icon: Calendar },
+    { label: 'Settings', path: '/settings', icon: Settings },
   ];
 
   return (
@@ -111,6 +112,15 @@ export const AppLayout: React.FC = () => {
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#F99F5B] text-[#1E222A] flex items-center justify-center font-extrabold text-xs sm:text-sm border-2 border-white/20 shadow-md">
               MA
             </div>
+
+            {/* Settings Link Button */}
+            <Link
+              to="/settings"
+              className="w-9 h-9 rounded-full bg-[#292D37] hover:bg-[#343946] border border-white/5 flex items-center justify-center text-slate-300 hover:text-white transition-colors"
+              title="Platform Settings & AI Configuration"
+            >
+              <Settings className="w-4 h-4" />
+            </Link>
 
             {/* Notification Bell */}
             <button

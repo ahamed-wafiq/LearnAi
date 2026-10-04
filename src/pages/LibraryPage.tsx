@@ -259,9 +259,10 @@ export const LibraryPage: React.FC = () => {
             onClick={() => setViewMode('grid')}
             className={`p-2 rounded-lg border transition-all ${
               viewMode === 'grid'
-                ? 'bg-primary-600/20 border-primary-500/40 text-primary-300'
-                : 'bg-surface-subtle border-surface-border text-slate-400 hover:text-white'
+                ? 'bg-[#7E79D8] border-[#7E79D8] text-white shadow-sm'
+                : 'bg-white border-[#1E222A]/10 text-slate-500 hover:text-[#1E222A] hover:bg-slate-50'
             }`}
+            title="Grid View"
           >
             <LayoutGrid className="w-4 h-4" />
           </button>
@@ -269,9 +270,10 @@ export const LibraryPage: React.FC = () => {
             onClick={() => setViewMode('list')}
             className={`p-2 rounded-lg border transition-all ${
               viewMode === 'list'
-                ? 'bg-primary-600/20 border-primary-500/40 text-primary-300'
-                : 'bg-surface-subtle border-surface-border text-slate-400 hover:text-white'
+                ? 'bg-[#7E79D8] border-[#7E79D8] text-white shadow-sm'
+                : 'bg-white border-[#1E222A]/10 text-slate-500 hover:text-[#1E222A] hover:bg-slate-50'
             }`}
+            title="List View"
           >
             <List className="w-4 h-4" />
           </button>
@@ -370,7 +372,7 @@ export const LibraryPage: React.FC = () => {
                     href={getDocumentPdfUrl(doc.id)}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-2 rounded-xl bg-surface-subtle hover:bg-surface-light border border-surface-border text-slate-300 hover:text-white transition-colors"
+                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-[#1E222A] transition-colors"
                     title="View original PDF in new tab"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -555,20 +557,20 @@ export const LibraryPage: React.FC = () => {
 
           {/* Error message */}
           {uploadError && (
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs">
-              <AlertCircle className="w-4 h-4 shrink-0" />
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs">
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
               <span>{uploadError}</span>
             </div>
           )}
 
           {/* Success message */}
           {uploadSuccess && (
-            <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs space-y-2">
+            <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs space-y-2">
               <div className="flex items-center gap-2 font-semibold">
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
                 <span>Upload & Indexing Complete!</span>
               </div>
-              <p className="text-[11px] text-emerald-200/90 leading-relaxed">{uploadSuccess}</p>
+              <p className="text-[11px] text-emerald-700 leading-relaxed">{uploadSuccess}</p>
               {uploadedDocId && (
                 <div className="pt-1 flex items-center gap-2">
                   <Button

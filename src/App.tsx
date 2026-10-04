@@ -8,6 +8,7 @@ import { PracticePage } from './pages/PracticePage';
 import { FlashcardsPage } from './pages/FlashcardsPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
 import { StudyPlannerPage } from './pages/StudyPlannerPage';
+import { SettingsPage } from './pages/SettingsPage';
 
 export function App() {
   return (
@@ -21,6 +22,7 @@ export function App() {
           <Route path="flashcards" element={<FlashcardsPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="planner" element={<StudyPlannerPage />} />
+          <Route path="settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

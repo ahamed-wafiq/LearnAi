@@ -36,9 +36,13 @@ import {
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Skeleton } from '../components/ui/Skeleton';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 export const PracticePage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const topicParam = searchParams.get('topic');
+  const docParam = searchParams.get('doc');
+
   // Documents & Quizzes state
   const [documents, setDocuments] = useState<RAGDocument[]>([]);
   const [quizzes, setQuizzes] = useState<GeneratedQuiz[]>([]);
@@ -50,10 +54,10 @@ export const PracticePage: React.FC = () => {
 
   // Generator modal / configuration state
   const [showGenerator, setShowGenerator] = useState(false);
-  const [selectedDocId, setSelectedDocId] = useState<string>('');
+  const [selectedDocId, setSelectedDocId] = useState<string>(docParam || '');
   const [numQuestions, setNumQuestions] = useState<number>(5);
   const [difficulty, setDifficulty] = useState<string>('Medium');
-  const [topicPrompt, setTopicPrompt] = useState<string>('');
+  const [topicPrompt, setTopicPrompt] = useState<string>(topicParam || '');
 
   // Active quiz session states
   const [activeQuestionIdx, setActiveQuestionIdx] = useState<number>(0);
@@ -68,7 +72,7 @@ export const PracticePage: React.FC = () => {
   // Initial data loading
   useEffect(() => {
     loadInitialData();
-  }, []);
+  }, [topicParam, docParam]);
 
   const loadInitialData = async () => {
     setLoading(true);
@@ -82,16 +86,26 @@ export const PracticePage: React.FC = () => {
 
       setDocuments(docs);
       if (docs.length > 0 && !selectedDocId) {
-        setSelectedDocId(docs[0].id);
+        setSelectedDocId(docParam || docs[0].id);
       }
 
       setQuizzes(savedQuizzes);
       setPastResults(results);
 
-      if (savedQuizzes.length > 0) {
+      if (topicParam) {
+        setTopicPrompt(topicParam);
+        const matchingQuiz = savedQuizzes.find(
+          (q) => q.topic.toLowerCase().includes(topicParam.toLowerCase()) ||
+                 q.questions.some(qn => qn.topic.toLowerCase().includes(topicParam.toLowerCase()))
+        );
+        if (matchingQuiz) {
+          selectQuiz(matchingQuiz);
+        } else {
+          setShowGenerator(true);
+        }
+      } else if (savedQuizzes.length > 0) {
         selectQuiz(savedQuizzes[0]);
       } else if (docs.length > 0) {
-        // Automatically open the generator modal if documents exist but no quizzes yet
         setShowGenerator(true);
       }
     } catch (err: any) {
@@ -343,16 +357,16 @@ export const PracticePage: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center text-primary-400">
-                  <Sparkles className="w-5 h-5" />
+                  <Sparkles className="w-5 h-5 text-[#7E79D8]" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white">Generate Quiz from Document</h3>
-                  <p className="text-xs text-slate-400">Grounded in RAG chunks with page citations</p>
+                  <h3 className="text-base font-bold text-[#1E222A]">Generate Quiz from Document</h3>
+                  <p className="text-xs text-slate-500">Grounded in RAG chunks with page citations</p>
                 </div>
               </div>
               <button
                 onClick={() => !generating && setShowGenerator(false)}
-                className="text-slate-400 hover:text-white text-lg font-bold"
+                className="text-slate-400 hover:text-[#1E222A] text-lg font-bold"
               >
                 &times;
               </button>
@@ -361,15 +375,15 @@ export const PracticePage: React.FC = () => {
             <div className="space-y-4">
               {/* Document Selector */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-200 flex items-center justify-between">
+                <label className="text-xs font-semibold text-[#1E222A] flex items-center justify-between">
                   <span>Source Document</span>
-                  <span className="text-[11px] text-primary-400">{documents.length} PDF(s) available</span>
+                  <span className="text-[11px] text-[#7E79D8]">{documents.length} PDF(s) available</span>
                 </label>
                 <select
                   value={selectedDocId}
                   onChange={(e) => setSelectedDocId(e.target.value)}
                   disabled={generating}
-                  className="w-full bg-surface-subtle border border-surface-border rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-primary-500"
+                  className="w-full bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl px-3.5 py-2.5 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
                 >
                   <option value="">All Uploaded Documents</option>
                   {documents.map((doc) => (
@@ -382,7 +396,7 @@ export const PracticePage: React.FC = () => {
 
               {/* Number of Questions */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-200">Number of Questions</label>
+                <label className="text-xs font-semibold text-[#1E222A]">Number of Questions</label>
                 <div className="grid grid-cols-3 gap-2">
                   {[3, 5, 10].map((num) => (
                     <button
@@ -392,8 +406,8 @@ export const PracticePage: React.FC = () => {
                       onClick={() => setNumQuestions(num)}
                       className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
                         numQuestions === num
-                          ? 'bg-primary-600 text-white border-primary-500 shadow-glow-primary'
-                          : 'bg-surface-subtle text-slate-400 border-surface-border hover:bg-surface-light'
+                          ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
+                          : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
                       }`}
                     >
                       {num} Questions
@@ -404,7 +418,7 @@ export const PracticePage: React.FC = () => {
 
               {/* Difficulty Level */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-200">Difficulty Level</label>
+                <label className="text-xs font-semibold text-[#1E222A]">Difficulty Level</label>
                 <div className="grid grid-cols-3 gap-2">
                   {['Easy', 'Medium', 'Hard'].map((diff) => (
                     <button
@@ -414,8 +428,8 @@ export const PracticePage: React.FC = () => {
                       onClick={() => setDifficulty(diff)}
                       className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
                         difficulty === diff
-                          ? 'bg-primary-600 text-white border-primary-500 shadow-glow-primary'
-                          : 'bg-surface-subtle text-slate-400 border-surface-border hover:bg-surface-light'
+                          ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
+                          : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
                       }`}
                     >
                       {diff}
@@ -426,7 +440,7 @@ export const PracticePage: React.FC = () => {
 
               {/* Topic Prompt (Optional) */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-200">
+                <label className="text-xs font-semibold text-[#1E222A]">
                   Focus Topic / Keyword <span className="text-slate-500 font-normal">(Optional)</span>
                 </label>
                 <input
@@ -435,7 +449,7 @@ export const PracticePage: React.FC = () => {
                   value={topicPrompt}
                   onChange={(e) => setTopicPrompt(e.target.value)}
                   disabled={generating}
-                  className="w-full bg-surface-subtle border border-surface-border rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-primary-500"
+                  className="w-full bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl px-3.5 py-2.5 text-xs text-[#1E222A] placeholder:text-slate-400 focus:outline-none focus:border-[#7E79D8]"
                 />
               </div>
             </div>
@@ -524,8 +538,8 @@ export const PracticePage: React.FC = () => {
                   onClick={() => selectQuiz(q)}
                   className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border flex items-center gap-2 ${
                     currentQuiz?.id === q.id
-                      ? 'bg-primary-600 text-white border-primary-500 shadow-glow-primary'
-                      : 'bg-surface text-slate-400 border-surface-border hover:text-white hover:bg-surface-light'
+                      ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
+                      : 'bg-white text-slate-600 border-[#1E222A]/10 hover:text-[#1E222A] hover:bg-slate-50'
                   }`}
                 >
                   <FileText className="w-3.5 h-3.5" />
@@ -545,7 +559,7 @@ export const PracticePage: React.FC = () => {
                 <div className="glass-card p-4 rounded-2xl border border-surface-border flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-2.5">
                     <Badge variant="primary">{currentQuiz.doc_name}</Badge>
-                    <span className="text-xs font-semibold text-slate-300">
+                    <span className="text-xs font-semibold text-slate-600">
                       Question {activeQuestionIdx + 1} of {currentQuiz.questions.length}
                     </span>
                   </div>
@@ -555,11 +569,11 @@ export const PracticePage: React.FC = () => {
                     <div
                       className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-mono font-bold ${
                         timeLeftSeconds < 60
-                          ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse'
-                          : 'bg-surface-light text-slate-200 border-surface-border'
+                          ? 'bg-rose-50 text-rose-700 border-rose-300 animate-pulse'
+                          : 'bg-[#F5F6FA] text-[#1E222A] border-[#1E222A]/10'
                       }`}
                     >
-                      <Clock className="w-3.5 h-3.5 text-primary-400" />
+                      <Clock className="w-3.5 h-3.5 text-[#7E79D8]" />
                       {formatTime(timeLeftSeconds)}
                     </div>
 
@@ -578,7 +592,7 @@ export const PracticePage: React.FC = () => {
                   {/* Question Metadata */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-semibold text-primary-400 bg-primary-500/10 px-2.5 py-1 rounded-lg border border-primary-500/20">
+                      <span className="text-xs font-semibold text-[#7E79D8] bg-[#7E79D8]/10 px-2.5 py-1 rounded-lg border border-[#7E79D8]/20">
                         {currentQ.topic}
                       </span>
                       <Badge
@@ -593,8 +607,8 @@ export const PracticePage: React.FC = () => {
                       >
                         {currentQ.difficulty}
                       </Badge>
-                      <span className="text-[11px] font-mono text-slate-400 bg-surface px-2.5 py-0.5 rounded-md border border-surface-border flex items-center gap-1">
-                        <FileText className="w-3 h-3 text-accent-cyan" />
+                      <span className="text-[11px] font-mono text-slate-500 bg-[#F5F6FA] px-2.5 py-0.5 rounded-md border border-[#1E222A]/10 flex items-center gap-1">
+                        <FileText className="w-3 h-3 text-[#06b6d4]" />
                         {currentQ.filename} (Page {currentQ.page_number})
                       </span>
                     </div>
@@ -603,8 +617,8 @@ export const PracticePage: React.FC = () => {
                       onClick={() => handleToggleFlag(activeQuestionIdx)}
                       className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-colors border ${
                         flaggedQuestions.has(activeQuestionIdx)
-                          ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                          : 'text-slate-400 hover:text-slate-200 border-surface-border hover:bg-surface-light'
+                          ? 'bg-amber-100 text-amber-800 border-amber-300 font-medium'
+                          : 'text-slate-500 hover:text-[#1E222A] border-[#1E222A]/10 hover:bg-slate-100'
                       }`}
                     >
                       <Flag className="w-3.5 h-3.5" />
@@ -683,7 +697,7 @@ export const PracticePage: React.FC = () => {
               {/* Navigation Palette (4 cols) */}
               <div className="lg:col-span-4 space-y-4">
                 <div className="glass-card rounded-2xl p-5 border border-surface-border space-y-4">
-                  <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider">
+                  <h4 className="text-xs font-bold text-[#1E222A] uppercase tracking-wider">
                     Question Palette
                   </h4>
 
@@ -699,10 +713,10 @@ export const PracticePage: React.FC = () => {
                           onClick={() => setActiveQuestionIdx(idx)}
                           className={`h-10 rounded-xl font-bold text-xs relative flex items-center justify-center border transition-all ${
                             isCurrent
-                              ? 'ring-2 ring-primary-500 bg-primary-600/30 text-white border-primary-400'
+                              ? 'ring-2 ring-[#7E79D8] bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
                               : isAnswered
-                              ? 'bg-primary-600/20 text-primary-300 border-primary-500/40'
-                              : 'bg-surface-subtle text-slate-400 border-surface-border hover:bg-surface-light hover:text-white'
+                              ? 'bg-[#7E79D8]/15 text-[#7E79D8] font-bold border-[#7E79D8]/30'
+                              : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
                           }`}
                         >
                           {idx + 1}
@@ -714,26 +728,26 @@ export const PracticePage: React.FC = () => {
                     })}
                   </div>
 
-                  <div className="pt-4 border-t border-surface-border/60 space-y-2 text-[11px] text-slate-400">
+                  <div className="pt-4 border-t border-[#1E222A]/10 space-y-2 text-[11px] text-slate-500">
                     <div className="flex items-center justify-between">
                       <span className="flex items-center gap-1.5">
-                        <span className="w-3 h-3 rounded-md bg-primary-600/30 border border-primary-500/50" /> Answered
+                        <span className="w-3 h-3 rounded-md bg-[#7E79D8]/20 border border-[#7E79D8]/40" /> Answered
                       </span>
-                      <span className="font-semibold text-slate-300">{answeredCount}</span>
+                      <span className="font-semibold text-[#1E222A]">{answeredCount}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="flex items-center gap-1.5">
-                        <span className="w-3 h-3 rounded-md bg-surface-subtle border border-surface-border" /> Unanswered
+                        <span className="w-3 h-3 rounded-md bg-[#F5F6FA] border border-[#1E222A]/15" /> Unanswered
                       </span>
-                      <span className="font-semibold text-slate-300">
+                      <span className="font-semibold text-[#1E222A]">
                         {currentQuiz.questions.length - answeredCount}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="flex items-center gap-1.5">
-                        <span className="w-3 h-3 rounded-md bg-amber-500/20 border border-amber-500/40" /> Flagged
+                        <span className="w-3 h-3 rounded-md bg-amber-100 border border-amber-300" /> Flagged
                       </span>
-                      <span className="font-semibold text-slate-300">{flaggedQuestions.size}</span>
+                      <span className="font-semibold text-[#1E222A]">{flaggedQuestions.size}</span>
                     </div>
                   </div>
                 </div>
@@ -832,14 +846,14 @@ export const PracticePage: React.FC = () => {
                     >
                       <div className="flex items-start justify-between gap-4 mb-3">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-surface-light text-slate-300">
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200">
                             Q{idx + 1}
                           </span>
-                          <span className="text-xs font-semibold text-primary-400">
+                          <span className="text-xs font-semibold text-[#7E79D8]">
                             {q.topic}
                           </span>
-                          <span className="text-[11px] font-mono text-slate-400 bg-surface px-2.5 py-0.5 rounded-md border border-surface-border flex items-center gap-1">
-                            <FileText className="w-3 h-3 text-accent-cyan" />
+                          <span className="text-[11px] font-mono text-slate-500 bg-[#F5F6FA] px-2.5 py-0.5 rounded-md border border-[#1E222A]/10 flex items-center gap-1">
+                            <FileText className="w-3 h-3 text-[#06b6d4]" />
                             {q.filename} (Page {q.page_number})
                           </span>
                         </div>
@@ -849,7 +863,7 @@ export const PracticePage: React.FC = () => {
                         </Badge>
                       </div>
 
-                      <h4 className="text-sm font-bold text-slate-100 mb-4">
+                      <h4 className="text-sm font-bold text-[#1E222A] mb-4">
                         {q.question}
                       </h4>
 
@@ -864,10 +878,10 @@ export const PracticePage: React.FC = () => {
                               key={optIdx}
                               className={`p-3 rounded-xl border text-xs flex items-center justify-between ${
                                 isThisCorrect
-                                  ? 'bg-emerald-500/15 border-emerald-500/50 text-emerald-200 font-semibold'
+                                  ? 'bg-emerald-50 border-emerald-300 text-emerald-800 font-semibold'
                                   : isSelected
-                                  ? 'bg-rose-500/15 border-rose-500/50 text-rose-200'
-                                  : 'bg-surface-subtle/50 border-surface-border text-slate-400'
+                                  ? 'bg-rose-50 border-rose-300 text-rose-800'
+                                  : 'bg-[#F8F9FD] border-[#1E222A]/10 text-slate-600'
                               }`}
                             >
                               <div className="flex items-center gap-2.5">
@@ -875,10 +889,10 @@ export const PracticePage: React.FC = () => {
                                 <span>{opt}</span>
                               </div>
                               {isThisCorrect && (
-                                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                               )}
                               {!isThisCorrect && isSelected && (
-                                <XCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                                <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
                               )}
                             </div>
                           );
@@ -886,23 +900,23 @@ export const PracticePage: React.FC = () => {
                       </div>
 
                       {/* Explanation & PDF Citation */}
-                      <div className="p-4 rounded-xl bg-surface-subtle border border-surface-border space-y-2.5 text-xs">
-                        <div className="flex items-center gap-1.5 font-bold text-slate-200">
-                          <HelpCircle className="w-4 h-4 text-primary-400" />
+                      <div className="p-4 rounded-xl bg-[#F5F6FA] border border-[#1E222A]/10 space-y-2.5 text-xs">
+                        <div className="flex items-center gap-1.5 font-bold text-[#1E222A]">
+                          <HelpCircle className="w-4 h-4 text-[#7E79D8]" />
                           Explanation:
                         </div>
-                        <p className="text-slate-300 leading-relaxed">
+                        <p className="text-slate-600 leading-relaxed">
                           {q.explanation}
                         </p>
 
                         {/* Citation Badge */}
-                        <div className="pt-2 border-t border-surface-border flex items-start gap-2 text-[11px] text-primary-300">
-                          <BookOpen className="w-3.5 h-3.5 text-accent-cyan shrink-0 mt-0.5" />
+                        <div className="pt-2 border-t border-[#1E222A]/10 flex items-start gap-2 text-[11px] text-[#7E79D8]">
+                          <BookOpen className="w-3.5 h-3.5 text-[#06b6d4] shrink-0 mt-0.5" />
                           <div>
-                            <span className="font-bold text-slate-200">Grounded in: </span>
-                            <span className="text-slate-300 font-medium">{q.filename}, Page {q.page_number}</span>
+                            <span className="font-bold text-[#1E222A]">Grounded in: </span>
+                            <span className="text-slate-600 font-medium">{q.filename}, Page {q.page_number}</span>
                             {q.excerpt && (
-                              <p className="italic text-slate-400 mt-1">"{q.excerpt}"</p>
+                              <p className="italic text-slate-500 mt-1">"{q.excerpt}"</p>
                             )}
                           </div>
                         </div>

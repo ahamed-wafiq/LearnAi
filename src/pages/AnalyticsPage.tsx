@@ -221,34 +221,34 @@ export const AnalyticsPage: React.FC = () => {
       {/* ML DIAGNOSTICS MODAL */}
       {showMLModal && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-card w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-primary-500/30 space-y-5 shadow-2xl animate-in zoom-in-95 duration-150">
+          <div className="glass-card w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-[#1E222A]/10 space-y-5 shadow-2xl animate-in zoom-in-95 duration-150 bg-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-10 h-10 rounded-xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center text-primary-400">
-                  <Brain className="w-5 h-5" />
+                  <Brain className="w-5 h-5 text-[#7E79D8]" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white">ML Model Diagnostics</h3>
-                  <p className="text-xs text-slate-400">Topic-level weakness prediction architecture</p>
+                  <h3 className="text-base font-bold text-[#1E222A]">ML Model Diagnostics</h3>
+                  <p className="text-xs text-slate-500">Topic-level weakness prediction architecture</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowMLModal(false)}
-                className="text-slate-400 hover:text-white text-lg font-bold"
+                className="text-slate-400 hover:text-[#1E222A] text-lg font-bold"
               >
                 &times;
               </button>
             </div>
 
-            <div className="space-y-3.5 text-xs text-slate-300">
-              <div className="p-3.5 rounded-xl bg-surface-subtle border border-surface-border space-y-1.5">
+            <div className="space-y-3.5 text-xs text-slate-600">
+              <div className="p-3.5 rounded-xl bg-[#F5F6FA] border border-[#1E222A]/10 space-y-1.5">
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Current Model State</span>
-                <p className="font-semibold text-slate-100">{ml_diagnostics.status_note}</p>
+                <p className="font-semibold text-[#1E222A]">{ml_diagnostics.status_note}</p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-surface-subtle border border-surface-border space-y-2">
+              <div className="p-3.5 rounded-xl bg-[#F5F6FA] border border-[#1E222A]/10 space-y-2">
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Pipeline Specification</span>
-                <ul className="space-y-1.5 text-slate-300">
+                <ul className="space-y-1.5 text-slate-600">
                   <li>• <strong>Algorithm:</strong> {ml_diagnostics.is_trained ? 'scikit-learn LogisticRegression (calibrated probabilities)' : 'Statistical Heuristic Baseline (sample threshold < 8)'}</li>
                   <li>• <strong>Training Samples:</strong> {ml_diagnostics.samples_count} collected (min. {ml_diagnostics.min_samples_required} required for ML training)</li>
                   <li>• <strong>Features:</strong> Quiz Error Rate, Flashcard Distress Rate, Time Decay Interval, Difficulty Scaling Factor, Attempt Volume</li>
@@ -476,22 +476,23 @@ export const AnalyticsPage: React.FC = () => {
                       <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="date" stroke="#64748b" fontSize={11} tickLine={false} />
-                  <YAxis domain={[0, 100]} stroke="#64748b" fontSize={11} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#F0F2F8" />
+                  <XAxis dataKey="date" stroke="#94A3B8" fontSize={11} tickLine={false} />
+                  <YAxis domain={[0, 100]} stroke="#94A3B8" fontSize={11} tickLine={false} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#0f1422',
+                      backgroundColor: '#1E222A',
                       borderColor: 'rgba(255,255,255,0.1)',
-                      borderRadius: '12px',
-                      color: '#f8fafc',
-                      fontSize: '12px'
+                      borderRadius: '14px',
+                      color: '#FFFFFF',
+                      fontSize: '12px',
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.15)'
                     }}
                   />
                   <Area
                     type="monotone"
                     dataKey="score"
-                    stroke="#8B5CF6"
+                    stroke="#7E79D8"
                     strokeWidth={2.5}
                     fillOpacity={1}
                     fill="url(#scoreGrad)"
@@ -508,14 +509,14 @@ export const AnalyticsPage: React.FC = () => {
         </div>
 
         {/* Topic Mastery & Quiz Accuracy Comparison */}
-        <div className="glass-card rounded-2xl p-6 border border-surface-border space-y-4">
+        <div className="bg-white rounded-3xl p-6 border border-[#1E222A]/10 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                <Brain className="w-4 h-4 text-accent-cyan" />
+              <h3 className="text-base font-bold text-[#1E222A] flex items-center gap-2">
+                <Brain className="w-4 h-4 text-[#7E79D8]" />
                 Topic Mastery vs Quiz Accuracy
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Comparison of calculated mastery against raw quiz accuracy
               </p>
             </div>
@@ -527,21 +528,22 @@ export const AnalyticsPage: React.FC = () => {
                 data={topics}
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="topic" stroke="#64748b" fontSize={9} tickLine={false} />
-                <YAxis domain={[0, 100]} stroke="#64748b" fontSize={11} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#F0F2F8" />
+                <XAxis dataKey="topic" stroke="#94A3B8" fontSize={9} tickLine={false} />
+                <YAxis domain={[0, 100]} stroke="#94A3B8" fontSize={11} tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#0f1422',
+                    backgroundColor: '#1E222A',
                     borderColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: '12px',
-                    color: '#f8fafc',
-                    fontSize: '12px'
+                    borderRadius: '14px',
+                    color: '#FFFFFF',
+                    fontSize: '12px',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.15)'
                   }}
                 />
                 <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
-                <Bar dataKey="mastery" fill="#06B6D4" radius={[6, 6, 0, 0]} name="Mastery %" />
-                <Bar dataKey="quiz_accuracy" fill="#8B5CF6" radius={[6, 6, 0, 0]} name="Accuracy %" />
+                <Bar dataKey="mastery" fill="#F99F5B" radius={[6, 6, 0, 0]} name="Mastery %" />
+                <Bar dataKey="quiz_accuracy" fill="#7E79D8" radius={[6, 6, 0, 0]} name="Accuracy %" />
               </BarChart>
             </ResponsiveContainer>
           </div>

@@ -355,8 +355,8 @@ export const AIStudyRoomPage: React.FC = () => {
 
         {/* Controls: Document selector & actions */}
         <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center bg-surface-subtle border border-surface-border rounded-xl px-2.5 py-1">
-            <span className="text-[11px] text-slate-400 mr-2">Doc:</span>
+          <div className="flex items-center bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl px-2.5 py-1">
+            <span className="text-[11px] text-slate-500 mr-2 font-medium">Doc:</span>
             <select
               value={currentDoc?.id || ''}
               onChange={(e) => {
@@ -367,10 +367,10 @@ export const AIStudyRoomPage: React.FC = () => {
                   setActiveCitation(null);
                 }
               }}
-              className="bg-transparent text-xs text-slate-200 focus:outline-none cursor-pointer"
+              className="bg-transparent text-xs text-[#1E222A] font-semibold focus:outline-none cursor-pointer"
             >
               {ragDocs.map((d) => (
-                <option key={d.id} value={d.id} className="bg-surface text-slate-200">
+                <option key={d.id} value={d.id} className="bg-white text-[#1E222A]">
                   {d.filename.length > 30 ? d.filename.slice(0, 30) + '...' : d.filename}
                 </option>
               ))}
@@ -391,7 +391,7 @@ export const AIStudyRoomPage: React.FC = () => {
               href={getDocumentPdfUrl(currentDoc.id)}
               target="_blank"
               rel="noreferrer"
-              className="p-2 rounded-xl bg-surface-subtle hover:bg-surface-light border border-surface-border text-slate-300 hover:text-white transition-colors"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-[#1E222A] transition-colors"
               title="Open full PDF in browser tab"
             >
               <ExternalLink className="w-4 h-4" />
@@ -405,22 +405,22 @@ export const AIStudyRoomPage: React.FC = () => {
         {/* LEFT PANE: PDF Document Viewer & Citations (7 cols) */}
         <div className="lg:col-span-7 glass-card rounded-2xl border border-surface-border flex flex-col overflow-hidden shadow-card-subtle">
           {/* Document Toolbar */}
-          <div className="h-12 bg-surface-subtle/90 border-b border-surface-border px-3 sm:px-4 flex items-center justify-between gap-2 shrink-0">
+          <div className="h-12 bg-[#F5F6FA] border-b border-[#1E222A]/10 px-3 sm:px-4 flex items-center justify-between gap-2 shrink-0">
             {/* Page navigation */}
-            <div className="flex items-center gap-1.5 text-xs text-slate-300">
+            <div className="flex items-center gap-1.5 text-xs text-slate-600">
               <button
                 disabled={currentPage <= 1}
                 onClick={() => {
                   setCurrentPage((prev) => Math.max(1, prev - 1));
                   setIsPageImageLoading(true);
                 }}
-                className="p-1.5 rounded-lg hover:bg-surface-light text-slate-300 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-600 disabled:opacity-30 disabled:pointer-events-none transition-colors"
                 title="Previous Page"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
 
-              <div className="flex items-center gap-1 font-semibold text-slate-200 px-1">
+              <div className="flex items-center gap-1 font-semibold text-[#1E222A] px-1">
                 <span>Page</span>
                 <input
                   type="number"
@@ -434,9 +434,9 @@ export const AIStudyRoomPage: React.FC = () => {
                       setIsPageImageLoading(true);
                     }
                   }}
-                  className="w-10 bg-surface border border-surface-border rounded-lg text-center py-0.5 text-xs font-mono focus:outline-none focus:border-primary-500"
+                  className="w-10 bg-white border border-[#1E222A]/15 text-[#1E222A] rounded-lg text-center py-0.5 text-xs font-mono font-bold focus:outline-none focus:border-[#7E79D8]"
                 />
-                <span className="text-slate-400">of {totalPages}</span>
+                <span className="text-slate-500 font-normal">of {totalPages}</span>
               </div>
 
               <button
@@ -445,7 +445,7 @@ export const AIStudyRoomPage: React.FC = () => {
                   setCurrentPage((prev) => Math.min(totalPages, prev + 1));
                   setIsPageImageLoading(true);
                 }}
-                className="p-1.5 rounded-lg hover:bg-surface-light text-slate-300 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-600 disabled:opacity-30 disabled:pointer-events-none transition-colors"
                 title="Next Page"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -453,13 +453,13 @@ export const AIStudyRoomPage: React.FC = () => {
             </div>
 
             {/* View mode toggle (Visual Image vs Text) */}
-            <div className="flex items-center bg-surface rounded-xl p-0.5 border border-surface-border">
+            <div className="flex items-center bg-white rounded-xl p-0.5 border border-[#1E222A]/10">
               <button
                 onClick={() => setViewMode('visual')}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
                   viewMode === 'visual'
-                    ? 'bg-primary-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-[#7E79D8] text-white shadow-sm'
+                    : 'text-slate-500 hover:text-[#1E222A]'
                 }`}
                 title="Render visual PDF page"
               >
@@ -468,10 +468,10 @@ export const AIStudyRoomPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setViewMode('text')}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all ${
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
                   viewMode === 'text'
-                    ? 'bg-primary-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-[#7E79D8] text-white shadow-sm'
+                    : 'text-slate-500 hover:text-[#1E222A]'
                 }`}
                 title="View extracted text"
               >
@@ -485,21 +485,21 @@ export const AIStudyRoomPage: React.FC = () => {
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setZoomLevel((prev) => Math.max(70, prev - 15))}
-                  className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-surface-light transition-colors"
+                  className="p-1.5 text-slate-500 hover:text-[#1E222A] rounded-lg hover:bg-slate-200 transition-colors"
                   title="Zoom Out"
                 >
                   <ZoomOut className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => setZoomLevel(100)}
-                  className="text-[11px] font-mono text-slate-300 px-1 hover:text-primary-300"
+                  className="text-[11px] font-mono font-bold text-slate-600 px-1 hover:text-[#7E79D8]"
                   title="Reset Zoom"
                 >
                   {zoomLevel}%
                 </button>
                 <button
                   onClick={() => setZoomLevel((prev) => Math.min(160, prev + 15))}
-                  className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-surface-light transition-colors"
+                  className="p-1.5 text-slate-500 hover:text-[#1E222A] rounded-lg hover:bg-slate-200 transition-colors"
                   title="Zoom In"
                 >
                   <ZoomIn className="w-3.5 h-3.5" />
@@ -678,7 +678,7 @@ export const AIStudyRoomPage: React.FC = () => {
         {/* RIGHT PANE: AI Study Copilot Chat with Citations (5 cols) */}
         <div className="lg:col-span-5 glass-card rounded-2xl border border-surface-border flex flex-col overflow-hidden shadow-card-subtle">
           {/* AI Header & Scope Switcher */}
-          <div className="h-12 bg-surface-subtle/90 border-b border-surface-border px-4 flex items-center justify-between shrink-0">
+          <div className="h-12 bg-[#F5F6FA] border-b border-[#1E222A]/10 px-4 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2">
               <span className="relative flex h-2 w-2">
                 <span
@@ -692,17 +692,17 @@ export const AIStudyRoomPage: React.FC = () => {
                   }`}
                 />
               </span>
-              <span className="text-xs font-bold text-slate-200">LearnSphere AI Tutor</span>
+              <span className="text-xs font-bold text-[#1E222A]">LearnSphere AI Tutor</span>
             </div>
 
             {/* Scope toggle */}
-            <div className="flex items-center gap-1 bg-surface px-1.5 py-0.5 rounded-lg border border-surface-border text-[10px]">
+            <div className="flex items-center gap-1 bg-white px-1.5 py-0.5 rounded-lg border border-[#1E222A]/10 text-[10px]">
               <button
                 onClick={() => setQueryScope('current')}
-                className={`px-2 py-0.5 rounded font-medium transition-colors ${
+                className={`px-2 py-0.5 rounded font-semibold transition-colors ${
                   queryScope === 'current'
-                    ? 'bg-primary-600 text-white'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-[#7E79D8] text-white shadow-sm'
+                    : 'text-slate-500 hover:text-[#1E222A]'
                 }`}
                 title="Search only the currently selected document"
               >
@@ -710,10 +710,10 @@ export const AIStudyRoomPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setQueryScope('all')}
-                className={`px-2 py-0.5 rounded font-medium transition-colors ${
+                className={`px-2 py-0.5 rounded font-semibold transition-colors ${
                   queryScope === 'all'
-                    ? 'bg-primary-600 text-white'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-[#7E79D8] text-white shadow-sm'
+                    : 'text-slate-500 hover:text-[#1E222A]'
                 }`}
                 title="Search across all indexed documents in your library"
               >
@@ -723,13 +723,13 @@ export const AIStudyRoomPage: React.FC = () => {
           </div>
 
           {/* Quick Action Prompt Chips */}
-          <div className="p-2.5 bg-surface-subtle/40 border-b border-surface-border flex items-center gap-2 overflow-x-auto scrollbar-none shrink-0">
+          <div className="p-2.5 bg-[#F8F9FD] border-b border-[#1E222A]/10 flex items-center gap-2 overflow-x-auto scrollbar-none shrink-0">
             <button
               onClick={() => handleSendMessage('Summarize the main concepts and arguments of this document')}
               disabled={isSending}
-              className="px-2.5 py-1 rounded-lg bg-surface-light border border-surface-border hover:border-primary-500 text-[11px] text-slate-300 hover:text-white whitespace-nowrap transition-colors flex items-center gap-1.5 disabled:opacity-50"
+              className="px-2.5 py-1 rounded-lg bg-white border border-[#1E222A]/10 hover:border-[#7E79D8] text-[11px] text-slate-600 hover:text-[#1E222A] whitespace-nowrap transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-xs"
             >
-              <Zap className="w-3 h-3 text-primary-400" /> Summarize Doc
+              <Zap className="w-3 h-3 text-[#7E79D8]" /> Summarize Doc
             </button>
             <button
               onClick={() =>
@@ -738,9 +738,9 @@ export const AIStudyRoomPage: React.FC = () => {
                 )
               }
               disabled={isSending}
-              className="px-2.5 py-1 rounded-lg bg-surface-light border border-surface-border hover:border-primary-500 text-[11px] text-slate-300 hover:text-white whitespace-nowrap transition-colors flex items-center gap-1.5 disabled:opacity-50"
+              className="px-2.5 py-1 rounded-lg bg-white border border-[#1E222A]/10 hover:border-[#7E79D8] text-[11px] text-slate-600 hover:text-[#1E222A] whitespace-nowrap transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-xs"
             >
-              <HelpCircle className="w-3 h-3 text-accent-cyan" /> Core Formulas
+              <HelpCircle className="w-3 h-3 text-[#06b6d4]" /> Core Formulas
             </button>
             <button
               onClick={() =>
@@ -749,9 +749,9 @@ export const AIStudyRoomPage: React.FC = () => {
                 )
               }
               disabled={isSending}
-              className="px-2.5 py-1 rounded-lg bg-surface-light border border-surface-border hover:border-primary-500 text-[11px] text-slate-300 hover:text-white whitespace-nowrap transition-colors flex items-center gap-1.5 disabled:opacity-50"
+              className="px-2.5 py-1 rounded-lg bg-white border border-[#1E222A]/10 hover:border-[#7E79D8] text-[11px] text-slate-600 hover:text-[#1E222A] whitespace-nowrap transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-xs"
             >
-              <ListOrdered className="w-3 h-3 text-amber-400" /> 3-Question Quiz
+              <ListOrdered className="w-3 h-3 text-[#F99F5B]" /> 3-Question Quiz
             </button>
           </div>
 
@@ -774,8 +774,8 @@ export const AIStudyRoomPage: React.FC = () => {
                 <div
                   className={`p-4 rounded-2xl max-w-[92%] leading-relaxed ${
                     msg.role === 'user'
-                      ? 'bg-primary-600 text-white shadow-md rounded-br-none'
-                      : 'bg-surface-light border border-surface-border text-slate-200 rounded-bl-none shadow-md space-y-3'
+                      ? 'bg-[#7E79D8] text-white shadow-sm rounded-br-none'
+                      : 'bg-[#F8F9FD] border border-[#1E222A]/10 text-[#1E222A] rounded-bl-none shadow-sm space-y-3'
                   }`}
                 >
                   {/* Message Content */}
@@ -788,13 +788,13 @@ export const AIStudyRoomPage: React.FC = () => {
                     <div className="pt-2 flex justify-end">
                       <button
                         onClick={() => copyToClipboard(msg.content, msg.id)}
-                        className="text-[10px] text-slate-400 hover:text-slate-200 inline-flex items-center gap-1 transition-colors"
+                        className="text-[10px] text-slate-500 hover:text-[#1E222A] inline-flex items-center gap-1 transition-colors"
                         title="Copy answer"
                       >
                         {copiedId === msg.id ? (
                           <>
-                            <Check className="w-3 h-3 text-emerald-400" />
-                            <span className="text-emerald-400">Copied</span>
+                            <Check className="w-3 h-3 text-emerald-600" />
+                            <span className="text-emerald-600 font-medium">Copied</span>
                           </>
                         ) : (
                           <>
@@ -808,8 +808,8 @@ export const AIStudyRoomPage: React.FC = () => {
 
                   {/* Source Citations */}
                   {msg.citations && msg.citations.length > 0 && (
-                    <div className="pt-3 border-t border-white/10 space-y-2">
-                      <span className="text-[10px] uppercase font-bold text-accent-cyan tracking-wider flex items-center gap-1">
+                    <div className="pt-3 border-t border-[#1E222A]/10 space-y-2">
+                      <span className="text-[10px] uppercase font-bold text-[#7E79D8] tracking-wider flex items-center gap-1">
                         <Quote className="w-3 h-3" /> Grounded Sources & Citations:
                       </span>
                       <div className="space-y-1.5">
@@ -817,23 +817,23 @@ export const AIStudyRoomPage: React.FC = () => {
                           <div
                             key={c.id}
                             onClick={() => handleCitationClick(c)}
-                            className="p-2.5 rounded-xl bg-surface/90 border border-primary-500/30 hover:border-primary-500/80 hover:bg-surface cursor-pointer transition-all group"
+                            className="p-2.5 rounded-xl bg-white border border-[#7E79D8]/30 hover:border-[#7E79D8] hover:bg-[#F5F6FA] cursor-pointer transition-all group shadow-2xs"
                           >
-                            <div className="flex items-center justify-between text-[11px] font-semibold text-primary-300 group-hover:text-primary-200 mb-1">
-                              <span className="truncate max-w-[200px] flex items-center gap-1">
-                                <FileText className="w-3 h-3 text-primary-400 shrink-0" />
+                            <div className="flex items-center justify-between text-[11px] font-semibold text-[#1E222A] group-hover:text-[#7E79D8] mb-1">
+                              <span className="truncate max-w-[200px] flex items-center gap-1 font-bold">
+                                <FileText className="w-3 h-3 text-[#7E79D8] shrink-0" />
                                 {c.documentTitle}
                               </span>
                               <Badge variant="primary" size="sm">
                                 Page {c.pageNumber}
                               </Badge>
                             </div>
-                            <p className="text-[11px] text-slate-300 line-clamp-2 italic font-mono bg-black/20 p-1.5 rounded">
+                            <p className="text-[11px] text-slate-600 line-clamp-2 italic font-mono bg-[#F5F6FA] p-1.5 rounded border border-[#1E222A]/5">
                               "{c.excerpt}"
                             </p>
-                            <div className="flex items-center justify-between mt-1 text-[10px] text-slate-400">
-                              <span>Click to view PDF page</span>
-                              <span className="text-accent-cyan font-mono">
+                            <div className="flex items-center justify-between mt-1 text-[10px] text-slate-500">
+                              <span>Click to jump to PDF page</span>
+                              <span className="text-[#7E79D8] font-bold font-mono">
                                 {(c.confidence * 100).toFixed(0)}% Match
                               </span>
                             </div>
@@ -845,14 +845,14 @@ export const AIStudyRoomPage: React.FC = () => {
 
                   {/* Key Takeaways */}
                   {msg.keyTakeaways && msg.keyTakeaways.length > 0 && (
-                    <div className="pt-2 border-t border-white/10">
-                      <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block mb-1">
+                    <div className="pt-2 border-t border-[#1E222A]/10">
+                      <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block mb-1">
                         Key Takeaways:
                       </span>
-                      <ul className="space-y-1 text-[11px] text-slate-300">
+                      <ul className="space-y-1 text-[11px] text-slate-700">
                         {msg.keyTakeaways.map((k, idx) => (
                           <li key={idx} className="flex items-start gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0 mt-1.5" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
                             <span>{k}</span>
                           </li>
                         ))}
@@ -862,8 +862,8 @@ export const AIStudyRoomPage: React.FC = () => {
 
                   {/* Suggested Follow-up Questions */}
                   {msg.suggestedQuestions && msg.suggestedQuestions.length > 0 && (
-                    <div className="pt-2 border-t border-white/10 space-y-1">
-                      <span className="text-[10px] font-semibold text-slate-400 block mb-1">
+                    <div className="pt-2 border-t border-[#1E222A]/10 space-y-1">
+                      <span className="text-[10px] font-semibold text-slate-500 block mb-1">
                         Recommended Follow-up Questions:
                       </span>
                       {msg.suggestedQuestions.map((q, idx) => (
@@ -871,7 +871,7 @@ export const AIStudyRoomPage: React.FC = () => {
                           key={idx}
                           onClick={() => handleSendMessage(q)}
                           disabled={isSending}
-                          className="w-full text-left p-1.5 rounded-lg bg-surface/60 hover:bg-surface text-[11px] text-primary-300 hover:text-white transition-colors border border-transparent hover:border-primary-500/30 truncate block disabled:opacity-50"
+                          className="w-full text-left p-1.5 rounded-lg bg-white hover:bg-slate-100 text-[11px] text-[#7E79D8] hover:text-[#1E222A] transition-colors border border-[#1E222A]/10 hover:border-[#7E79D8] truncate block disabled:opacity-50"
                         >
                           → {q}
                         </button>
@@ -884,11 +884,11 @@ export const AIStudyRoomPage: React.FC = () => {
 
             {/* In-Flight Generation Indicator */}
             {isSending && (
-              <div className="p-3.5 rounded-2xl bg-surface-light border border-primary-500/30 text-primary-300 text-xs flex items-center gap-3 animate-pulse">
-                <Sparkles className="w-4 h-4 animate-spin text-accent-cyan shrink-0" />
+              <div className="p-3.5 rounded-2xl bg-white border border-[#7E79D8]/30 text-[#7E79D8] text-xs flex items-center gap-3 animate-pulse shadow-sm">
+                <Sparkles className="w-4 h-4 animate-spin text-[#7E79D8] shrink-0" />
                 <div>
-                  <p className="font-semibold text-slate-200">Generating grounded answer...</p>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="font-semibold text-[#1E222A]">Generating grounded answer...</p>
+                  <p className="text-[11px] text-slate-500">
                     Retrieving nearest vectors from FAISS & prompt-engineering Gemini
                   </p>
                 </div>
@@ -897,12 +897,12 @@ export const AIStudyRoomPage: React.FC = () => {
 
             {/* Error Message with Retry */}
             {error && (
-              <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs space-y-2">
+              <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs space-y-2">
                 <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" />
                   <div className="flex-1">
                     <p className="font-semibold">Query Failed</p>
-                    <p className="text-[11px] text-rose-200/90 mt-0.5 leading-relaxed">{error}</p>
+                    <p className="text-[11px] text-rose-600 mt-0.5 leading-relaxed">{error}</p>
                   </div>
                 </div>
                 {lastFailedPrompt && (
@@ -924,7 +924,7 @@ export const AIStudyRoomPage: React.FC = () => {
           </div>
 
           {/* Chat Input Bar */}
-          <div className="p-3 bg-surface-subtle border-t border-surface-border shrink-0">
+          <div className="p-3 bg-[#F5F6FA] border-t border-[#1E222A]/10 shrink-0">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -942,7 +942,7 @@ export const AIStudyRoomPage: React.FC = () => {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 disabled={isSending}
-                className="flex-1 bg-surface border border-surface-border rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all disabled:opacity-50"
+                className="flex-1 bg-white border border-[#1E222A]/15 rounded-xl px-4 py-2.5 text-xs text-[#1E222A] placeholder-slate-400 focus:outline-none focus:border-[#7E79D8] focus:ring-1 focus:ring-[#7E79D8] transition-all disabled:opacity-50"
               />
               <Button
                 type="submit"
