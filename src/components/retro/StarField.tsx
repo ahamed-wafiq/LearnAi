@@ -17,20 +17,20 @@ export const StarField: React.FC<StarFieldProps> = ({ className = '', showMoon =
             <svg
               width="64"
               height="64"
-              viewBox="0 0 64 64"
+              viewBox="0 0 70 80"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="w-12 h-12 sm:w-16 sm:h-16 drop-shadow-[0_0_12px_rgba(248,192,47,0.8)] transform -rotate-12"
+              className="w-12 h-12 sm:w-16 sm:h-16 drop-shadow-[0_0_12px_rgba(248,192,47,0.8)]"
             >
               {/* Crescent Moon silhouette */}
               <path
-                d="M48 32C48 43.0457 39.0457 52 28 52C22.6806 52 17.8485 49.9192 14.2809 46.5401C17.5029 48.0933 21.134 48.9744 24.9744 48.9744C36.0197 48.9744 44.9744 40.0197 44.9744 28.9744C44.9744 21.6508 41.0544 15.2268 35.2144 11.6667C42.8407 14.7356 48 22.7483 48 32Z"
+                d="M 6,6 A 38,38 0 1,1 12.7,69.5 A 34,34 0 0,0 6,6 Z"
                 fill="#F8C02F"
               />
-              {/* Pixel craters / shading */}
-              <circle cx="28" cy="40" r="2.5" fill="#E6A817" />
-              <circle cx="36" cy="32" r="3" fill="#E6A817" />
-              <circle cx="32" cy="22" r="2" fill="#E6A817" />
+              {/* Pixel craters */}
+              <rect x="34" y="28" width="4" height="4" fill="#E2A612" />
+              <rect x="40" y="40" width="5" height="4" fill="#E2A612" />
+              <rect x="32" y="52" width="5" height="4" fill="#E2A612" />
             </svg>
           </div>
         </div>

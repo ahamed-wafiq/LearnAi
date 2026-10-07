@@ -23,7 +23,7 @@ export const HeroPixelScene: React.FC = () => {
             </filter>
 
             {/* Moon Glow Filter */}
-            <filter id="moon-glow" x="-30%" y="-30%" width="160%" height="160%">
+            <filter id="moon-glow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="6" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
@@ -43,16 +43,16 @@ export const HeroPixelScene: React.FC = () => {
           <rect x="0" y="0" width="1000" height="460" fill="#070B14" />
 
           {/* Crescent Moon (Top Left - as in reference) */}
-          <g transform="translate(190, 45)" filter="url(#moon-glow)">
-            {/* Outer golden crescent */}
+          <g transform="translate(185, 42)" filter="url(#moon-glow)">
+            {/* Outer golden crescent with smooth pointed horns */}
             <path
-              d="M38,0 C48,16 48,40 34,56 C20,72 0,72 -14,64 C10,64 28,46 28,26 C28,14 20,4 12,0 C22,0 32,0 38,0 Z"
+              d="M 0,6 A 38,38 0 1,1 6.7,69.5 A 34,34 0 0,0 0,6 Z"
               fill="#F8C02F"
             />
             {/* Pixel craters */}
-            <rect x="24" y="24" width="4" height="4" fill="#E2A612" />
-            <rect x="18" y="40" width="6" height="4" fill="#E2A612" />
-            <rect x="28" y="34" width="4" height="4" fill="#E2A612" />
+            <rect x="28" y="28" width="4" height="4" fill="#E2A612" />
+            <rect x="34" y="40" width="5" height="4" fill="#E2A612" />
+            <rect x="26" y="52" width="5" height="4" fill="#E2A612" />
           </g>
 
           {/* Sparkling 4-Point Stars (Matching Reference placements) */}
