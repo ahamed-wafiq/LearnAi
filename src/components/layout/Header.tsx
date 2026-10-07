@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Menu,
   Search,
@@ -12,11 +12,21 @@ import {
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { useNavigate } from 'react-router-dom';
+import { getLearningAnalytics, listDocuments, getPlannerOverview } from '../../services/ragApi';
 
 interface HeaderProps {
   onMenuToggle: () => void;
   title?: string;
   subtitle?: string;
+}
+
+interface NotificationItem {
+  id: string | number;
+  title: string;
+  desc: string;
+  time: string;
+  unread: boolean;
+  path: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -26,34 +36,102 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   const navigate = useNavigate();
 
-  const mockNotifications = [
-    {
-      id: 1,
-      title: 'Spaced Repetition Due',
-      desc: '12 flashcards in "Transformer Architecture" ready for review',
-      time: '10m ago',
-      unread: true,
-      path: '/flashcards'
-    },
-    {
-      id: 2,
-      title: 'Weak Topic Alert',
-      desc: 'Taylor Rule calculations accuracy dropped below 40%',
-      time: '2h ago',
-      unread: true,
-      path: '/practice'
-    },
-    {
-      id: 3,
-      title: 'Document Ready',
-      desc: 'Attention Is All You Need has been fully processed & indexed',
-      time: '1d ago',
-      unread: false,
-      path: '/study-room'
-    }
-  ];
+  useEffect(() => {
+    let isMounted = true;
+    const fetchNotifications = async () => {
+      try {
+        const [analytics, docs, planner] = await Promise.all([
+          getLearningAnalytics().catch(() => null),
+          listDocuments().catch(() => []),
+          getPlannerOverview().catch(() => null)
+        ]);
+
+        if (!isMounted) return;
+        const items: NotificationItem[] = [];
+
+        // 1. Spaced Repetition Due
+        if (analytics?.spaced_repetition?.due_today_count && analytics.spaced_repetition.due_today_count > 0) {
+          items.push({
+            id: 'sr-due',
+            title: 'Spaced Repetition Due',
+            desc: `${analytics.spaced_repetition.due_today_count} flashcards ready for active recall review`,
+            time: 'Today',
+            unread: true,
+            path: '/flashcards'
+          });
+        }
+
+        // 2. Weak Topic Alert
+        if (analytics?.weak_topics && analytics.weak_topics.length > 0) {
+          const topWeak = analytics.weak_topics[0];
+          items.push({
+            id: 'weak-alert',
+            title: 'Weak Topic Alert',
+            desc: `${topWeak.topic}: ${topWeak.reason}`,
+            time: 'Active',
+            unread: true,
+            path: '/practice'
+          });
+        }
+
+        // 3. Today's Study Tasks
+        const pendingTasks = planner?.today_tasks?.filter((t) => t.status === 'scheduled') || [];
+        if (pendingTasks.length > 0) {
+          items.push({
+            id: 'plan-due',
+            title: 'Scheduled Tasks Pending',
+            desc: `${pendingTasks.length} study session${pendingTasks.length > 1 ? 's' : ''} scheduled for today`,
+            time: 'Today',
+            unread: true,
+            path: '/planner'
+          });
+        }
+
+        // 4. Latest Document Ready
+        if (docs.length > 0) {
+          const latestDoc = docs[0];
+          items.push({
+            id: `doc-${latestDoc.id}`,
+            title: 'Document Indexed',
+            desc: `"${latestDoc.filename}" (${latestDoc.total_pages} pages, ${latestDoc.chunks_count} chunks) ready for AI Q&A`,
+            time: latestDoc.upload_time ? latestDoc.upload_time.split(' ')[0] : 'Ready',
+            unread: false,
+            path: `/study-room?doc=${latestDoc.id}`
+          });
+        }
+
+        if (items.length === 0) {
+          items.push({
+            id: 'welcome-notif',
+            title: 'Welcome to LearnSphere',
+            desc: 'Upload course documents in your Library to begin personalized learning.',
+            time: 'Now',
+            unread: false,
+            path: '/library'
+          });
+        }
+
+        setNotifications(items);
+        setUnreadCount(items.filter((n) => n.unread).length);
+      } catch {
+        // Fallback
+      }
+    };
+
+    fetchNotifications();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleMarkAllRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
+    setUnreadCount(0);
+  };
 
   return (
     <header className="sticky top-0 z-30 h-16 bg-surface/80 backdrop-blur-xl border-b border-surface-border flex items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -125,18 +203,24 @@ export const Header: React.FC<HeaderProps> = ({
                   <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider">
                     Notifications
                   </h4>
-                  <Badge variant="cyan" size="sm">2 New</Badge>
+                  {unreadCount > 0 ? (
+                    <Badge variant="cyan" size="sm">{unreadCount} New</Badge>
+                  ) : (
+                    <Badge variant="neutral" size="sm">Caught Up</Badge>
+                  )}
                 </div>
-                <button
-                  onClick={() => setShowNotifications(false)}
-                  className="text-[11px] text-primary-400 hover:text-primary-300"
-                >
-                  Mark all read
-                </button>
+                {unreadCount > 0 && (
+                  <button
+                    onClick={handleMarkAllRead}
+                    className="text-[11px] text-primary-400 hover:text-primary-300"
+                  >
+                    Mark all read
+                  </button>
+                )}
               </div>
 
               <div className="space-y-2.5 max-h-72 overflow-y-auto">
-                {mockNotifications.map((n) => (
+                {notifications.map((n) => (
                   <div
                     key={n.id}
                     onClick={() => {

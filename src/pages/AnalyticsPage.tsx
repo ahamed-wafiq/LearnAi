@@ -56,6 +56,8 @@ export const AnalyticsPage: React.FC = () => {
   const [analytics, setAnalytics] = useState<LearningAnalyticsPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showMLModal, setShowMLModal] = useState(false);
+  const [classificationFilter, setClassificationFilter] = useState<'all' | 'weak' | 'consolidating' | 'strong'>('all');
+  const [docFilter, setDocFilter] = useState<string>('all');
 
   useEffect(() => {
     fetchAnalyticsData();
@@ -173,16 +175,31 @@ export const AnalyticsPage: React.FC = () => {
     ml_diagnostics
   } = analytics;
 
+  const availableDocs = Array.from(new Set(topics.map((t) => t.source_doc))).filter(Boolean);
+  const filteredTopics = topics.filter((t) => {
+    const matchesClass = classificationFilter === 'all' || t.classification === classificationFilter;
+    const matchesDoc = docFilter === 'all' || t.source_doc === docFilter;
+    return matchesClass && matchesDoc;
+  });
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
+    <div className="bg-[#FBF5E6] text-[#0C1220] min-h-[calc(100vh-140px)] p-4 sm:p-8 paper-dot-grid space-y-8">
       {/* Top Banner & ML Diagnostic Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-[#0C1220] pb-5">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
-            <BarChart3 className="w-6 h-6 text-[#7E79D8]" />
-            Learning Analytics & ML Mastery
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="font-arcade text-[9px] px-2 py-0.5 bg-[#FF4742] text-white border border-[#0C1220]">
+              TELEMETRY MODULE
+            </span>
+            <span className="font-arcade text-[9px] px-2 py-0.5 bg-[#00E5FF] text-[#0C1220] border border-[#0C1220]">
+              COGNITIVE MASTERY
+            </span>
+          </div>
+          <h2 className="font-pixel text-xl sm:text-3xl font-extrabold uppercase text-[#0C1220] flex items-center gap-2.5">
+            <BarChart3 className="w-6 h-6 text-[#FF4742]" />
+            LEARNING ANALYTICS & MASTERY
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500">
+          <p className="font-mono text-xs text-[#53627C] mt-1">
             Predictive weakness modeling, cognitive retention decay, and personalized revision scheduling
           </p>
         </div>
@@ -307,11 +324,11 @@ export const AnalyticsPage: React.FC = () => {
         <div className="glass-card rounded-2xl p-6 border border-rose-500/30 bg-gradient-to-br from-rose-500/5 to-transparent space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-rose-400" />
+              <h3 className="text-base font-bold text-[#1E222A] flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-rose-500" />
                 Predicted Weak Topics Requiring Focus
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Topics flagged by the {ml_diagnostics.model_type === 'heuristic_baseline' ? 'heuristic baseline' : 'scikit-learn predictor'} based on past mistakes and flashcard reviews
               </p>
             </div>
@@ -325,7 +342,7 @@ export const AnalyticsPage: React.FC = () => {
               <div key={idx} className="p-4 rounded-xl bg-surface/80 border border-surface-border space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h4 className="text-sm font-bold text-slate-100">{wt.topic}</h4>
+                    <h4 className="text-sm font-bold text-[#1E222A]">{wt.topic}</h4>
                     <span className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
                       <FileText className="w-3 h-3 text-accent-cyan" />
                       {wt.source_doc} (Page {wt.page_number})
@@ -336,14 +353,14 @@ export const AnalyticsPage: React.FC = () => {
                   </Badge>
                 </div>
 
-                <div className="p-2.5 rounded-lg bg-surface-subtle text-xs text-slate-300 leading-relaxed border border-surface-border">
-                  <span className="font-bold text-rose-300">Why recommended: </span>
+                <div className="p-2.5 rounded-lg bg-surface-subtle text-xs text-slate-600 leading-relaxed border border-surface-border">
+                  <span className="font-bold text-rose-600">Why recommended: </span>
                   {wt.reason}
                 </div>
 
                 <div className="flex items-center justify-between pt-1">
-                  <span className="text-xs text-slate-400">
-                    Mastery: <strong className="text-rose-400">{wt.mastery}%</strong>
+                  <span className="text-xs text-slate-500">
+                    Mastery: <strong className="text-rose-600">{wt.mastery}%</strong>
                   </span>
                   <Link to={`/practice`}>
                     <Button variant="glow" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
@@ -361,16 +378,16 @@ export const AnalyticsPage: React.FC = () => {
       <div className="glass-card rounded-2xl p-6 border border-surface-border space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-              <Zap className="w-4 h-4 text-accent-cyan" />
+            <h3 className="text-base font-bold text-[#1E222A] flex items-center gap-2">
+              <Zap className="w-4 h-4 text-[#7E79D8]" />
               Topic & Skill Mastery Heatmap
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Calculated from quiz accuracy (55%), flashcard retention (30%), and exponential time decay (15%)
             </p>
           </div>
 
-          <div className="flex items-center gap-3 text-xs text-slate-400">
+          <div className="flex items-center gap-3 text-xs text-slate-500 flex-wrap">
             <span className="flex items-center gap-1">
               <span className="w-3 h-3 rounded-md bg-emerald-500/20 border border-emerald-500/50" /> &ge;80% Strong
             </span>
@@ -383,67 +400,109 @@ export const AnalyticsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Heatmap Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 pt-2">
-          {topics.map((item, idx) => {
-            const isHigh = item.classification === 'strong';
-            const isMid = item.classification === 'consolidating';
-            const isLow = item.classification === 'weak';
-
-            return (
-              <div
-                key={idx}
-                className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
-                  isHigh
-                    ? 'bg-emerald-500/5 border-emerald-500/25 hover:border-emerald-500/50'
-                    : isMid
-                    ? 'bg-amber-500/5 border-amber-500/25 hover:border-amber-500/50'
-                    : 'bg-rose-500/5 border-rose-500/25 hover:border-rose-500/50'
+        {/* Filter controls row */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 pb-2 border-b border-surface-border">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-xs font-semibold text-slate-500 mr-1">Status:</span>
+            {(['all', 'weak', 'consolidating', 'strong'] as const).map((mode) => (
+              <button
+                key={mode}
+                onClick={() => setClassificationFilter(mode)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold capitalize transition-all ${
+                  classificationFilter === mode
+                    ? 'bg-[#7E79D8] text-white shadow-sm'
+                    : 'bg-[#F5F6FA] text-slate-600 hover:bg-slate-200'
                 }`}
               >
-                <div>
-                  <div className="flex items-center justify-between gap-1 mb-2">
-                    <Badge
-                      variant={isHigh ? 'success' : isMid ? 'warning' : 'danger'}
-                      size="sm"
-                    >
-                      {item.classification}
-                    </Badge>
-                    <span className="text-[10px] text-slate-400 bg-surface-light px-1.5 py-0.5 rounded">
-                      Decay in {item.decay_days}d
-                    </span>
-                  </div>
+                {mode === 'all' ? 'All' : mode}
+              </button>
+            ))}
+          </div>
 
-                  <h4 className="text-xs font-bold text-slate-200 line-clamp-2">
-                    {item.topic}
-                  </h4>
-
-                  <span className="text-[10px] text-slate-400 flex items-center gap-1 mt-1 truncate">
-                    <BookOpen className="w-3 h-3 text-accent-cyan shrink-0" />
-                    {item.source_doc} (p. {item.page_number})
-                  </span>
-                </div>
-
-                <div className="mt-3 pt-3 border-t border-surface-border/50">
-                  <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="text-[11px] text-slate-400">Mastery</span>
-                    <span className={`font-bold ${isHigh ? 'text-emerald-400' : isMid ? 'text-amber-400' : 'text-rose-400'}`}>
-                      {item.mastery}%
-                    </span>
-                  </div>
-                  <div className="w-full h-1.5 bg-surface-light rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full ${
-                        isHigh ? 'bg-emerald-400' : isMid ? 'bg-amber-400' : 'bg-rose-400'
-                      }`}
-                      style={{ width: `${item.mastery}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {availableDocs.length > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-slate-500">Document:</span>
+              <select
+                value={docFilter}
+                onChange={(e) => setDocFilter(e.target.value)}
+                className="bg-[#F5F6FA] border border-surface-border rounded-lg px-2.5 py-1 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
+              >
+                <option value="all">All Documents</option>
+                {availableDocs.map((doc, idx) => (
+                  <option key={idx} value={doc}>{doc}</option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
+
+        {/* Heatmap Grid */}
+        {filteredTopics.length === 0 ? (
+          <div className="py-8 text-center text-xs text-slate-500">
+            No topics match the selected status or document filter.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 pt-2">
+            {filteredTopics.map((item, idx) => {
+              const isHigh = item.classification === 'strong';
+              const isMid = item.classification === 'consolidating';
+              const isLow = item.classification === 'weak';
+
+              return (
+                <div
+                  key={idx}
+                  className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
+                    isHigh
+                      ? 'bg-emerald-500/5 border-emerald-500/25 hover:border-emerald-500/50'
+                      : isMid
+                      ? 'bg-amber-500/5 border-amber-500/25 hover:border-amber-500/50'
+                      : 'bg-rose-500/5 border-rose-500/25 hover:border-rose-500/50'
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-1 mb-2">
+                      <Badge
+                        variant={isHigh ? 'success' : isMid ? 'warning' : 'danger'}
+                        size="sm"
+                      >
+                        {item.classification}
+                      </Badge>
+                      <span className="text-[10px] text-slate-500 bg-white px-1.5 py-0.5 rounded border border-slate-200">
+                        Decay in {item.decay_days}d
+                      </span>
+                    </div>
+
+                    <h4 className="text-xs font-bold text-[#1E222A] line-clamp-2">
+                      {item.topic}
+                    </h4>
+
+                    <span className="text-[10px] text-slate-500 flex items-center gap-1 mt-1 truncate">
+                      <BookOpen className="w-3 h-3 text-[#7E79D8] shrink-0" />
+                      {item.source_doc} (p. {item.page_number})
+                    </span>
+                  </div>
+
+                  <div className="mt-3 pt-3 border-t border-surface-border/50">
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <span className="text-[11px] text-slate-500">Mastery</span>
+                      <span className={`font-bold ${isHigh ? 'text-emerald-600' : isMid ? 'text-amber-600' : 'text-rose-600'}`}>
+                        {item.mastery}%
+                      </span>
+                    </div>
+                    <div className="w-full h-1.5 bg-[#F0F2F8] rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${
+                          isHigh ? 'bg-emerald-500' : isMid ? 'bg-amber-500' : 'bg-rose-500'
+                        }`}
+                        style={{ width: `${item.mastery}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Charts Grid */}
@@ -452,11 +511,11 @@ export const AnalyticsPage: React.FC = () => {
         <div className="glass-card rounded-2xl p-6 border border-surface-border space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-primary-400" />
+              <h3 className="text-base font-bold text-[#1E222A] flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-primary-500" />
                 Quiz Score Progression
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Score performance across consecutive drill sessions
               </p>
             </div>
@@ -520,12 +579,15 @@ export const AnalyticsPage: React.FC = () => {
                 Comparison of calculated mastery against raw quiz accuracy
               </p>
             </div>
+            {filteredTopics.length !== topics.length && (
+              <Badge variant="neutral" size="sm">Filtered ({filteredTopics.length}/{topics.length})</Badge>
+            )}
           </div>
 
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
-                data={topics}
+                data={filteredTopics}
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#F0F2F8" />
@@ -556,11 +618,11 @@ export const AnalyticsPage: React.FC = () => {
         <div className="lg:col-span-7 glass-card rounded-2xl p-6 border border-surface-border space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-accent-cyan" />
+              <h3 className="text-base font-bold text-[#1E222A] flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#7E79D8]" />
                 Personalized Revision Tasks
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Targeted review items generated from past mistakes and weakness patterns
               </p>
             </div>
@@ -568,23 +630,23 @@ export const AnalyticsPage: React.FC = () => {
           </div>
 
           {revision_tasks.length === 0 ? (
-            <div className="p-8 text-center text-xs text-slate-400">
+            <div className="p-8 text-center text-xs text-slate-500">
               No revision tasks needed right now. All topics have strong retention!
             </div>
           ) : (
             <div className="space-y-3">
               {revision_tasks.map((task) => (
-                <div key={task.id} className="p-4 rounded-xl bg-surface-subtle border border-surface-border space-y-2.5">
+                <div key={task.id} className="p-4 rounded-xl bg-[#F8F9FD] border border-surface-border space-y-2.5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-slate-100">{task.title}</span>
+                        <span className="text-xs font-bold text-[#1E222A]">{task.title}</span>
                         <Badge variant={task.priority === 'high' ? 'danger' : 'warning'} size="sm">
                           {task.priority} priority
                         </Badge>
                       </div>
-                      <span className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
-                        <FileText className="w-3 h-3 text-accent-cyan" />
+                      <span className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
+                        <FileText className="w-3 h-3 text-[#7E79D8]" />
                         {task.doc_name} (Page {task.page_number}) • ~{task.estimated_minutes} mins
                       </span>
                     </div>
@@ -596,8 +658,8 @@ export const AnalyticsPage: React.FC = () => {
                     </Link>
                   </div>
 
-                  <p className="text-xs text-slate-300 leading-relaxed bg-surface/60 p-2.5 rounded-lg border border-surface-border/60">
-                    <span className="font-bold text-primary-300">Target Reason: </span>
+                  <p className="text-xs text-slate-600 leading-relaxed bg-white p-2.5 rounded-lg border border-surface-border/60">
+                    <span className="font-bold text-[#7E79D8]">Target Reason: </span>
                     {task.reason}
                   </p>
                 </div>
@@ -610,11 +672,11 @@ export const AnalyticsPage: React.FC = () => {
         <div className="lg:col-span-5 glass-card rounded-2xl p-6 border border-surface-border space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Clock className="w-4 h-4 text-primary-400" />
+              <h3 className="text-base font-bold text-[#1E222A] flex items-center gap-2">
+                <Clock className="w-4 h-4 text-[#7E79D8]" />
                 Spaced Repetition Schedule
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Prioritizing cards marked 'Review Again'
               </p>
             </div>
@@ -626,36 +688,36 @@ export const AnalyticsPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-center">
-            <div className="p-3 rounded-xl bg-surface-subtle border border-surface-border">
-              <span className="text-lg font-bold text-rose-400 block">{spaced_repetition.due_today_count}</span>
-              <span className="text-[11px] text-slate-400">Due Now / Today</span>
+            <div className="p-3 rounded-xl bg-[#F8F9FD] border border-surface-border">
+              <span className="text-lg font-bold text-rose-600 block">{spaced_repetition.due_today_count}</span>
+              <span className="text-[11px] text-slate-500">Due Now / Today</span>
             </div>
-            <div className="p-3 rounded-xl bg-surface-subtle border border-surface-border">
-              <span className="text-lg font-bold text-amber-400 block">{spaced_repetition.due_this_week_count}</span>
-              <span className="text-[11px] text-slate-400">Due This Week</span>
+            <div className="p-3 rounded-xl bg-[#F8F9FD] border border-surface-border">
+              <span className="text-lg font-bold text-amber-600 block">{spaced_repetition.due_this_week_count}</span>
+              <span className="text-[11px] text-slate-500">Due This Week</span>
             </div>
           </div>
 
           {spaced_repetition.cards.length === 0 ? (
-            <div className="p-6 text-center text-xs text-slate-400">
+            <div className="p-6 text-center text-xs text-slate-500">
               No flashcards in review rotation. Create cards from the Library to start spaced repetition.
             </div>
           ) : (
             <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1 scrollbar-none">
               {spaced_repetition.cards.slice(0, 6).map((c, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-surface-subtle border border-surface-border space-y-1.5">
+                <div key={idx} className="p-3 rounded-xl bg-[#F8F9FD] border border-surface-border space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-primary-400 truncate max-w-[170px]">
+                    <span className="text-[11px] font-semibold text-[#7E79D8] truncate max-w-[170px]">
                       {c.topic}
                     </span>
                     <Badge variant={c.status === 'review' ? 'danger' : c.is_overdue ? 'warning' : 'neutral'} size="sm">
                       {c.status === 'review' ? 'Review Again' : c.is_overdue ? 'Due Today' : `In ${c.interval_days}d`}
                     </Badge>
                   </div>
-                  <p className="text-xs text-slate-200 line-clamp-2 font-medium">
+                  <p className="text-xs text-[#1E222A] line-clamp-2 font-medium">
                     {c.front}
                   </p>
-                  <span className="text-[10px] text-slate-400 block">
+                  <span className="text-[10px] text-slate-500 block">
                     Source: {c.filename} (p. {c.page_number})
                   </span>
                 </div>

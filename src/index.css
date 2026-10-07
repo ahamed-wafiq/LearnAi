@@ -1,161 +1,305 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #b5b9f4;
-  --color-surface: #ffffff;
-  --color-surface-light: #f5f6fa;
-  --color-surface-subtle: #f0f2f8;
-  --color-surface-border: rgba(31, 35, 43, 0.08);
-  --color-surface-hover: #e9ebf5;
-
-  --color-charcoal: #1e222a;
-  --color-charcoal-light: #2a2e37;
-  --color-charcoal-dark: #16181f;
-
-  --color-lavender: #7e79d8;
-  --color-lavender-light: #dde0fa;
-  --color-lavender-soft: #b8bcf8;
-  --color-lavender-deep: #655fc4;
-
-  --color-peach: #f99f5b;
-  --color-peach-light: #fde5d2;
-  --color-peach-dark: #e8873f;
-
-  --color-primary-50: #f5f3ff;
-  --color-primary-100: #ede9fe;
-  --color-primary-200: #ddd6fe;
-  --color-primary-300: #c4b5fd;
-  --color-primary-400: #a78bfa;
-  --color-primary-500: #7e79d8;
-  --color-primary-600: #6d67cf;
-  --color-primary-700: #5b54bd;
-  --color-primary-800: #4a43a8;
-  --color-primary-900: #3b358e;
-  --color-primary: #7e79d8;
-
-  --color-accent-blue: #3b82f6;
-  --color-accent-cyan: #06b6d4;
-  --color-accent-violet: #7e79d8;
-  --color-accent-purple: #9333ea;
-  --color-accent-emerald: #10b981;
-  --color-accent-amber: #f99f5b;
-  --color-accent-rose: #f43f5e;
-
-  --color-slate-100: #1e222a;
-  --color-slate-200: #292d37;
-  --color-slate-300: #475569;
-  --color-slate-400: #64748b;
-  --color-slate-500: #94a3b8;
-
-  --font-sans: "Plus Jakarta Sans", Inter, system-ui, -apple-system, sans-serif;
+  --font-pixel: "Silkscreen", "Press Start 2P", monospace;
+  --font-arcade: "Press Start 2P", monospace;
+  --font-terminal: "VT323", monospace;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
-  --shadow-glow-primary: 0 0 25px -5px rgba(126, 121, 216, 0.35);
-  --shadow-glow-cyan: 0 0 25px -5px rgba(6, 182, 212, 0.35);
-  --shadow-glow-blue: 0 0 25px -5px rgba(59, 130, 246, 0.35);
-  --shadow-card-subtle: 0 6px 24px 0 rgba(31, 35, 43, 0.06);
+  --color-retro-dark: #0a0e1a;
+  --color-retro-dark2: #121829;
+  --color-retro-dark3: #1a2238;
+  --color-retro-paper: #fbf5e6;
+  --color-retro-paper-card: #fffdf7;
+  --color-retro-paper-muted: #ede4ce;
+  --color-retro-coral: #ff4742;
+  --color-retro-coral-hover: #ff5f5b;
+  --color-retro-cyan: #00e5ff;
+  --color-retro-cyan-hover: #33ecff;
+  --color-retro-yellow: #f8c02f;
+  --color-retro-green: #2ecc71;
+  --color-retro-border: #0c1220;
+
+  --shadow-pixel-sm: 2px 2px 0px #0a0e1a;
+  --shadow-pixel: 3px 3px 0px #0a0e1a;
+  --shadow-pixel-md: 4px 4px 0px #0a0e1a;
+  --shadow-pixel-lg: 6px 6px 0px #0a0e1a;
+  --shadow-pixel-coral: 3px 3px 0px #ff4742;
+  --shadow-pixel-cyan: 3px 3px 0px #00e5ff;
 }
 
 :root {
-  --bg-primary: #f5f6fa;
-  --bg-surface: #ffffff;
-  --bg-surface-light: #f0f2f8;
-  --border-subtle: rgba(31, 35, 43, 0.08);
+  /* Global Visual Language CSS Variables from Reference Spec */
+  --bg-dark: #0a0e1a;
+  --bg-dark-2: #121829;
+  --bg-dark-3: #1a2238;
+  --paper: #fbf5e6;
+  --paper-card: #fffdf7;
+  --paper-muted: #ede4ce;
+  --coral: #ff4742;
+  --coral-hover: #ff5f5b;
+  --cyan: #00e5ff;
+  --cyan-hover: #33ecff;
+  --yellow: #f8c02f;
+  --green: #2ecc71;
+  --text-dark: #0c1220;
+  --text-light: #fbf5e6;
+  --text-dim: #94a3b8;
+  --border-dark: #0c1220;
 }
 
+/* Base Body Styles */
 body {
-  background-color: #b5b9f4;
-  color: #1e222a;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  font-family: "Plus Jakarta Sans", sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  margin: 0;
+  padding: 0;
+  selection-background-color: #ff4742;
+  selection-color: #ffffff;
 }
 
-/* EduView geometric lavender background pattern */
-.bg-lavender-geometric {
-  background-color: #b4b8f0;
-  background-image:
-    linear-gradient(115deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.18) 18%, transparent 18%, transparent 40%, rgba(255, 255, 255, 0.14) 40%, rgba(255, 255, 255, 0.14) 62%, transparent 62%, transparent 100%),
-    radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.25) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(139, 144, 230, 0.4) 0%, transparent 50%),
-    linear-gradient(135deg, #a7aceb 0%, #c4c8fa 50%, #b2b6ef 100%);
-  background-attachment: fixed;
+/* Pixel Display Font Classes */
+.font-pixel {
+  font-family: "Silkscreen", "Press Start 2P", monospace;
+  letter-spacing: 0.04em;
 }
 
+.font-arcade {
+  font-family: "Press Start 2P", monospace;
+  letter-spacing: 0.02em;
+}
 
-/* Custom Scrollbars */
+.font-terminal {
+  font-family: "VT323", monospace;
+  letter-spacing: 0.05em;
+}
+
+/* Custom Scrollbars in Retro Pixel Aesthetic */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(245, 246, 250, 0.8);
+  background: #0a0e1a;
+  border-left: 1px solid #1a2238;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(126, 121, 216, 0.35);
-  border-radius: 9999px;
+  background: #ff4742;
+  border: 1px solid #0a0e1a;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(126, 121, 216, 0.6);
+  background: #00e5ff;
 }
 
-/* Glassmorphism & Card Styles */
-.glass-card {
-  background-color: #ffffff;
-  border-radius: 24px;
-  border: 1px solid rgba(31, 35, 43, 0.08);
-  box-shadow: 0 4px 20px -2px rgba(31, 35, 43, 0.05);
-  color: #1e222a;
+/* Retro Pixel Borders and Panels */
+.pixel-border {
+  border: 2px solid var(--border-dark);
+  box-shadow: 3px 3px 0px var(--border-dark);
 }
 
-/* EduView UI Cards & Patterns */
-.edu-card {
-  background-color: #ffffff;
-  border-radius: 24px;
-  border: 1px solid rgba(31, 35, 43, 0.07);
-  box-shadow: 0 4px 20px -2px rgba(31, 35, 43, 0.05);
+.pixel-border-sm {
+  border: 2px solid var(--border-dark);
+  box-shadow: 2px 2px 0px var(--border-dark);
 }
 
-.edu-card-hover {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+.pixel-border-lg {
+  border: 3px solid var(--border-dark);
+  box-shadow: 5px 5px 0px var(--border-dark);
 }
 
-.edu-card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px -4px rgba(31, 35, 43, 0.09);
-  border-color: rgba(126, 121, 216, 0.3);
+.pixel-border-coral {
+  border: 2px solid var(--coral);
+  box-shadow: 3px 3px 0px var(--border-dark);
 }
 
-/* Diagonal stripes pattern for chart bars */
-.bg-striped-pattern {
+.pixel-border-cyan {
+  border: 2px solid var(--cyan);
+  box-shadow: 3px 3px 0px rgba(0, 229, 255, 0.4);
+}
+
+/* Hover lift for interactive retro cards */
+.pixel-hover {
+  transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pixel-hover:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px var(--border-dark);
+}
+
+.pixel-hover:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px var(--border-dark);
+}
+
+.pixel-hover-coral:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px var(--coral);
+}
+
+.pixel-hover-cyan:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px var(--cyan);
+}
+
+/* CRT Scanlines Overlay */
+.crt-scanlines {
+  position: relative;
+}
+
+.crt-scanlines::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.22) 50%
+  );
+  background-size: 100% 4px;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0.65;
+}
+
+/* Subtle CRT screen glow and pulse */
+@keyframes crtFlicker {
+  0% { opacity: 0.99; }
+  50% { opacity: 1; }
+  52% { opacity: 0.97; }
+  54% { opacity: 1; }
+  100% { opacity: 0.99; }
+}
+
+.crt-screen {
+  animation: crtFlicker 0.15s infinite;
+}
+
+/* Blinking terminal indicator */
+@keyframes pixelBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.terminal-blink {
+  animation: pixelBlink 1s infinite;
+}
+
+/* Floating documents animation */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1.5deg);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 5s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: floatSlow 6s ease-in-out 2s infinite;
+}
+
+/* Perspective Cyber Grid Floor (matching reference stage floor) */
+.perspective-grid {
+  background-color: #0b1522;
+  background-image: 
+    linear-gradient(to right, rgba(0, 229, 255, 0.22) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 229, 255, 0.22) 1px, transparent 1px);
+  background-size: 32px 32px;
+  transform: perspective(600px) rotateX(45deg);
+  transform-origin: bottom center;
+}
+
+/* Retro Hazard Stripes pattern (seen on card borders in reference) */
+.retro-hazard-stripes {
   background-image: repeating-linear-gradient(
-    45deg,
-    rgba(255, 255, 255, 0.2),
-    rgba(255, 255, 255, 0.2) 6px,
-    transparent 6px,
-    transparent 12px
+    -45deg,
+    #ff4742,
+    #ff4742 8px,
+    #121829 8px,
+    #121829 16px
   );
 }
 
-.glass-card-hover {
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+.retro-hazard-stripes-cyan {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #00e5ff,
+    #00e5ff 8px,
+    #121829 8px,
+    #121829 16px
+  );
 }
 
-.glass-card-hover:hover {
-  border-color: rgba(126, 121, 216, 0.35);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px -4px rgba(31, 35, 43, 0.08);
+/* Scalloped decorative border edge (The signature transition in the reference image!) */
+.scallop-divider-bottom {
+  position: relative;
+  width: 100%;
+  height: 24px;
+  background-image: radial-gradient(circle at 12px 0px, transparent 12px, var(--paper) 13px);
+  background-size: 24px 24px;
+  background-repeat: repeat-x;
 }
 
-.glass-dropdown {
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid rgba(31, 35, 43, 0.1);
-  box-shadow: 0 16px 36px -10px rgba(31, 35, 43, 0.15);
-  color: #1e222a;
+.scallop-divider-top {
+  position: relative;
+  width: 100%;
+  height: 24px;
+  background-image: radial-gradient(circle at 12px 24px, transparent 12px, var(--paper) 13px);
+  background-size: 24px 24px;
+  background-repeat: repeat-x;
+}
+
+/* Retro Dot Matrix Grid for paper canvas */
+.paper-dot-grid {
+  background-image: radial-gradient(#121829 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Retro Star Twinkle */
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+
+.star-twinkle {
+  animation: starTwinkle 3s ease-in-out infinite;
+}
+
+.star-twinkle-delay-1 {
+  animation: starTwinkle 3.5s ease-in-out 1.2s infinite;
+}
+
+.star-twinkle-delay-2 {
+  animation: starTwinkle 4s ease-in-out 2.1s infinite;
+}
+
+/* Retro Paper and Terminal Cards compatibility classes */
+.glass-card, .edu-card {
+  background-color: #FFFDF7;
+  color: #0C1220;
+  border: 2px solid #0C1220 !important;
+  box-shadow: 3px 3px 0px #0C1220 !important;
+  border-radius: 0px !important;
+}
+
+.glass-card-dark {
+  background-color: #121829;
+  color: #FBF5E6;
+  border: 2px solid #0C1220 !important;
+  box-shadow: 3px 3px 0px #000 !important;
+  border-radius: 0px !important;
 }
 
 /* Flashcard 3D perspective & flip */
@@ -174,11 +318,4 @@ body {
 
 .rotate-y-180 {
   transform: rotateY(180deg);
-}
-
-/* Gradients */
-.gradient-text {
-  background: linear-gradient(135deg, #a78bfa 0%, #38bdf8 50%, #818cf8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }

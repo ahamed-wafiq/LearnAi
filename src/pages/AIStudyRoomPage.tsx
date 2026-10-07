@@ -18,16 +18,17 @@ import {
   RefreshCw,
   ListOrdered,
   AlertTriangle,
-  WifiOff,
-  Upload,
   FileImage,
   Layers,
   X,
+  Terminal,
   RotateCcw,
+  Search,
+  CheckCircle2
 } from 'lucide-react';
-import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
-import { Skeleton } from '../components/ui/Skeleton';
+import { RetroButton } from '../components/retro/RetroButton';
+import { RetroBadge } from '../components/retro/RetroBadge';
+import { PixelIcon } from '../components/retro/PixelIcon';
 import {
   askQuestion,
   listDocuments,
@@ -37,8 +38,6 @@ import {
   getDocumentPdfUrl,
   type RAGDocument,
 } from '../services/ragApi';
-
-// ── Local types for the chat UI ────────────────────────────────────────
 
 interface ChatCitation {
   id: string;
@@ -59,8 +58,6 @@ interface LocalChatMessage {
   suggestedQuestions?: string[];
 }
 
-// ── Component ──────────────────────────────────────────────────────────
-
 export const AIStudyRoomPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -73,7 +70,7 @@ export const AIStudyRoomPage: React.FC = () => {
   const [zoomLevel, setZoomLevel] = useState<number>(100);
   const [activeCitation, setActiveCitation] = useState<ChatCitation | null>(null);
 
-  // Left pane view mode: 'visual' (PyMuPDF rendered page image) or 'text' (raw extracted text)
+  // Left pane view mode: 'visual' (PyMuPDF rendered page PNG) or 'text' (raw extracted text)
   const [viewMode, setViewMode] = useState<'visual' | 'text'>('visual');
   const [isPageImageLoading, setIsPageImageLoading] = useState<boolean>(true);
   const [pageImageError, setPageImageError] = useState<boolean>(false);
@@ -96,7 +93,6 @@ export const AIStudyRoomPage: React.FC = () => {
   const [backendOnline, setBackendOnline] = useState<boolean | null>(null);
   const [isCheckingBackend, setIsCheckingBackend] = useState<boolean>(false);
 
-  // Check backend health
   const refreshBackendHealth = async () => {
     setIsCheckingBackend(true);
     try {
@@ -129,12 +125,11 @@ export const AIStudyRoomPage: React.FC = () => {
           setCurrentDoc(selected);
           setCurrentPage(1);
 
-          // Add welcome message
           setMessages([
             {
               id: 'welcome',
               role: 'assistant',
-              content: `Hello! I've indexed "${selected.filename}" (${selected.total_pages} pages, ${selected.chunks_count} chunks). Ask me any question — I'll retrieve the most relevant sections and generate answers grounded in your document with page citations.`,
+              content: `AI Study Terminal Initialized.\nIndexed "${selected.filename}" (${selected.total_pages} pages, ${selected.chunks_count} FAISS chunks).\nAsk any question — I will retrieve the most relevant sections and generate answers grounded in your document with page citations.`,
               timestamp: 'Just now',
               suggestedQuestions: [
                 'Summarize the core concepts in this document',
@@ -145,7 +140,7 @@ export const AIStudyRoomPage: React.FC = () => {
           ]);
         }
       } catch {
-        // Backend might be offline
+        // Backend offline
       } finally {
         setLoading(false);
       }
@@ -195,7 +190,6 @@ export const AIStudyRoomPage: React.FC = () => {
       const docScope = queryScope === 'current' ? currentDoc?.id : undefined;
       const response = await askQuestion(text, docScope);
 
-      // Convert citations
       const chatCitations: ChatCitation[] = response.citations.map((c, idx) => {
         const matchedDoc = ragDocs.find((d) => d.filename === c.filename);
         return {
@@ -219,11 +213,6 @@ export const AIStudyRoomPage: React.FC = () => {
       };
 
       setMessages((prev) => [...prev, aiReply]);
-
-      // Jump to first citation if available
-      if (chatCitations.length > 0) {
-        handleCitationClick(chatCitations[0]);
-      }
     } catch (err: any) {
       setLastFailedPrompt(text);
       setError(
@@ -256,53 +245,39 @@ export const AIStudyRoomPage: React.FC = () => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  // ── Loading state ─────────────────────────────────────────────────────
-
   if (loading) {
     return (
-      <div className="h-[calc(100vh-8rem)] grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <Skeleton className="lg:col-span-7 h-full rounded-2xl" />
-        <Skeleton className="lg:col-span-5 h-full rounded-2xl" />
+      <div className="bg-[#0A0E1A] min-h-[calc(100vh-140px)] p-8 flex items-center justify-center">
+        <div className="bg-[#121829] p-8 border-3 border-[#0C1220] shadow-[6px_6px_0px_#0C1220] text-center space-y-4">
+          <RefreshCw className="w-8 h-8 text-[#00E5FF] animate-spin mx-auto" />
+          <h3 className="font-pixel text-base text-white uppercase">
+            INITIALIZING STUDY ROOM...
+          </h3>
+          <p className="font-mono text-xs text-slate-400">
+            Connecting to local FAISS vector index & PyMuPDF renderer
+          </p>
+        </div>
       </div>
     );
   }
 
-  // ── No documents empty state ──────────────────────────────────────────
-
   if (ragDocs.length === 0) {
     return (
-      <div className="h-[calc(100vh-8rem)] flex items-center justify-center">
-        <div className="bg-white max-w-md w-full p-8 rounded-3xl border border-[#1E222A]/10 text-center space-y-6 shadow-sm">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-[#7E79D8]/10 border border-[#7E79D8]/20 flex items-center justify-center">
-            <Upload className="w-8 h-8 text-[#7E79D8]" />
+      <div className="bg-[#FBF5E6] text-[#0C1220] min-h-[calc(100vh-140px)] p-8 flex items-center justify-center paper-dot-grid">
+        <div className="bg-[#FFFDF7] p-8 sm:p-12 border-3 border-[#0C1220] shadow-[6px_6px_0px_#0C1220] text-center max-w-lg space-y-4">
+          <div className="p-3 bg-[#0A0E1A] inline-block border-2 border-[#0C1220]">
+            <PixelIcon name="folder" size={36} color="#FF4742" />
           </div>
-          <div>
-            <h2 className="text-xl font-bold text-[#1E222A] mb-2">No Documents Indexed Yet</h2>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              {backendOnline === false
-                ? 'The RAG backend is currently offline. Start it in backend/ with: python main.py'
-                : 'Upload a study PDF in your library to extract chunks, compute vector embeddings, and start Q&A with Gemini.'}
-            </p>
-          </div>
-
-          {backendOnline === false && (
-            <div className="flex items-center justify-center gap-2 text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-2.5">
-              <WifiOff className="w-4 h-4" />
-              <span>Backend unreachable on http://localhost:8000</span>
-              <button
-                onClick={refreshBackendHealth}
-                disabled={isCheckingBackend}
-                className="ml-2 underline hover:text-white"
-              >
-                {isCheckingBackend ? 'Checking...' : 'Retry'}
-              </button>
-            </div>
-          )}
-
-          <div className="flex items-center justify-center gap-3 pt-2">
-            <Button variant="glow" onClick={() => navigate('/library')}>
-              <BookOpen className="w-4 h-4" /> Go to Library & Upload PDF
-            </Button>
+          <h2 className="font-pixel text-lg sm:text-xl font-bold uppercase text-[#0C1220]">
+            NO DOCUMENTS IN ARCHIVE
+          </h2>
+          <p className="text-xs sm:text-sm text-[#53627C] font-mono leading-relaxed">
+            The AI Study Room requires at least one indexed PDF. Please upload a textbook, lecture slide deck, or paper.
+          </p>
+          <div className="pt-2">
+            <RetroButton to="/library" variant="primary" size="md">
+              GO TO KNOWLEDGE ARCHIVE & UPLOAD PDF
+            </RetroButton>
           </div>
         </div>
       </div>
@@ -310,53 +285,41 @@ export const AIStudyRoomPage: React.FC = () => {
   }
 
   const totalPages = currentDoc?.total_pages || 1;
-  const allSessionCitations = messages.flatMap((m) => m.citations || []);
 
   return (
-    <div className="space-y-4 animate-in fade-in duration-300">
-      {/* Top Header & Document Switcher */}
-      <div className="flex flex-wrap items-center justify-between gap-3 glass-card p-3 rounded-2xl border border-surface-border shadow-sm">
+    <div className="bg-[#0A0E1A] text-white min-h-[calc(100vh-140px)] p-3 sm:p-6 space-y-4">
+      {/* ─────────────────────────────────────────────────────────────
+          TOP CONTROL BAR & DOCUMENT SELECTOR
+          ───────────────────────────────────────────────────────────── */}
+      <div className="bg-[#121829] border-2 border-[#0C1220] shadow-[4px_4px_0px_#000] p-3 sm:p-4 flex flex-wrap items-center justify-between gap-4">
+        {/* Left: Document info */}
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-primary-500/10 text-primary-400 border border-primary-500/20">
-            <Sparkles className="w-5 h-5 text-accent-cyan animate-pulse" />
+          <div className="p-2 bg-[#0A0E1A] border border-[#00E5FF]/40 text-[#00E5FF]">
+            <Terminal className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-bold text-slate-100 truncate max-w-xs sm:max-w-sm">
-                {currentDoc?.filename || 'Document'}
+              <span className="font-pixel text-xs sm:text-sm text-white font-bold truncate max-w-xs sm:max-w-md">
+                {currentDoc?.filename}
               </span>
-              <Badge variant="primary" size="sm">
-                RAG Mode
-              </Badge>
-              {backendOnline ? (
-                <span
-                  className="flex items-center gap-1.5 text-[11px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20"
-                  title="Backend is operational"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  Connected
-                </span>
-              ) : (
-                <span
-                  className="flex items-center gap-1.5 text-[11px] text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20"
-                  title="Backend is offline"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
-                  Offline
-                </span>
-              )}
+              <RetroBadge variant="coral" size="sm">
+                RAG ACTIVE
+              </RetroBadge>
+              <RetroBadge variant={backendOnline ? 'green' : 'coral'} size="sm" dot>
+                {backendOnline ? 'CONNECTED' : 'OFFLINE'}
+              </RetroBadge>
             </div>
-            <p className="text-[11px] text-slate-400 mt-0.5">
-              {currentDoc?.total_pages || 0} pages • {currentDoc?.chunks_count || 0} vector chunks •{' '}
-              {currentDoc?.file_size_mb || 0} MB
+            <p className="font-mono text-[11px] text-slate-400 mt-0.5">
+              {currentDoc?.total_pages} Pages • {currentDoc?.chunks_count} FAISS Chunks • {currentDoc?.file_size_mb} MB
             </p>
           </div>
         </div>
 
-        {/* Controls: Document selector & actions */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl px-2.5 py-1">
-            <span className="text-[11px] text-slate-500 mr-2 font-medium">Doc:</span>
+        {/* Right: Switch Doc dropdown + Scope toggle */}
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+          {/* Doc Switcher */}
+          <div className="flex items-center bg-[#0A0E1A] border-2 border-[#1E293B] px-2 py-1">
+            <span className="font-arcade text-[10px] text-slate-400 mr-2">DOC:</span>
             <select
               value={currentDoc?.id || ''}
               onChange={(e) => {
@@ -367,139 +330,131 @@ export const AIStudyRoomPage: React.FC = () => {
                   setActiveCitation(null);
                 }
               }}
-              className="bg-transparent text-xs text-[#1E222A] font-semibold focus:outline-none cursor-pointer"
+              className="bg-transparent text-xs font-mono text-[#00E5FF] focus:outline-none cursor-pointer max-w-[160px] truncate"
             >
               {ragDocs.map((d) => (
-                <option key={d.id} value={d.id} className="bg-white text-[#1E222A]">
-                  {d.filename.length > 30 ? d.filename.slice(0, 30) + '...' : d.filename}
+                <option key={d.id} value={d.id} className="bg-[#0A0E1A] text-white">
+                  {d.filename}
                 </option>
               ))}
             </select>
           </div>
 
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => navigate('/library')}
-            leftIcon={<BookOpen className="w-3.5 h-3.5" />}
-          >
-            Library
-          </Button>
-
+          {/* External PDF view link */}
           {currentDoc && (
             <a
               href={getDocumentPdfUrl(currentDoc.id)}
               target="_blank"
               rel="noreferrer"
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-[#1E222A] transition-colors"
-              title="Open full PDF in browser tab"
+              className="p-2 bg-[#0A0E1A] hover:bg-[#1A2338] text-slate-300 hover:text-white border-2 border-[#1E293B] shadow-[2px_2px_0px_#000] text-xs font-arcade inline-flex items-center gap-1.5"
+              title="Open raw PDF in new browser tab"
             >
-              <ExternalLink className="w-4 h-4" />
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">RAW PDF</span>
             </a>
           )}
         </div>
       </div>
 
-      {/* Split Screen Container */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 h-[calc(100vh-14rem)] min-h-[620px]">
-        {/* LEFT PANE: PDF Document Viewer & Citations (7 cols) */}
-        <div className="lg:col-span-7 glass-card rounded-2xl border border-surface-border flex flex-col overflow-hidden shadow-card-subtle">
-          {/* Document Toolbar */}
-          <div className="h-12 bg-[#F5F6FA] border-b border-[#1E222A]/10 px-3 sm:px-4 flex items-center justify-between gap-2 shrink-0">
+      {/* ─────────────────────────────────────────────────────────────
+          SPLIT-SCREEN WORKSPACE:
+          LEFT: RETRO PDF READER  |  RIGHT: AI STUDY TERMINAL
+          ───────────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-[calc(100vh-250px)]">
+        {/* =========================================================
+            LEFT PANE: RETRO PDF READER
+            ========================================================= */}
+        <div className="lg:col-span-6 bg-[#121829] border-3 border-[#0C1220] shadow-[5px_5px_0px_#0C1220] flex flex-col overflow-hidden">
+          {/* Reader Top Toolbar */}
+          <div className="bg-[#1A2338] px-3 sm:px-4 py-2 border-b-2 border-[#0C1220] flex items-center justify-between gap-2 flex-wrap">
             {/* Page navigation */}
-            <div className="flex items-center gap-1.5 text-xs text-slate-600">
+            <div className="flex items-center gap-1">
               <button
-                disabled={currentPage <= 1}
                 onClick={() => {
-                  setCurrentPage((prev) => Math.max(1, prev - 1));
-                  setIsPageImageLoading(true);
+                  setCurrentPage((p) => Math.max(1, p - 1));
+                  setActiveCitation(null);
                 }}
-                className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-600 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                disabled={currentPage <= 1}
+                className="p-1.5 bg-[#0A0E1A] text-white border border-[#1E293B] hover:border-[#00E5FF] disabled:opacity-40 transition-colors"
                 title="Previous Page"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
 
-              <div className="flex items-center gap-1 font-semibold text-[#1E222A] px-1">
-                <span>Page</span>
+              <div className="flex items-center gap-1 px-2 font-mono text-xs">
+                <span className="text-slate-400">PAGE</span>
                 <input
                   type="number"
                   min={1}
                   max={totalPages}
                   value={currentPage}
                   onChange={(e) => {
-                    const val = parseInt(e.target.value, 10);
-                    if (val >= 1 && val <= totalPages) {
-                      setCurrentPage(val);
-                      setIsPageImageLoading(true);
+                    const p = parseInt(e.target.value);
+                    if (p >= 1 && p <= totalPages) {
+                      setCurrentPage(p);
+                      setActiveCitation(null);
                     }
                   }}
-                  className="w-10 bg-white border border-[#1E222A]/15 text-[#1E222A] rounded-lg text-center py-0.5 text-xs font-mono font-bold focus:outline-none focus:border-[#7E79D8]"
+                  className="w-12 bg-[#0A0E1A] text-[#00E5FF] text-center font-bold border border-[#1E293B] py-0.5"
                 />
-                <span className="text-slate-500 font-normal">of {totalPages}</span>
+                <span className="text-slate-400">/ {totalPages}</span>
               </div>
 
               <button
-                disabled={currentPage >= totalPages}
                 onClick={() => {
-                  setCurrentPage((prev) => Math.min(totalPages, prev + 1));
-                  setIsPageImageLoading(true);
+                  setCurrentPage((p) => Math.min(totalPages, p + 1));
+                  setActiveCitation(null);
                 }}
-                className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-600 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                disabled={currentPage >= totalPages}
+                className="p-1.5 bg-[#0A0E1A] text-white border border-[#1E293B] hover:border-[#00E5FF] disabled:opacity-40 transition-colors"
                 title="Next Page"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
 
-            {/* View mode toggle (Visual Image vs Text) */}
-            <div className="flex items-center bg-white rounded-xl p-0.5 border border-[#1E222A]/10">
+            {/* View Mode: Visual vs Text */}
+            <div className="flex items-center bg-[#0A0E1A] border border-[#1E293B] p-0.5">
               <button
                 onClick={() => setViewMode('visual')}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+                className={`flex items-center gap-1 px-2 py-1 text-[10px] font-arcade transition-all ${
                   viewMode === 'visual'
-                    ? 'bg-[#7E79D8] text-white shadow-sm'
-                    : 'text-slate-500 hover:text-[#1E222A]'
+                    ? 'bg-[#FF4742] text-white'
+                    : 'text-slate-400 hover:text-white'
                 }`}
-                title="Render visual PDF page"
               >
-                <FileImage className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Visual Page</span>
+                <FileImage className="w-3 h-3" />
+                <span>VISUAL</span>
               </button>
               <button
                 onClick={() => setViewMode('text')}
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+                className={`flex items-center gap-1 px-2 py-1 text-[10px] font-arcade transition-all ${
                   viewMode === 'text'
-                    ? 'bg-[#7E79D8] text-white shadow-sm'
-                    : 'text-slate-500 hover:text-[#1E222A]'
+                    ? 'bg-[#FF4742] text-white'
+                    : 'text-slate-400 hover:text-white'
                 }`}
-                title="View extracted text"
               >
-                <FileText className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Text Mode</span>
+                <FileText className="w-3 h-3" />
+                <span>TEXT</span>
               </button>
             </div>
 
             {/* Zoom Controls */}
             {viewMode === 'visual' && (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 font-mono text-xs">
                 <button
-                  onClick={() => setZoomLevel((prev) => Math.max(70, prev - 15))}
-                  className="p-1.5 text-slate-500 hover:text-[#1E222A] rounded-lg hover:bg-slate-200 transition-colors"
+                  onClick={() => setZoomLevel((z) => Math.max(70, z - 15))}
+                  className="p-1 text-slate-400 hover:text-[#00E5FF]"
                   title="Zoom Out"
                 >
                   <ZoomOut className="w-3.5 h-3.5" />
                 </button>
-                <button
-                  onClick={() => setZoomLevel(100)}
-                  className="text-[11px] font-mono font-bold text-slate-600 px-1 hover:text-[#7E79D8]"
-                  title="Reset Zoom"
-                >
+                <span className="text-[11px] text-slate-300 w-10 text-center">
                   {zoomLevel}%
-                </button>
+                </span>
                 <button
-                  onClick={() => setZoomLevel((prev) => Math.min(160, prev + 15))}
-                  className="p-1.5 text-slate-500 hover:text-[#1E222A] rounded-lg hover:bg-slate-200 transition-colors"
+                  onClick={() => setZoomLevel((z) => Math.min(160, z + 15))}
+                  className="p-1 text-slate-400 hover:text-[#00E5FF]"
                   title="Zoom In"
                 >
                   <ZoomIn className="w-3.5 h-3.5" />
@@ -508,228 +463,134 @@ export const AIStudyRoomPage: React.FC = () => {
             )}
           </div>
 
-          {/* Document Content Canvas */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#080C14] space-y-4 select-text">
-            {/* Active Citation Highlight Banner */}
-            {activeCitation && activeCitation.pageNumber === currentPage && (
-              <div className="p-3.5 rounded-xl bg-primary-950/80 border border-primary-500/50 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200 flex items-start justify-between gap-3">
-                <div className="flex items-start gap-2.5">
-                  <div className="p-1.5 rounded-lg bg-primary-500/20 text-accent-cyan mt-0.5">
-                    <Quote className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap font-bold text-primary-200 text-xs">
-                      <span>Referenced Citation • Page {activeCitation.pageNumber}</span>
-                      <Badge variant="cyan" size="sm">
-                        {(activeCitation.confidence * 100).toFixed(0)}% Match
-                      </Badge>
-                      <span className="text-[10px] text-slate-400 font-normal">
-                        ({activeCitation.documentTitle})
-                      </span>
-                    </div>
-                    <p className="text-slate-100 italic font-mono text-xs mt-1.5 leading-relaxed bg-black/30 p-2 rounded-lg border border-primary-500/20">
-                      "{activeCitation.excerpt}"
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setActiveCitation(null)}
-                  className="text-slate-400 hover:text-slate-100 p-1 rounded-lg hover:bg-surface-light transition-colors"
-                  title="Dismiss citation banner"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-
-            {/* Visual Page View */}
-            {viewMode === 'visual' && currentDoc && (
-              <div className="flex flex-col items-center justify-start min-h-[400px]">
-                {isPageImageLoading && (
-                  <div className="w-full flex flex-col items-center justify-center p-12 space-y-3">
-                    <RefreshCw className="w-8 h-8 text-primary-400 animate-spin" />
-                    <p className="text-xs text-slate-400">
-                      Rendering page {currentPage} from {currentDoc.filename}...
-                    </p>
-                  </div>
-                )}
-
-                {pageImageError ? (
-                  <div className="p-8 text-center glass-card rounded-2xl border border-surface-border max-w-md my-8 space-y-3">
-                    <AlertTriangle className="w-8 h-8 text-amber-400 mx-auto" />
-                    <h4 className="text-sm font-bold text-slate-200">Page Preview Unavailable</h4>
-                    <p className="text-xs text-slate-400">
-                      Could not render the image preview for page {currentPage}. You can switch to
-                      Text Mode or view the original PDF.
-                    </p>
-                    <div className="flex items-center justify-center gap-2 pt-2">
-                      <Button variant="secondary" size="sm" onClick={() => setViewMode('text')}>
-                        Switch to Text Mode
-                      </Button>
-                      <a
-                        href={getDocumentPdfUrl(currentDoc.id)}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary-600 text-white text-xs font-medium hover:bg-primary-500"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" /> Open Full PDF
-                      </a>
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    className="transition-transform duration-200 origin-top shadow-2xl rounded-lg overflow-hidden border border-surface-border bg-white"
-                    style={{ transform: `scale(${zoomLevel / 100})` }}
-                  >
-                    <img
-                      src={getDocumentPageImageUrl(currentDoc.id, currentPage)}
-                      alt={`Page ${currentPage} of ${currentDoc.filename}`}
-                      className={`max-w-full h-auto object-contain block ${
-                        isPageImageLoading ? 'hidden' : 'block'
-                      }`}
-                      onLoad={() => setIsPageImageLoading(false)}
-                      onError={() => {
-                        setIsPageImageLoading(false);
-                        setPageImageError(true);
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Extracted Text Mode */}
-            {viewMode === 'text' && (
-              <div className="glass-card rounded-2xl border border-surface-border p-6 space-y-4">
-                <div className="flex items-center justify-between border-b border-surface-border pb-3">
-                  <div className="flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-primary-400" />
-                    <span className="text-xs font-bold text-slate-200">
-                      Extracted Text — Page {currentPage} of {totalPages}
+          {/* Active Citation Highlight Banner (When citation is clicked!) */}
+          {activeCitation && activeCitation.pageNumber === currentPage && (
+            <div className="bg-[#FF4742] text-white p-3 border-b-2 border-[#0C1220] flex items-start justify-between gap-3 animate-in slide-in-from-top duration-150">
+              <div className="flex items-start gap-2 text-xs">
+                <Quote className="w-4 h-4 shrink-0 mt-0.5" />
+                <div>
+                  <div className="flex items-center gap-2 font-arcade text-[10px]">
+                    <span>REFERENCED CITATION • PAGE {activeCitation.pageNumber}</span>
+                    <span className="bg-[#0C1220] text-[#00E5FF] px-1.5 py-0.2">
+                      {(activeCitation.confidence * 100).toFixed(0)}% MATCH
                     </span>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => copyToClipboard(pageText, `page-${currentPage}`)}
-                    className="text-xs"
-                  >
-                    {copiedId === `page-${currentPage}` ? (
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5" />
-                    )}
-                    <span>{copiedId === `page-${currentPage}` ? 'Copied' : 'Copy Text'}</span>
-                  </Button>
+                  <p className="font-mono text-[11px] mt-1 italic text-yellow-100 bg-black/25 p-1.5 border border-white/20">
+                    "{activeCitation.excerpt}"
+                  </p>
                 </div>
+              </div>
+              <button
+                onClick={() => setActiveCitation(null)}
+                className="text-white hover:text-black p-1"
+                title="Dismiss banner"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
 
+          {/* Viewer Canvas */}
+          <div className="flex-1 bg-[#070D18] p-4 overflow-auto flex items-center justify-center relative select-text">
+            {viewMode === 'visual' ? (
+              currentDoc && (
+                <div
+                  className="transition-all duration-200 flex items-center justify-center"
+                  style={{ width: `${zoomLevel}%` }}
+                >
+                  <img
+                    src={getDocumentPageImageUrl(currentDoc.id, currentPage)}
+                    alt={`Page ${currentPage}`}
+                    onLoad={() => setIsPageImageLoading(false)}
+                    onError={() => {
+                      setIsPageImageLoading(false);
+                      setPageImageError(true);
+                    }}
+                    className={`max-w-full shadow-2xl border-2 border-[#0C1220] bg-white ${
+                      isPageImageLoading ? 'opacity-0' : 'opacity-100'
+                    }`}
+                  />
+                  {isPageImageLoading && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#070D18]/80 text-[#00E5FF] space-y-2">
+                      <RefreshCw className="w-6 h-6 animate-spin" />
+                      <span className="font-arcade text-xs">RENDERING PAGE PNG...</span>
+                    </div>
+                  )}
+                  {pageImageError && (
+                    <div className="p-6 bg-[#121829] border border-[#FF4742] text-center space-y-2 max-w-sm">
+                      <AlertTriangle className="w-8 h-8 text-[#FF4742] mx-auto" />
+                      <p className="font-pixel text-xs text-white uppercase">PAGE RENDER ERROR</p>
+                      <p className="font-mono text-[11px] text-slate-400">
+                        Unable to render page {currentPage}. Try switching to Text Mode.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )
+            ) : (
+              /* Text Mode Canvas */
+              <div className="w-full h-full p-4 bg-[#0A0E1A] border-2 border-[#1E293B] font-mono text-xs text-slate-200 leading-relaxed overflow-y-auto max-h-[600px] whitespace-pre-wrap select-text">
                 {isPageTextLoading ? (
-                  <div className="space-y-2 py-4">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-5/6" />
-                    <Skeleton className="h-4 w-4/6" />
+                  <div className="flex items-center justify-center h-48 text-[#00E5FF] space-x-2">
+                    <RefreshCw className="w-5 h-5 animate-spin" />
+                    <span className="font-arcade text-xs">EXTRACTING PAGE TEXT...</span>
                   </div>
                 ) : (
-                  <div className="text-xs text-slate-300 font-mono leading-relaxed whitespace-pre-wrap max-h-[500px] overflow-y-auto pr-2">
-                    {pageText || 'No text extracted for this page.'}
-                  </div>
+                  pageText || 'No text extracted for this page.'
                 )}
-              </div>
-            )}
-
-            {/* All citations recorded in this study session */}
-            {allSessionCitations.length > 0 && (
-              <div className="pt-4 border-t border-surface-border/60 space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-slate-300 flex items-center gap-2">
-                    <Layers className="w-3.5 h-3.5 text-primary-400" /> Citations in this Session (
-                    {allSessionCitations.length})
-                  </h4>
-                  <span className="text-[10px] text-slate-500">Click any card to jump to page</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {allSessionCitations.map((c) => (
-                    <div
-                      key={c.id}
-                      onClick={() => handleCitationClick(c)}
-                      className={`p-2.5 rounded-xl border text-xs cursor-pointer transition-all ${
-                        activeCitation?.id === c.id && currentPage === c.pageNumber
-                          ? 'bg-primary-500/20 border-primary-500/60 shadow-glow-primary'
-                          : 'bg-surface-subtle border-surface-border hover:border-primary-500/40 text-slate-300'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between font-semibold mb-1">
-                        <span className="truncate max-w-[180px] text-primary-300">
-                          {c.documentTitle}
-                        </span>
-                        <Badge variant="primary" size="sm">
-                          P.{c.pageNumber}
-                        </Badge>
-                      </div>
-                      <p className="text-[11px] text-slate-400 italic line-clamp-2">"{c.excerpt}"</p>
-                    </div>
-                  ))}
-                </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* RIGHT PANE: AI Study Copilot Chat with Citations (5 cols) */}
-        <div className="lg:col-span-5 glass-card rounded-2xl border border-surface-border flex flex-col overflow-hidden shadow-card-subtle">
-          {/* AI Header & Scope Switcher */}
-          <div className="h-12 bg-[#F5F6FA] border-b border-[#1E222A]/10 px-4 flex items-center justify-between shrink-0">
+        {/* =========================================================
+            RIGHT PANE: AI STUDY TERMINAL
+            ========================================================= */}
+        <div className="lg:col-span-6 bg-[#080C14] border-3 border-[#0C1220] shadow-[5px_5px_0px_#0C1220] flex flex-col overflow-hidden crt-scanlines">
+          {/* Terminal Title Bar */}
+          <div className="bg-[#1A2338] px-4 py-2 border-b-2 border-[#0C1220] flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="relative flex h-2 w-2">
-                <span
-                  className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                    backendOnline ? 'bg-emerald-400' : 'bg-rose-400'
-                  }`}
-                />
-                <span
-                  className={`relative inline-flex rounded-full h-2 w-2 ${
-                    backendOnline ? 'bg-emerald-500' : 'bg-rose-500'
-                  }`}
-                />
+              <span className="w-2.5 h-2.5 bg-[#FF4742] border border-[#0C1220]" />
+              <span className="w-2.5 h-2.5 bg-[#F8C02F] border border-[#0C1220]" />
+              <span className="w-2.5 h-2.5 bg-[#00E5FF] border border-[#0C1220]" />
+              <span className="font-arcade text-[10px] text-white ml-2">
+                TERMINAL // STUDY COPILOT
               </span>
-              <span className="text-xs font-bold text-[#1E222A]">LearnSphere AI Tutor</span>
             </div>
 
-            {/* Scope toggle */}
-            <div className="flex items-center gap-1 bg-white px-1.5 py-0.5 rounded-lg border border-[#1E222A]/10 text-[10px]">
+            {/* Scope Selector */}
+            <div className="flex items-center bg-[#0A0E1A] border border-[#1E293B] p-0.5">
               <button
                 onClick={() => setQueryScope('current')}
-                className={`px-2 py-0.5 rounded font-semibold transition-colors ${
+                className={`px-2 py-0.5 text-[9px] font-arcade ${
                   queryScope === 'current'
-                    ? 'bg-[#7E79D8] text-white shadow-sm'
-                    : 'text-slate-500 hover:text-[#1E222A]'
+                    ? 'bg-[#00E5FF] text-[#0C1220] font-bold'
+                    : 'text-slate-400 hover:text-white'
                 }`}
-                title="Search only the currently selected document"
               >
-                Current PDF
+                THIS DOC
               </button>
               <button
                 onClick={() => setQueryScope('all')}
-                className={`px-2 py-0.5 rounded font-semibold transition-colors ${
+                className={`px-2 py-0.5 text-[9px] font-arcade ${
                   queryScope === 'all'
-                    ? 'bg-[#7E79D8] text-white shadow-sm'
-                    : 'text-slate-500 hover:text-[#1E222A]'
+                    ? 'bg-[#00E5FF] text-[#0C1220] font-bold'
+                    : 'text-slate-400 hover:text-white'
                 }`}
-                title="Search across all indexed documents in your library"
               >
-                All PDFs
+                ALL ARCHIVE
               </button>
             </div>
           </div>
 
-          {/* Quick Action Prompt Chips */}
-          <div className="p-2.5 bg-[#F8F9FD] border-b border-[#1E222A]/10 flex items-center gap-2 overflow-x-auto scrollbar-none shrink-0">
+          {/* Quick Action Chips */}
+          <div className="bg-[#101726] p-2 border-b border-[#1E293B] flex items-center gap-2 overflow-x-auto scrollbar-none">
             <button
               onClick={() => handleSendMessage('Summarize the main concepts and arguments of this document')}
               disabled={isSending}
-              className="px-2.5 py-1 rounded-lg bg-white border border-[#1E222A]/10 hover:border-[#7E79D8] text-[11px] text-slate-600 hover:text-[#1E222A] whitespace-nowrap transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-xs"
+              className="px-2.5 py-1 bg-[#0A0E1A] hover:bg-[#1A2338] text-[#00E5FF] border border-[#00E5FF]/40 text-[10px] font-arcade whitespace-nowrap flex items-center gap-1.5 transition-colors"
             >
-              <Zap className="w-3 h-3 text-[#7E79D8]" /> Summarize Doc
+              <Zap className="w-3 h-3 text-[#FF4742]" /> SUMMARIZE DOC
             </button>
             <button
               onClick={() =>
@@ -738,9 +599,9 @@ export const AIStudyRoomPage: React.FC = () => {
                 )
               }
               disabled={isSending}
-              className="px-2.5 py-1 rounded-lg bg-white border border-[#1E222A]/10 hover:border-[#7E79D8] text-[11px] text-slate-600 hover:text-[#1E222A] whitespace-nowrap transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-xs"
+              className="px-2.5 py-1 bg-[#0A0E1A] hover:bg-[#1A2338] text-[#00E5FF] border border-[#00E5FF]/40 text-[10px] font-arcade whitespace-nowrap flex items-center gap-1.5 transition-colors"
             >
-              <HelpCircle className="w-3 h-3 text-[#06b6d4]" /> Core Formulas
+              <HelpCircle className="w-3 h-3 text-[#F8C02F]" /> CORE FORMULAS
             </button>
             <button
               onClick={() =>
@@ -749,92 +610,101 @@ export const AIStudyRoomPage: React.FC = () => {
                 )
               }
               disabled={isSending}
-              className="px-2.5 py-1 rounded-lg bg-white border border-[#1E222A]/10 hover:border-[#7E79D8] text-[11px] text-slate-600 hover:text-[#1E222A] whitespace-nowrap transition-colors flex items-center gap-1.5 disabled:opacity-50 shadow-xs"
+              className="px-2.5 py-1 bg-[#0A0E1A] hover:bg-[#1A2338] text-[#00E5FF] border border-[#00E5FF]/40 text-[10px] font-arcade whitespace-nowrap flex items-center gap-1.5 transition-colors"
             >
-              <ListOrdered className="w-3 h-3 text-[#F99F5B]" /> 3-Question Quiz
+              <ListOrdered className="w-3 h-3 text-[#2ECC71]" /> 3-QUESTION QUIZ
             </button>
           </div>
 
-          {/* Chat Messages Log */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
+          {/* Messages Scroll Area */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 font-mono text-xs select-text">
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex flex-col ${
-                  msg.role === 'user' ? 'items-end' : 'items-start'
-                }`}
+                className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
               >
+                {/* Header label */}
                 <div className="flex items-center gap-2 mb-1 px-1">
-                  <span className="text-[10px] font-semibold text-slate-400">
-                    {msg.role === 'user' ? 'You' : 'LearnSphere Copilot'}
+                  <span
+                    className={`font-arcade text-[9px] ${
+                      msg.role === 'user' ? 'text-[#00E5FF]' : 'text-[#FF4742]'
+                    }`}
+                  >
+                    {msg.role === 'user' ? '> USER' : '// LEARNSPHERE COPILOT'}
                   </span>
-                  <span className="text-[10px] text-slate-500">{msg.timestamp}</span>
+                  <span className="text-[9px] text-slate-500">{msg.timestamp}</span>
                 </div>
 
+                {/* Message Box */}
                 <div
-                  className={`p-4 rounded-2xl max-w-[92%] leading-relaxed ${
+                  className={`p-3.5 border-2 max-w-[94%] leading-relaxed ${
                     msg.role === 'user'
-                      ? 'bg-[#7E79D8] text-white shadow-sm rounded-br-none'
-                      : 'bg-[#F8F9FD] border border-[#1E222A]/10 text-[#1E222A] rounded-bl-none shadow-sm space-y-3'
+                      ? 'bg-[#121829] text-white border-[#00E5FF]/50 shadow-[2px_2px_0px_#00E5FF]'
+                      : 'bg-[#0D1526] text-slate-100 border-[#FF4742]/50 shadow-[2px_2px_0px_#FF4742] space-y-3'
                   }`}
                 >
-                  {/* Message Content */}
-                  <div className="whitespace-pre-line space-y-2 leading-relaxed">
+                  <div className="whitespace-pre-line leading-relaxed text-[11px] sm:text-xs">
                     {msg.content}
                   </div>
 
-                  {/* Copy response action */}
+                  {/* Copy Button */}
                   {msg.role === 'assistant' && (
-                    <div className="pt-2 flex justify-end">
+                    <div className="pt-1 flex justify-end">
                       <button
                         onClick={() => copyToClipboard(msg.content, msg.id)}
-                        className="text-[10px] text-slate-500 hover:text-[#1E222A] inline-flex items-center gap-1 transition-colors"
-                        title="Copy answer"
+                        className="text-[9px] font-arcade text-slate-400 hover:text-white flex items-center gap-1"
                       >
                         {copiedId === msg.id ? (
                           <>
-                            <Check className="w-3 h-3 text-emerald-600" />
-                            <span className="text-emerald-600 font-medium">Copied</span>
+                            <Check className="w-3 h-3 text-[#2ECC71]" />
+                            <span className="text-[#2ECC71]">COPIED</span>
                           </>
                         ) : (
                           <>
                             <Copy className="w-3 h-3" />
-                            <span>Copy</span>
+                            <span>COPY TEXT</span>
                           </>
                         )}
                       </button>
                     </div>
                   )}
 
-                  {/* Source Citations */}
+                  {/* ───────────────────────────────────────────────────
+                      STRONG CITATION CARDS (CLICKABLE PAGE JUMP!)
+                      ─────────────────────────────────────────────────── */}
                   {msg.citations && msg.citations.length > 0 && (
-                    <div className="pt-3 border-t border-[#1E222A]/10 space-y-2">
-                      <span className="text-[10px] uppercase font-bold text-[#7E79D8] tracking-wider flex items-center gap-1">
-                        <Quote className="w-3 h-3" /> Grounded Sources & Citations:
-                      </span>
-                      <div className="space-y-1.5">
+                    <div className="pt-2 border-t border-[#1E293B] space-y-2">
+                      <div className="flex items-center gap-1.5 text-[#FF4742] font-arcade text-[9px]">
+                        <Quote className="w-3 h-3" />
+                        <span>GROUNDED SOURCE CITATIONS:</span>
+                      </div>
+
+                      <div className="space-y-2">
                         {msg.citations.map((c) => (
                           <div
                             key={c.id}
                             onClick={() => handleCitationClick(c)}
-                            className="p-2.5 rounded-xl bg-white border border-[#7E79D8]/30 hover:border-[#7E79D8] hover:bg-[#F5F6FA] cursor-pointer transition-all group shadow-2xs"
+                            className="p-2.5 bg-[#121829] hover:bg-[#1A2338] border-2 border-[#FF4742] shadow-[2px_2px_0px_#000] cursor-pointer transition-all group"
                           >
-                            <div className="flex items-center justify-between text-[11px] font-semibold text-[#1E222A] group-hover:text-[#7E79D8] mb-1">
-                              <span className="truncate max-w-[200px] flex items-center gap-1 font-bold">
-                                <FileText className="w-3 h-3 text-[#7E79D8] shrink-0" />
+                            <div className="flex items-center justify-between gap-2 mb-1">
+                              <span className="font-arcade text-[10px] text-white group-hover:text-[#00E5FF] truncate max-w-[220px]">
                                 {c.documentTitle}
                               </span>
-                              <Badge variant="primary" size="sm">
-                                Page {c.pageNumber}
-                              </Badge>
+                              <span className="bg-[#FF4742] text-white font-arcade text-[9px] px-2 py-0.5 border border-[#0C1220]">
+                                PAGE {c.pageNumber}
+                              </span>
                             </div>
-                            <p className="text-[11px] text-slate-600 line-clamp-2 italic font-mono bg-[#F5F6FA] p-1.5 rounded border border-[#1E222A]/5">
+
+                            <p className="font-mono text-[10px] text-slate-300 italic bg-[#0A0E1A] p-2 border border-slate-700/60 line-clamp-2">
                               "{c.excerpt}"
                             </p>
-                            <div className="flex items-center justify-between mt-1 text-[10px] text-slate-500">
-                              <span>Click to jump to PDF page</span>
-                              <span className="text-[#7E79D8] font-bold font-mono">
-                                {(c.confidence * 100).toFixed(0)}% Match
+
+                            <div className="flex items-center justify-between mt-1 text-[9px] font-arcade">
+                              <span className="text-[#00E5FF] group-hover:underline">
+                                ➔ CLICK TO JUMP PDF VIEWER
+                              </span>
+                              <span className="text-[#2ECC71]">
+                                {(c.confidence * 100).toFixed(0)}% MATCH
                               </span>
                             </div>
                           </div>
@@ -845,77 +715,65 @@ export const AIStudyRoomPage: React.FC = () => {
 
                   {/* Key Takeaways */}
                   {msg.keyTakeaways && msg.keyTakeaways.length > 0 && (
-                    <div className="pt-2 border-t border-[#1E222A]/10">
-                      <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block mb-1">
-                        Key Takeaways:
+                    <div className="pt-2 border-t border-[#1E293B]">
+                      <span className="font-arcade text-[9px] text-[#2ECC71] block mb-1">
+                        KEY TAKEAWAYS:
                       </span>
-                      <ul className="space-y-1 text-[11px] text-slate-700">
-                        {msg.keyTakeaways.map((k, idx) => (
+                      <ul className="space-y-1 text-[11px] text-slate-200">
+                        {msg.keyTakeaways.map((point, idx) => (
                           <li key={idx} className="flex items-start gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
-                            <span>{k}</span>
+                            <span className="text-[#2ECC71] font-bold">▪</span>
+                            <span>{point}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
                   )}
 
-                  {/* Suggested Follow-up Questions */}
+                  {/* Suggested follow-ups */}
                   {msg.suggestedQuestions && msg.suggestedQuestions.length > 0 && (
-                    <div className="pt-2 border-t border-[#1E222A]/10 space-y-1">
-                      <span className="text-[10px] font-semibold text-slate-500 block mb-1">
-                        Recommended Follow-up Questions:
+                    <div className="pt-2 border-t border-[#1E293B] space-y-1">
+                      <span className="font-arcade text-[9px] text-[#F8C02F] block">
+                        FOLLOW-UP EXPLORATIONS:
                       </span>
-                      {msg.suggestedQuestions.map((q, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => handleSendMessage(q)}
-                          disabled={isSending}
-                          className="w-full text-left p-1.5 rounded-lg bg-white hover:bg-slate-100 text-[11px] text-[#7E79D8] hover:text-[#1E222A] transition-colors border border-[#1E222A]/10 hover:border-[#7E79D8] truncate block disabled:opacity-50"
-                        >
-                          → {q}
-                        </button>
-                      ))}
+                      <div className="flex flex-wrap gap-1.5">
+                        {msg.suggestedQuestions.map((q, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleSendMessage(q)}
+                            disabled={isSending}
+                            className="text-[10px] font-mono text-left bg-[#0A0E1A] hover:bg-[#1A2338] text-slate-300 hover:text-white px-2 py-1 border border-slate-700 transition-colors"
+                          >
+                            + {q}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
               </div>
             ))}
 
-            {/* In-Flight Generation Indicator */}
             {isSending && (
-              <div className="p-3.5 rounded-2xl bg-white border border-[#7E79D8]/30 text-[#7E79D8] text-xs flex items-center gap-3 animate-pulse shadow-sm">
-                <Sparkles className="w-4 h-4 animate-spin text-[#7E79D8] shrink-0" />
-                <div>
-                  <p className="font-semibold text-[#1E222A]">Generating grounded answer...</p>
-                  <p className="text-[11px] text-slate-500">
-                    Retrieving nearest vectors from FAISS & prompt-engineering Gemini
-                  </p>
-                </div>
+              <div className="p-3 bg-[#121829] border border-[#00E5FF]/40 text-xs font-mono text-[#00E5FF] flex items-center gap-2">
+                <RefreshCw className="w-4 h-4 animate-spin" />
+                <span className="font-arcade text-[10px]">
+                  RETRIEVING FAISS PASSAGES & QUERYING GEMINI...
+                </span>
               </div>
             )}
 
-            {/* Error Message with Retry */}
             {error && (
-              <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs space-y-2">
-                <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="font-semibold">Query Failed</p>
-                    <p className="text-[11px] text-rose-600 mt-0.5 leading-relaxed">{error}</p>
-                  </div>
-                </div>
+              <div className="p-3 bg-[#FF4742]/20 border-2 border-[#FF4742] text-xs font-mono text-[#FF4742] flex items-center justify-between gap-2">
+                <span>{error}</span>
                 {lastFailedPrompt && (
-                  <div className="pt-1 flex items-center gap-2">
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleSendMessage(lastFailedPrompt)}
-                      leftIcon={<RotateCcw className="w-3 h-3" />}
-                    >
-                      Retry Question
-                    </Button>
-                  </div>
+                  <RetroButton
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleSendMessage(lastFailedPrompt)}
+                  >
+                    RETRY
+                  </RetroButton>
                 )}
               </div>
             )}
@@ -924,7 +782,7 @@ export const AIStudyRoomPage: React.FC = () => {
           </div>
 
           {/* Chat Input Bar */}
-          <div className="p-3 bg-[#F5F6FA] border-t border-[#1E222A]/10 shrink-0">
+          <div className="bg-[#121829] p-3 border-t-2 border-[#0C1220]">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -932,27 +790,29 @@ export const AIStudyRoomPage: React.FC = () => {
               }}
               className="flex items-center gap-2"
             >
-              <input
-                type="text"
-                placeholder={
-                  queryScope === 'current' && currentDoc
-                    ? `Ask anything about "${currentDoc.filename}"...`
-                    : 'Ask questions across all indexed documents...'
-                }
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                disabled={isSending}
-                className="flex-1 bg-white border border-[#1E222A]/15 rounded-xl px-4 py-2.5 text-xs text-[#1E222A] placeholder-slate-400 focus:outline-none focus:border-[#7E79D8] focus:ring-1 focus:ring-[#7E79D8] transition-all disabled:opacity-50"
-              />
-              <Button
+              <div className="relative flex-1">
+                <span className="absolute left-3 top-3 font-arcade text-xs text-[#00E5FF]">
+                  &gt;
+                </span>
+                <input
+                  type="text"
+                  placeholder="ASK QUESTION (E.G. EXPLAIN LOSS FUNCTION FORMULA ON PAGE 42)..."
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  disabled={isSending}
+                  className="w-full bg-[#0A0E1A] text-white pl-8 pr-3 py-2.5 border-2 border-[#1E293B] focus:border-[#00E5FF] font-mono text-xs focus:outline-none"
+                />
+              </div>
+
+              <RetroButton
                 type="submit"
-                variant="glow"
+                variant="primary"
                 size="md"
-                disabled={!inputMessage.trim() || isSending}
-                isLoading={isSending}
+                disabled={isSending || !inputMessage.trim()}
+                rightIcon={<Send className="w-3.5 h-3.5" />}
               >
-                <Send className="w-4 h-4" />
-              </Button>
+                SEND
+              </RetroButton>
             </form>
           </div>
         </div>

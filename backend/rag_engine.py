@@ -141,29 +141,27 @@ def _call_gemini_json(system_instruction: str, user_message: str) -> tuple[dict 
     Returns (parsed_dict, raw_text).
     """
     client = _get_client()
-    candidate_models = [GEMINI_MODEL, "gemini-3.5-flash-lite", "gemini-3.8-flash"]
+    candidate_models = [GEMINI_MODEL, "gemini-3.1-flash-lite", "gemini-3-flash-preview"]
     response = None
     last_err = None
 
     for m in candidate_models:
-        for attempt in range(2):
-            try:
-                response = client.models.generate_content(
-                    model=m,
-                    contents=[user_message],
-                    config=types.GenerateContentConfig(
-                        system_instruction=system_instruction,
-                        temperature=0.3,
-                        max_output_tokens=3072,
-                        response_mime_type="application/json",
-                    ),
-                )
+        try:
+            response = client.models.generate_content(
+                model=m,
+                contents=[user_message],
+                config=types.GenerateContentConfig(
+                    system_instruction=system_instruction,
+                    temperature=0.3,
+                    max_output_tokens=3072,
+                    response_mime_type="application/json",
+                ),
+            )
+            if response is not None and response.text:
                 break
-            except Exception as e:
-                last_err = e
-                time.sleep(1.0)
-        if response is not None:
-            break
+        except Exception as e:
+            last_err = e
+            continue
 
     if response is None:
         raise last_err or RuntimeError("Failed to generate response from Gemini.")

@@ -25,22 +25,29 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] select-none';
+    const baseStyles =
+      'inline-flex items-center justify-center font-bold border-2 border-[#0C1220] uppercase select-none transition-all duration-100 disabled:opacity-50 disabled:pointer-events-none active:translate-x-[1px] active:translate-y-[1px] active:shadow-none font-arcade';
 
     const variants = {
-      primary: 'bg-[#7E79D8] hover:bg-[#6D67CF] text-white shadow-sm border border-[#7E79D8]/30 hover:shadow-md',
-      secondary: 'bg-white hover:bg-slate-50 text-[#1E222A] border border-[#1E222A]/10 hover:border-[#7E79D8]/50 shadow-sm',
-      outline: 'bg-transparent border border-slate-300 hover:border-[#7E79D8] text-slate-700 hover:text-[#1E222A] hover:bg-[#7E79D8]/10',
-      ghost: 'bg-transparent text-slate-600 hover:text-[#1E222A] hover:bg-slate-100',
-      danger: 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100',
-      glow: 'bg-gradient-to-r from-[#7E79D8] to-[#9333EA] hover:from-[#6D67CF] hover:to-[#7E79D8] text-white shadow-md border border-white/20'
+      primary:
+        'bg-[#FF4742] hover:bg-[#FF5F5B] text-white shadow-[2px_2px_0px_#0C1220]',
+      secondary:
+        'bg-[#FFFDF7] hover:bg-white text-[#0C1220] shadow-[2px_2px_0px_#0C1220]',
+      outline:
+        'bg-transparent hover:bg-[#00E5FF]/10 text-[#0C1220] border-[#0C1220] shadow-[2px_2px_0px_#0C1220]',
+      ghost:
+        'bg-transparent text-slate-700 hover:text-[#0C1220] hover:bg-black/5 border-transparent shadow-none',
+      danger:
+        'bg-[#DC2626] hover:bg-[#EF4444] text-white shadow-[2px_2px_0px_#0C1220]',
+      glow:
+        'bg-[#00E5FF] hover:bg-[#33ECFF] text-[#0C1220] shadow-[2px_2px_0px_#0C1220]'
     };
 
     const sizes = {
-      sm: 'text-xs px-3 py-1.5 gap-1.5',
-      md: 'text-sm px-4 py-2.5 gap-2',
-      lg: 'text-base px-6 py-3 gap-2.5',
-      icon: 'p-2.5'
+      sm: 'text-[10px] px-2.5 py-1 gap-1.5',
+      md: 'text-xs px-3.5 py-2 gap-2',
+      lg: 'text-xs sm:text-sm px-5 py-2.5 gap-2.5',
+      icon: 'p-2'
     };
 
     return (
@@ -51,11 +58,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading ? (
-          <Loader2 className="w-4 h-4 animate-spin text-current" />
+          <Loader2 className="w-3.5 h-3.5 animate-spin text-current" />
         ) : (
           leftIcon && <span className="inline-flex shrink-0">{leftIcon}</span>
         )}
-        {children}
+        <span>{children}</span>
         {!isLoading && rightIcon && <span className="inline-flex shrink-0">{rightIcon}</span>}
       </button>
     );

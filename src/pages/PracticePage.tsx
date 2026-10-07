@@ -69,11 +69,6 @@ export const PracticePage: React.FC = () => {
   const [currentResult, setCurrentResult] = useState<QuizResultRecord | null>(null);
   const [activeTab, setActiveTab] = useState<'quiz' | 'history'>('quiz');
 
-  // Initial data loading
-  useEffect(() => {
-    loadInitialData();
-  }, [topicParam, docParam]);
-
   const loadInitialData = async () => {
     setLoading(true);
     setError(null);
@@ -114,6 +109,11 @@ export const PracticePage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // Initial data loading
+  useEffect(() => {
+    loadInitialData();
+  }, [topicParam, docParam]);
 
   const selectQuiz = (quiz: GeneratedQuiz) => {
     setCurrentQuiz(quiz);
@@ -292,15 +292,23 @@ export const PracticePage: React.FC = () => {
   const answeredCount = Object.keys(userAnswers).length;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
+    <div className="bg-[#FBF5E6] text-[#0C1220] min-h-[calc(100vh-140px)] p-4 sm:p-8 paper-dot-grid space-y-6">
       {/* Top Header & Actions Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-[#0C1220] pb-5">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
-            <CheckSquare className="w-6 h-6 text-[#7E79D8]" />
-            AI Practice & Question Drills
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="font-arcade text-[9px] px-2 py-0.5 bg-[#FF4742] text-white border border-[#0C1220]">
+              DRILL MODULE
+            </span>
+            <span className="font-arcade text-[9px] px-2 py-0.5 bg-[#00E5FF] text-[#0C1220] border border-[#0C1220]">
+              ACTIVE RECALL
+            </span>
+          </div>
+          <h2 className="font-pixel text-xl sm:text-3xl font-extrabold uppercase text-[#0C1220] flex items-center gap-2.5">
+            <CheckSquare className="w-6 h-6 text-[#FF4742]" />
+            AI PRACTICE & QUESTION DRILLS
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500">
+          <p className="font-mono text-xs text-[#53627C] mt-1">
             Multiple-choice quizzes generated directly from your uploaded course PDFs using RAG & Gemini
           </p>
         </div>
@@ -481,8 +489,8 @@ export const PracticePage: React.FC = () => {
       {activeTab === 'history' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <History className="w-5 h-5 text-primary-400" />
+            <h3 className="text-base font-bold text-[#1E222A] flex items-center gap-2">
+              <History className="w-5 h-5 text-primary-500" />
               Saved Quiz Attempts & Scores
             </h3>
             <span className="text-xs text-slate-400">{pastResults.length} completed sessions</span>
@@ -828,8 +836,8 @@ export const PracticePage: React.FC = () => {
 
               {/* Detailed Review with Grounded Citations */}
               <div className="space-y-4">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                <h3 className="text-base font-bold text-[#1E222A] flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                   Detailed Question Review & Citations
                 </h3>
 

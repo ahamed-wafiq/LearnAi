@@ -49,37 +49,47 @@ export const Modal: React.FC<ModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/75 backdrop-blur-md transition-opacity animate-in fade-in duration-200"
+        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
         onClick={onClose}
       />
 
-      {/* Dialog container */}
+      {/* Retro Dialog container */}
       <div
         className={cn(
-          'relative w-full bg-surface border border-surface-border rounded-2xl shadow-2xl p-6 z-10 overflow-hidden transform transition-all animate-in zoom-in-95 duration-200',
+          'relative w-full bg-[#0A0E1A] text-white border-3 border-[#0C1220] shadow-[8px_8px_0px_#0C1220] z-10 overflow-hidden transform transition-all animate-in zoom-in-95 duration-150',
           maxWidths[maxWidth],
           className
         )}
       >
-        {/* Subtle decorative glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-[#7E79D8] to-transparent" />
-
-        {/* Header */}
-        <div className="flex items-start justify-between mb-5">
-          <div>
-            {title && <h3 className="text-lg font-bold text-[#1E222A]">{title}</h3>}
-            {description && <p className="text-xs text-slate-500 mt-1">{description}</p>}
+        {/* Retro Title Bar */}
+        <div className="bg-[#1A2338] px-4 py-2.5 border-b-2 border-[#0C1220] flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 bg-[#FF4742] border border-[#0C1220]" />
+            <span className="w-2.5 h-2.5 bg-[#F8C02F] border border-[#0C1220]" />
+            <span className="w-2.5 h-2.5 bg-[#00E5FF] border border-[#0C1220]" />
+            {title && (
+              <span className="font-pixel text-xs text-white uppercase ml-2 tracking-wide">
+                {title}
+              </span>
+            )}
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-[#1E222A] p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+            className="text-slate-400 hover:text-white p-1 hover:bg-[#121829] transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Body */}
-        <div>{children}</div>
+        {/* Content Body */}
+        <div className="p-5 sm:p-6 bg-[#121829] font-mono text-xs">
+          {description && (
+            <p className="text-slate-400 text-xs mb-4 pb-3 border-b border-white/10 font-sans">
+              {description}
+            </p>
+          )}
+          {children}
+        </div>
       </div>
     </div>
   );

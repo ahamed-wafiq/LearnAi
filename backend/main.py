@@ -14,6 +14,7 @@ import json
 import uuid
 import time
 import shutil
+import asyncio
 from pathlib import Path
 from contextlib import asynccontextmanager
 
@@ -169,6 +170,7 @@ class TaskStatusUpdateRequest(BaseModel):
 # ── Endpoints ────────────────────────────────────────────────────────────
 
 @app.get("/api/health")
+@app.get("/health")
 async def health():
     stats = embeddings.get_index_stats()
     return {
@@ -393,9 +395,9 @@ async def ask_question(req: AskRequest):
             follow_up_questions=[],
         )
 
-    # Generate answer with Gemini
+    # Generate answer with Gemini in worker thread
     try:
-        response = generate_answer(req.question, results)
+        response = await asyncio.to_thread(generate_answer, req.question, results)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Gemini API error: {e}")
 
@@ -427,7 +429,8 @@ async def create_quiz(req: GenerateQuizRequest):
         )
 
     try:
-        quiz_data = generate_quiz(
+        quiz_data = await asyncio.to_thread(
+            generate_quiz,
             chunks,
             num_questions=req.num_questions,
             difficulty=req.difficulty,
@@ -522,7 +525,8 @@ async def create_flashcards(req: GenerateFlashcardsRequest):
         )
 
     try:
-        card_data = generate_flashcards(
+        card_data = await asyncio.to_thread(
+            generate_flashcards,
             chunks,
             num_cards=req.num_cards,
             difficulty=req.difficulty,

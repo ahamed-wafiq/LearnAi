@@ -30,6 +30,6 @@ CHUNKS_META_FILE = INDEX_DIR / "chunks_meta.json"
 TOP_K = 5
 
 # Gemini
-GEMINI_MODEL = "gemini-3.5-flash"
+GEMINI_MODEL = "gemini-3.8-flash"
 
 

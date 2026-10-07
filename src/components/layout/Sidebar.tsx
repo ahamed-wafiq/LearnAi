@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -11,9 +11,11 @@ import {
   Flame,
   PlusCircle,
   HardDrive,
+  Settings,
   X
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { listDocuments, listQuizResults, RAGDocument } from '../../services/ragApi';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -28,10 +30,47 @@ const NAV_ITEMS = [
   { name: 'Flashcards', path: '/flashcards', icon: Layers },
   { name: 'Analytics', path: '/analytics', icon: BarChart3 },
   { name: 'Study Planner', path: '/planner', icon: Calendar },
+  { name: 'Settings', path: '/settings', icon: Settings },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
+  const [documents, setDocuments] = useState<RAGDocument[]>([]);
+  const [streakDays, setStreakDays] = useState<number>(1);
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadSidebarData = async () => {
+      try {
+        const [docs, results] = await Promise.all([
+          listDocuments().catch(() => []),
+          listQuizResults().catch(() => [])
+        ]);
+        if (!isMounted) return;
+        setDocuments(docs);
+
+        // Calculate real streak from activity dates
+        if (results.length > 0) {
+          const uniqueDays = new Set(
+            results.map((r: any) => new Date(r.completed_at * 1000).toISOString().split('T')[0])
+          );
+          setStreakDays(Math.max(1, uniqueDays.size));
+        }
+      } catch {
+        // Fallback to empty if offline
+      }
+    };
+    loadSidebarData();
+    return () => {
+      isMounted = false;
+    };
+  }, [location.pathname]);
+
+  const totalStorageMb = documents.reduce((acc, d) => acc + (d.file_size_mb || 0), 0);
+  const maxStorageMb = 50.0;
+  const storagePercentage = Math.min(100, Math.round((totalStorageMb / maxStorageMb) * 100));
+
+  const subjectColors = ['bg-primary-500', 'bg-accent-blue', 'bg-accent-cyan', 'bg-amber-400'];
 
   return (
     <>
@@ -81,12 +120,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               <Flame className="w-5 h-5 fill-amber-500/20" />
             </div>
             <div>
-              <div className="text-xs font-semibold text-slate-200">14-Day Streak</div>
+              <div className="text-xs font-semibold text-slate-200">{streakDays}-Day Streak</div>
               <div className="text-[11px] text-amber-400/90 font-medium">Keep it up today!</div>
             </div>
           </div>
           <div className="text-xs font-bold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-500/30">
-            🔥 14
+            🔥 {streakDays}
           </div>
         </div>
 
@@ -131,32 +170,33 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <div className="pt-4 pb-1">
             <div className="px-3 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center justify-between">
               <span>Active Subjects</span>
-              <NavLink to="/library" className="text-primary-400 hover:text-primary-300">
+              <NavLink to="/library" className="text-primary-400 hover:text-primary-300" title="Manage library">
                 <PlusCircle className="w-3.5 h-3.5" />
               </NavLink>
             </div>
             <div className="space-y-1 mt-1">
-              <NavLink
-                to="/study-room?doc=doc-1"
-                className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-300 hover:bg-surface-light transition-colors group"
-              >
-                <span className="w-2 h-2 rounded-full bg-primary-500 group-hover:scale-125 transition-transform" />
-                <span className="truncate">Machine Learning & AI</span>
-              </NavLink>
-              <NavLink
-                to="/study-room?doc=doc-2"
-                className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-300 hover:bg-surface-light transition-colors group"
-              >
-                <span className="w-2 h-2 rounded-full bg-accent-blue group-hover:scale-125 transition-transform" />
-                <span className="truncate">Distributed Systems</span>
-              </NavLink>
-              <NavLink
-                to="/study-room?doc=doc-3"
-                className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-300 hover:bg-surface-light transition-colors group"
-              >
-                <span className="w-2 h-2 rounded-full bg-accent-cyan group-hover:scale-125 transition-transform" />
-                <span className="truncate">Cognitive Neuroscience</span>
-              </NavLink>
+              {documents.length === 0 ? (
+                <NavLink
+                  to="/library"
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-slate-400 hover:bg-surface-light transition-colors"
+                >
+                  <PlusCircle className="w-3 h-3 text-primary-400" />
+                  <span>Upload your first PDF</span>
+                </NavLink>
+              ) : (
+                documents.slice(0, 4).map((doc, idx) => (
+                  <NavLink
+                    key={doc.id}
+                    to={`/study-room?doc=${doc.id}`}
+                    onClick={() => onClose()}
+                    className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-300 hover:bg-surface-light transition-colors group"
+                    title={doc.filename}
+                  >
+                    <span className={cn('w-2 h-2 rounded-full group-hover:scale-125 transition-transform shrink-0', subjectColors[idx % subjectColors.length])} />
+                    <span className="truncate">{doc.filename.replace(/\.pdf$/i, '').replace(/_/g, ' ')}</span>
+                  </NavLink>
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -168,10 +208,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               <span className="flex items-center gap-1">
                 <HardDrive className="w-3.5 h-3.5 text-primary-400" /> Storage
               </span>
-              <span className="text-slate-300 font-medium">15.4 / 50 MB</span>
+              <span className="text-slate-300 font-medium">
+                {totalStorageMb.toFixed(1)} / {maxStorageMb} MB
+              </span>
             </div>
             <div className="w-full h-1.5 bg-surface-light rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-primary-500 to-accent-cyan rounded-full w-[31%]" />
+              <div
+                className="h-full bg-gradient-to-r from-primary-500 to-accent-cyan rounded-full transition-all duration-300"
+                style={{ width: `${Math.max(4, storagePercentage)}%` }}
+              />
             </div>
           </div>
 

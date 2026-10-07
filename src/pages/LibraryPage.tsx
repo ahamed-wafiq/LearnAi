@@ -14,16 +14,18 @@ import {
   AlertCircle,
   FolderOpen,
   Trash2,
-  WifiOff,
   RefreshCw,
   ExternalLink,
   X,
+  Plus,
+  Terminal,
+  Database
 } from 'lucide-react';
-import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
-import { Modal } from '../components/ui/Modal';
-import { EmptyState } from '../components/ui/EmptyState';
-import { Skeleton } from '../components/ui/Skeleton';
+import { RetroButton } from '../components/retro/RetroButton';
+import { RetroBadge } from '../components/retro/RetroBadge';
+import { DocumentCard } from '../components/retro/DocumentCard';
+import { SectionHeader } from '../components/retro/SectionHeader';
+import { PixelIcon } from '../components/retro/PixelIcon';
 import {
   uploadPDF,
   listDocuments,
@@ -42,8 +44,7 @@ export const LibraryPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>(searchParams.get('q') || '');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  // Upload modal state
-  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  // Upload state
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -133,7 +134,7 @@ export const LibraryPage: React.FC = () => {
       setRagDocs([result.document, ...ragDocs]);
       setUploadedDocId(result.document.id);
       setUploadSuccess(
-        `"${result.document.filename}" processed: ${result.processing.pages_extracted} pages, ${result.processing.chunks_created} chunks indexed in ${result.processing.embedding_time_sec}s`
+        `"${result.document.filename}" indexed: ${result.processing.pages_extracted} pages, ${result.processing.chunks_created} chunks added in ${result.processing.embedding_time_sec}s`
       );
       setUploadFile(null);
     } catch (err: any) {
@@ -148,500 +149,406 @@ export const LibraryPage: React.FC = () => {
     setIsDeleting(true);
     try {
       await deleteDocument(deleteTarget.id);
-      setRagDocs(ragDocs.filter(d => d.id !== deleteTarget.id));
+      setRagDocs(ragDocs.filter((d) => d.id !== deleteTarget.id));
       setDeleteTarget(null);
     } catch (err: any) {
-      console.error('Delete failed:', err);
+      alert(`Delete failed: ${err.message}`);
     } finally {
       setIsDeleting(false);
     }
   };
 
-  const filteredDocs = ragDocs.filter(doc =>
+  const filteredDocs = ragDocs.filter((doc) =>
     doc.filename.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between">
-          <Skeleton className="h-10 w-48 rounded-xl" />
-          <Skeleton className="h-10 w-32 rounded-xl" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <Skeleton key={i} className="h-64 rounded-2xl" />
-          ))}
-        </div>
-      </div>
-    );
-  }
+  const totalPagesCount = ragDocs.reduce((acc, d) => acc + (d.total_pages || 0), 0);
+  const totalChunksCount = ragDocs.reduce((acc, d) => acc + (d.chunks_count || 0), 0);
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
-      {/* Top action & banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
-            <BookOpen className="w-6 h-6 text-[#7E79D8]" />
-            Knowledge Library & Sources
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500">
-            Upload PDFs for AI-powered RAG — ask questions grounded in your study materials
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {backendOnline === false ? (
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-1.5">
-                <WifiOff className="w-3.5 h-3.5" />
-                Backend offline
-              </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleRefresh}
-                isLoading={isRefreshing}
-                title="Retry connecting to FastAPI backend"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-                Retry
-              </Button>
+    <div className="bg-[#FBF5E6] text-[#0C1220] min-h-[calc(100vh-140px)] py-8 sm:py-12 paper-dot-grid">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        {/* Header Bar */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b-2 border-[#0C1220] pb-6">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <RetroBadge variant="coral" size="sm">
+                ARCHIVE MODULE
+              </RetroBadge>
+              <RetroBadge variant={backendOnline ? 'green' : 'coral'} size="sm" dot>
+                {backendOnline ? 'LOCAL FAISS ONLINE' : 'BACKEND OFFLINE'}
+              </RetroBadge>
             </div>
-          ) : (
-            <Button
-              variant="secondary"
-              size="sm"
+            <h1 className="font-pixel text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-[#0C1220]">
+              KNOWLEDGE ARCHIVE
+            </h1>
+            <p className="text-xs sm:text-sm text-[#53627C] font-sans mt-1">
+              Your indexed study materials. Every document is chunked and vector-embedded for citation retrieval.
+            </p>
+          </div>
+
+          {/* Quick Metrics Bar */}
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            <div className="bg-[#FFFDF7] p-2.5 sm:p-3 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] text-center min-w-[90px]">
+              <span className="font-arcade text-[9px] text-[#53627C] uppercase block">DOCS</span>
+              <span className="font-pixel text-base font-bold text-[#FF4742]">
+                {ragDocs.length}
+              </span>
+            </div>
+
+            <div className="bg-[#FFFDF7] p-2.5 sm:p-3 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] text-center min-w-[90px]">
+              <span className="font-arcade text-[9px] text-[#53627C] uppercase block">PAGES</span>
+              <span className="font-pixel text-base font-bold text-[#00E5FF] text-stroke-dark">
+                {totalPagesCount}
+              </span>
+            </div>
+
+            <div className="bg-[#FFFDF7] p-2.5 sm:p-3 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] text-center min-w-[90px]">
+              <span className="font-arcade text-[9px] text-[#53627C] uppercase block">CHUNKS</span>
+              <span className="font-pixel text-base font-bold text-[#F8C02F]">
+                {totalChunksCount}
+              </span>
+            </div>
+
+            <button
               onClick={handleRefresh}
-              isLoading={isRefreshing}
-              title="Refresh document list"
+              disabled={isRefreshing}
+              className="p-3 bg-[#FFFDF7] hover:bg-white border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] active:translate-x-0.5 active:translate-y-0.5 transition-all text-[#0C1220]"
+              title="Refresh Knowledge Archive"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-          )}
-          <Button
-            variant="primary"
-            onClick={() => {
-              if (backendOnline === false) {
-                setUploadError('Backend is offline. Start it with: python main.py in backend/');
-                setIsUploadOpen(true);
-              } else {
-                setUploadError('');
-                setIsUploadOpen(true);
-              }
-            }}
-            leftIcon={<Upload className="w-4 h-4" />}
-          >
-            Upload PDF
-          </Button>
-        </div>
-      </div>
-
-      {/* Filter and Search Controls */}
-      <div className="bg-white p-4 rounded-2xl border border-[#1E222A]/10 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-        {/* Search */}
-        <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-          <input
-            type="text"
-            placeholder="Search by filename..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl pl-9 pr-4 py-2 text-xs text-[#1E222A] placeholder-slate-400 focus:outline-none focus:border-[#7E79D8] focus:ring-1 focus:ring-[#7E79D8] transition-all"
-          />
-        </div>
-
-        {/* View Mode Toggle */}
-        <div className="flex items-center gap-2 self-end md:self-auto">
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`p-2 rounded-lg border transition-all ${
-              viewMode === 'grid'
-                ? 'bg-[#7E79D8] border-[#7E79D8] text-white shadow-sm'
-                : 'bg-white border-[#1E222A]/10 text-slate-500 hover:text-[#1E222A] hover:bg-slate-50'
-            }`}
-            title="Grid View"
-          >
-            <LayoutGrid className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`p-2 rounded-lg border transition-all ${
-              viewMode === 'list'
-                ? 'bg-[#7E79D8] border-[#7E79D8] text-white shadow-sm'
-                : 'bg-white border-[#1E222A]/10 text-slate-500 hover:text-[#1E222A] hover:bg-slate-50'
-            }`}
-            title="List View"
-          >
-            <List className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* Document Grid / List */}
-      {filteredDocs.length === 0 ? (
-        <EmptyState
-          icon={FolderOpen}
-          title={ragDocs.length === 0 ? 'No documents uploaded yet' : 'No matching documents'}
-          description={
-            ragDocs.length === 0
-              ? 'Upload a PDF to get started. The AI will extract text, create searchable chunks, and let you ask questions grounded in your materials.'
-              : 'Try adjusting your search query.'
-          }
-          actionLabel={ragDocs.length === 0 ? 'Upload Your First PDF' : 'Clear Search'}
-          onAction={() => {
-            if (ragDocs.length === 0) setIsUploadOpen(true);
-            else setSearchQuery('');
-          }}
-        />
-      ) : viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredDocs.map((doc) => (
-            <div
-              key={doc.id}
-              className="glass-card glass-card-hover rounded-2xl p-5 border border-surface-border flex flex-col justify-between group"
-            >
-              <div>
-                {/* Header */}
-                <div className="flex items-start justify-between gap-2 mb-3">
-                  <Badge variant="primary" size="sm">
-                    PDF
-                  </Badge>
-
-                  <Badge
-                    variant={doc.status === 'ready' ? 'success' : 'warning'}
-                    size="sm"
-                  >
-                    {doc.status === 'ready' && <CheckCircle2 className="w-3 h-3" />}
-                    {doc.status === 'ready' ? 'Indexed' : doc.status}
-                  </Badge>
-                </div>
-
-                {/* Title */}
-                <h3
-                  onClick={() => navigate(`/study-room?doc=${doc.id}`)}
-                  className="text-sm font-bold text-[#1E222A] group-hover:text-[#7E79D8] transition-colors line-clamp-2 cursor-pointer mb-2"
-                >
-                  {doc.filename}
-                </h3>
-
-                {/* Summary */}
-                <p className="text-xs text-slate-500 line-clamp-3 mb-4 leading-relaxed">
-                  {doc.total_pages} pages extracted • {doc.chunks_count} chunks indexed • {doc.file_size_mb} MB
-                </p>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
-                    #{doc.total_pages} pages
-                  </span>
-                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
-                    #{doc.chunks_count} chunks
-                  </span>
-                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
-                    Uploaded {doc.upload_time.split(' ')[0]}
-                  </span>
-                </div>
-              </div>
-
-              {/* Footer & Stats */}
-              <div className="pt-3 border-t border-surface-border/60 space-y-3">
-                <div className="flex items-center justify-between text-xs text-slate-400">
-                  <span className="flex items-center gap-1">
-                    <FileText className="w-3.5 h-3.5 text-primary-400" /> {doc.total_pages} Pages
-                  </span>
-                  <span>{doc.file_size_mb} MB</span>
-                  <span className="flex items-center gap-1">
-                    <Layers className="w-3.5 h-3.5 text-accent-cyan" /> {doc.chunks_count} Chunks
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2 pt-1">
-                  <Button
-                    variant="glow"
-                    size="sm"
-                    className="flex-1 text-xs"
-                    onClick={() => navigate(`/study-room?doc=${doc.id}`)}
-                    rightIcon={<ArrowUpRight className="w-3 h-3" />}
-                  >
-                    Open AI Room
-                  </Button>
-                  <a
-                    href={getDocumentPdfUrl(doc.id)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-[#1E222A] transition-colors"
-                    title="View original PDF in new tab"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    className="text-xs px-2.5"
-                    onClick={() => setDeleteTarget(doc)}
-                    title="Delete document"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="glass-card rounded-2xl border border-surface-border overflow-hidden">
-          <div className="divide-y divide-surface-border">
-            {filteredDocs.map((doc) => (
-              <div
-                key={doc.id}
-                className="p-4 hover:bg-surface-light/40 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="p-2.5 rounded-xl bg-primary-500/10 text-primary-400 border border-primary-500/20 mt-1">
-                    <FileText className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <Badge variant="primary" size="sm">PDF</Badge>
-                      <span className="text-xs text-slate-400">
-                        {doc.file_size_mb} MB • {doc.total_pages} pages • {doc.chunks_count} chunks
-                      </span>
-                    </div>
-                    <h4
-                      onClick={() => navigate(`/study-room?doc=${doc.id}`)}
-                      className="text-sm font-bold text-[#1E222A] hover:text-[#7E79D8] transition-colors cursor-pointer"
-                    >
-                      {doc.filename}
-                    </h4>
-                    <p className="text-xs text-slate-500 line-clamp-1 mt-1 max-w-xl">
-                      Uploaded {doc.upload_time} • Status: {doc.status}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 shrink-0">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => navigate(`/study-room?doc=${doc.id}`)}
-                  >
-                    Open in Study Room
-                  </Button>
-                  <a
-                    href={getDocumentPdfUrl(doc.id)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-[#1E222A] transition-colors"
-                    title="View original PDF in new tab"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => setDeleteTarget(doc)}
-                    title="Delete document"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
+              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-[#FF4742]' : ''}`} />
+            </button>
           </div>
         </div>
-      )}
 
-      {/* Upload Document Modal */}
-      <Modal
-        isOpen={isUploadOpen}
-        onClose={() => {
-          setIsUploadOpen(false);
-          setUploadError('');
-          setUploadSuccess('');
-          setUploadProgress(0);
-          setUploadedDocId(null);
-        }}
-        title="Upload Study Material (PDF)"
-        description="Upload a PDF document. LearnSphere will extract text page by page, create searchable chunks, and index them for AI-powered Q&A."
-        maxWidth="lg"
-      >
-        <form onSubmit={handleUploadSubmit} className="space-y-4">
-          {/* Drag & Drop Box */}
-          <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            className={`border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer ${
-              isDragging
-                ? 'border-primary-400 bg-primary-500/15 scale-[1.01]'
-                : uploadFile
-                ? 'border-emerald-500/50 bg-emerald-500/5'
-                : 'border-primary-500/30 hover:border-primary-500/60 bg-primary-500/5'
-            }`}
-            onClick={() => {
-              const input = document.createElement('input');
-              input.type = 'file';
-              input.accept = '.pdf,application/pdf';
-              input.onchange = (e: any) => {
-                if (e.target.files?.[0]) {
-                  setUploadFile(e.target.files[0]);
-                  setUploadError('');
-                  setUploadSuccess('');
-                  setUploadedDocId(null);
-                }
-              };
-              input.click();
-            }}
-          >
-            {uploadFile ? (
-              <div className="space-y-2">
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-300 mx-auto flex items-center justify-center">
-                  <FileText className="w-6 h-6" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-[#1E222A] line-clamp-1">
-                    {uploadFile.name}
-                  </p>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    {(uploadFile.size / (1024 * 1024)).toFixed(2)} MB • Ready to upload & index
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setUploadFile(null);
+        {/* ─────────────────────────────────────────────────────────────
+            FUTURISTIC RETRO TERMINAL UPLOAD DROPZONE
+            [ + DROP PDF INTO KNOWLEDGE ARCHIVE ]
+            ───────────────────────────────────────────────────────────── */}
+        <div className="bg-[#0A0E1A] text-white border-3 border-[#0C1220] shadow-[6px_6px_0px_#0C1220] overflow-hidden">
+          {/* Terminal Title Bar */}
+          <div className="bg-[#1A2338] px-4 py-2 border-b-2 border-[#0C1220] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 bg-[#FF4742] border border-[#0C1220]" />
+              <span className="w-2.5 h-2.5 bg-[#F8C02F] border border-[#0C1220]" />
+              <span className="w-2.5 h-2.5 bg-[#00E5FF] border border-[#0C1220]" />
+              <span className="font-arcade text-[10px] text-white ml-2">
+                TERMINAL // INGESTION STATION
+              </span>
+            </div>
+            <span className="font-arcade text-[9px] text-[#00E5FF]">
+              FAISS INGESTION PROTOCOL
+            </span>
+          </div>
+
+          <div className="p-6 sm:p-8 crt-scanlines">
+            <form onSubmit={handleUploadSubmit} className="space-y-4">
+              {/* Drag and Drop Box */}
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`relative border-2 border-dashed p-6 sm:p-10 text-center cursor-pointer transition-all ${
+                  isDragging
+                    ? 'border-[#00E5FF] bg-[#00E5FF]/10 shadow-[inset_0_0_20px_rgba(0,229,255,0.2)]'
+                    : 'border-[#1E293B] hover:border-[#FF4742] bg-[#121829]/60 hover:bg-[#121829]'
+                }`}
+                onClick={() => {
+                  const input = document.getElementById('pdf-file-input');
+                  if (input) input.click();
+                }}
+              >
+                <input
+                  id="pdf-file-input"
+                  type="file"
+                  accept=".pdf"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setUploadFile(e.target.files[0]);
+                      setUploadError('');
+                      setUploadSuccess('');
+                    }
                   }}
-                  className="text-[11px] text-rose-600 hover:text-rose-700 inline-flex items-center gap-1 mt-1 underline"
-                >
-                  <X className="w-3 h-3" /> Choose another file
-                </button>
+                />
+
+                <div className="flex flex-col items-center justify-center space-y-3">
+                  <div className="p-3 bg-[#0A0E1A] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220]">
+                    <PixelIcon name="document" size={32} color="#00E5FF" />
+                  </div>
+
+                  <div>
+                    <h3 className="font-pixel text-base sm:text-lg font-bold text-white uppercase tracking-wider">
+                      [ + DROP PDF INTO KNOWLEDGE ARCHIVE ]
+                    </h3>
+                    <p className="text-xs text-slate-400 font-mono mt-1">
+                      Drag & drop your textbook, slides, or research paper, or click to browse
+                    </p>
+                  </div>
+
+                  {uploadFile && (
+                    <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-[#1A2338] border border-[#00E5FF] text-xs font-mono text-[#00E5FF]">
+                      <FileText className="w-3.5 h-3.5" />
+                      <span className="font-bold">{uploadFile.name}</span>
+                      <span className="text-slate-400">
+                        ({(uploadFile.size / (1024 * 1024)).toFixed(2)} MB)
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            ) : (
-              <div>
-                <Upload className="w-9 h-9 text-[#7E79D8] mx-auto mb-2" />
-                <p className="text-sm font-semibold text-[#1E222A]">
-                  {isDragging ? 'Drop your PDF here' : 'Click to select or drag & drop PDF here'}
-                </p>
-                <p className="text-xs text-slate-500 mt-1">
-                  Extracts text, breaks into overlapping chunks, builds embeddings & indexes into FAISS
-                </p>
-              </div>
+
+              {/* Progress & Status Messages */}
+              {isUploading && (
+                <div className="bg-[#121829] p-4 border border-[#00E5FF]/40 space-y-2">
+                  <div className="flex justify-between text-xs font-arcade text-[#00E5FF]">
+                    <span>INDEXING IN PROGRESS...</span>
+                    <span>{uploadProgress}%</span>
+                  </div>
+                  {/* Retro segmented progress bar */}
+                  <div className="w-full bg-[#0A0E1A] h-4 border border-[#0C1220] p-0.5">
+                    <div
+                      className="h-full bg-[#FF4742] transition-all duration-150"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                  <p className="font-mono text-[11px] text-slate-400">
+                    Extracting pages with PyMuPDF → Generating embeddings with MiniLM → Indexing vectors in FAISS...
+                  </p>
+                </div>
+              )}
+
+              {uploadError && (
+                <div className="p-3 bg-[#FF4742]/20 border-2 border-[#FF4742] text-xs font-mono text-[#FF4742] flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{uploadError}</span>
+                </div>
+              )}
+
+              {uploadSuccess && (
+                <div className="p-3.5 bg-[#2ECC71]/15 border-2 border-[#2ECC71] text-xs font-mono text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#2ECC71] shrink-0" />
+                    <span>{uploadSuccess}</span>
+                  </div>
+                  {uploadedDocId && (
+                    <RetroButton
+                      to={`/study-room?doc=${uploadedDocId}`}
+                      variant="cyan"
+                      size="sm"
+                      rightIcon={<ArrowUpRight className="w-3.5 h-3.5" />}
+                    >
+                      OPEN STUDY ROOM NOW
+                    </RetroButton>
+                  )}
+                </div>
+              )}
+
+              {/* Submit Button */}
+              {uploadFile && !isUploading && (
+                <div className="flex justify-end">
+                  <RetroButton
+                    type="submit"
+                    variant="primary"
+                    size="md"
+                    rightIcon={<Upload className="w-4 h-4" />}
+                  >
+                    START VECTOR INGESTION
+                  </RetroButton>
+                </div>
+              )}
+            </form>
+          </div>
+        </div>
+
+        {/* ─────────────────────────────────────────────────────────────
+            SEARCH & VIEW CONTROLS
+            ───────────────────────────────────────────────────────────── */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+          {/* Search Bar */}
+          <div className="relative w-full sm:w-96">
+            <input
+              type="text"
+              placeholder="SEARCH ARCHIVE BY TITLE..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-[#FFFDF7] text-[#0C1220] pl-10 pr-4 py-2.5 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] font-arcade text-xs placeholder:text-slate-400 focus:outline-none focus:border-[#FF4742]"
+            />
+            <Search className="w-4 h-4 text-[#0C1220] absolute left-3 top-3.5" />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-3 text-slate-400 hover:text-[#0C1220]"
+              >
+                <X className="w-4 h-4" />
+              </button>
             )}
           </div>
 
-          {/* Upload progress bar */}
-          {isUploading && (
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs text-slate-400">
-                <span>Uploading & processing...</span>
-                <span className="font-mono">{uploadProgress}%</span>
-              </div>
-              <div className="w-full h-2 bg-surface-light rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-primary-500 to-accent-cyan rounded-full transition-all duration-300"
-                  style={{ width: `${uploadProgress}%` }}
-                />
-              </div>
-              {uploadProgress >= 100 && (
-                <p className="text-xs text-accent-cyan animate-pulse">
-                  <Sparkles className="w-3 h-3 inline mr-1" />
-                  Extracting text, chunking, and building embeddings...
-                </p>
-              )}
-            </div>
-          )}
-
-          {/* Error message */}
-          {uploadError && (
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs">
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
-              <span>{uploadError}</span>
-            </div>
-          )}
-
-          {/* Success message */}
-          {uploadSuccess && (
-            <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs space-y-2">
-              <div className="flex items-center gap-2 font-semibold">
-                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-                <span>Upload & Indexing Complete!</span>
-              </div>
-              <p className="text-[11px] text-emerald-700 leading-relaxed">{uploadSuccess}</p>
-              {uploadedDocId && (
-                <div className="pt-1 flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="glow"
-                    size="sm"
-                    className="text-xs w-full sm:w-auto"
-                    onClick={() => {
-                      setIsUploadOpen(false);
-                      navigate(`/study-room?doc=${uploadedDocId}`);
-                    }}
-                    rightIcon={<ArrowUpRight className="w-3.5 h-3.5" />}
-                  >
-                    Open in AI Study Room Now
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Action buttons */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-surface-border">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => {
-                setIsUploadOpen(false);
-                setUploadError('');
-                setUploadSuccess('');
-              }}
+          {/* View Mode Toggle */}
+          <div className="flex items-center gap-2 select-none self-end sm:self-auto">
+            <span className="font-arcade text-[10px] text-[#53627C] uppercase mr-1">
+              VIEW:
+            </span>
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] transition-colors ${
+                viewMode === 'grid' ? 'bg-[#FF4742] text-white' : 'bg-[#FFFDF7] text-[#0C1220]'
+              }`}
+              title="Grid View"
             >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="glow"
-              isLoading={isUploading}
-              disabled={!uploadFile || isUploading || backendOnline === false}
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] transition-colors ${
+                viewMode === 'list' ? 'bg-[#FF4742] text-white' : 'bg-[#FFFDF7] text-[#0C1220]'
+              }`}
+              title="List View"
             >
-              {isUploading ? 'Processing with AI...' : 'Upload & Index'}
-            </Button>
-          </div>
-        </form>
-      </Modal>
-
-      {/* Delete Confirmation Modal */}
-      <Modal
-        isOpen={!!deleteTarget}
-        onClose={() => setDeleteTarget(null)}
-        title="Delete Document"
-        description={`This will permanently remove "${deleteTarget?.filename}" and all its indexed chunks from the vector store.`}
-        maxWidth="sm"
-      >
-        <div className="space-y-4">
-          <p className="text-xs text-slate-400">
-            This action cannot be undone. The document's embeddings will be removed from the FAISS index.
-          </p>
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-surface-border">
-            <Button variant="ghost" onClick={() => setDeleteTarget(null)}>
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
-              onClick={handleDelete}
-              isLoading={isDeleting}
-            >
-              <Trash2 className="w-3 h-3" /> Delete Forever
-            </Button>
+              <List className="w-4 h-4" />
+            </button>
           </div>
         </div>
-      </Modal>
+
+        {/* ─────────────────────────────────────────────────────────────
+            INDEXED DOCUMENTS GRID / LIST
+            ───────────────────────────────────────────────────────────── */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-48 bg-[#EDE4CE] border-2 border-[#0C1220]" />
+            ))}
+          </div>
+        ) : filteredDocs.length > 0 ? (
+          viewMode === 'grid' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredDocs.map((doc) => (
+                <DocumentCard
+                  key={doc.id}
+                  doc={doc}
+                  onDelete={(target) => setDeleteTarget(target)}
+                />
+              ))}
+            </div>
+          ) : (
+            /* Retro List View */
+            <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[4px_4px_0px_#0C1220] divide-y-2 divide-[#0C1220]/20 overflow-hidden">
+              {filteredDocs.map((doc) => (
+                <div
+                  key={doc.id}
+                  className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#FBF5E6] transition-colors"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-[#0A0E1A] text-[#00E5FF] border border-[#0C1220] shrink-0 mt-0.5">
+                      <FileText className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <RetroBadge variant="coral" size="sm">
+                          PDF
+                        </RetroBadge>
+                        <span className="font-mono text-xs text-[#53627C]">
+                          {doc.file_size_mb} MB • {doc.total_pages} Pages • {doc.chunks_count} Chunks
+                        </span>
+                      </div>
+                      <h4
+                        onClick={() => navigate(`/study-room?doc=${doc.id}`)}
+                        className="font-pixel text-sm font-bold text-[#0C1220] hover:text-[#FF4742] cursor-pointer"
+                      >
+                        {doc.filename}
+                      </h4>
+                      <p className="text-[11px] font-mono text-slate-500 mt-1">
+                        Uploaded {doc.upload_time || 'Recent'} • Status: {doc.status}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <RetroButton
+                      to={`/study-room?doc=${doc.id}`}
+                      variant="primary"
+                      size="sm"
+                      rightIcon={<ArrowUpRight className="w-3 h-3" />}
+                    >
+                      OPEN IN STUDY ROOM
+                    </RetroButton>
+                    <a
+                      href={getDocumentPdfUrl(doc.id)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="p-2 bg-[#FFFDF7] hover:bg-white text-[#0C1220] border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220]"
+                      title="View PDF in new tab"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                    <button
+                      onClick={() => setDeleteTarget(doc)}
+                      className="p-2 bg-[#FF4742] hover:bg-[#FF5F5B] text-white border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220]"
+                      title="Delete document"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
+        ) : (
+          /* Empty State */
+          <div className="bg-[#FFFDF7] p-12 text-center border-2 border-[#0C1220] shadow-[4px_4px_0px_#0C1220] space-y-3">
+            <div className="inline-block p-4 bg-[#0A0E1A] border-2 border-[#0C1220]">
+              <PixelIcon name="folder" size={36} color="#FF4742" />
+            </div>
+            <h3 className="font-pixel text-base font-bold text-[#0C1220] uppercase">
+              NO MATCHING DOCUMENTS FOUND
+            </h3>
+            <p className="text-xs text-[#53627C] max-w-sm mx-auto font-mono">
+              {searchQuery
+                ? `No documents matched "${searchQuery}". Clear your search query.`
+                : 'Your Knowledge Archive is empty. Drop a PDF above to begin.'}
+            </p>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {deleteTarget && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
+            <div className="bg-[#0A0E1A] text-white border-3 border-[#FF4742] shadow-[8px_8px_0px_#000] max-w-md w-full p-6 space-y-4">
+              <div className="flex items-center gap-2 text-[#FF4742]">
+                <Trash2 className="w-5 h-5" />
+                <h3 className="font-pixel text-base font-bold uppercase">
+                  DELETE FROM ARCHIVE?
+                </h3>
+              </div>
+
+              <p className="text-xs font-mono text-slate-300 leading-relaxed">
+                Are you sure you want to delete <span className="text-[#FF4742] font-bold">"{deleteTarget.filename}"</span>?
+                This permanently purges its vector embeddings from the FAISS index.
+              </p>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <RetroButton
+                  variant="dark"
+                  size="sm"
+                  onClick={() => setDeleteTarget(null)}
+                  disabled={isDeleting}
+                >
+                  CANCEL
+                </RetroButton>
+                <RetroButton
+                  variant="danger"
+                  size="sm"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? 'PURGING...' : 'PURGE DOCUMENT'}
+                </RetroButton>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

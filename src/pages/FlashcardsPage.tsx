@@ -296,15 +296,23 @@ export const FlashcardsPage: React.FC = () => {
   const reviewCount = currentDeck ? currentDeck.cards.filter(c => progressMap[c.id]?.status === 'review').length : 0;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300 max-w-4xl mx-auto">
+    <div className="bg-[#FBF5E6] text-[#0C1220] min-h-[calc(100vh-140px)] p-4 sm:p-8 paper-dot-grid space-y-6 max-w-5xl mx-auto">
       {/* Top Banner & Deck Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-[#0C1220] pb-5">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
-            <Layers className="w-6 h-6 text-[#7E79D8]" />
-            AI Flashcards & Active Recall
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="font-arcade text-[9px] px-2 py-0.5 bg-[#FF4742] text-white border border-[#0C1220]">
+              MEMORY ENGINE
+            </span>
+            <span className="font-arcade text-[9px] px-2 py-0.5 bg-[#00E5FF] text-[#0C1220] border border-[#0C1220]">
+              SPACED REPETITION
+            </span>
+          </div>
+          <h2 className="font-pixel text-xl sm:text-3xl font-extrabold uppercase text-[#0C1220] flex items-center gap-2.5">
+            <Layers className="w-6 h-6 text-[#FF4742]" />
+            AI FLASHCARDS & ACTIVE RECALL
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500">
+          <p className="font-mono text-xs text-[#53627C] mt-1">
             Self-paced spaced repetition flashcards extracted from your uploaded PDFs
           </p>
         </div>
@@ -714,10 +722,10 @@ export const FlashcardsPage: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-2xl font-extrabold text-white">
+            <h3 className="text-2xl font-extrabold text-[#1E222A]">
               Flashcard Session Complete!
             </h3>
-            <p className="text-sm text-slate-300 max-w-md mx-auto">
+            <p className="text-sm text-slate-600 max-w-md mx-auto">
               You reviewed {activeCards.length} cards from <strong>{currentDeck?.title}</strong>.
             </p>
           </div>

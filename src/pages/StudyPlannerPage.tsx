@@ -51,6 +51,8 @@ export const StudyPlannerPage: React.FC = () => {
 
   // Selected date in weekly calendar
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [taskTypeFilter, setTaskTypeFilter] = useState<'all' | 'quiz' | 'flashcards' | 'revision' | 'reading'>('all');
+  const [taskStatusFilter, setTaskStatusFilter] = useState<'all' | 'scheduled' | 'completed' | 'skipped'>('all');
 
   // Goal Modal state
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
@@ -287,7 +289,12 @@ export const StudyPlannerPage: React.FC = () => {
   }
 
   const { active_goal, today_stats, today_tasks, week_days, weekly_tasks, upcoming_deadlines } = overview;
-  const displayTasks = weekly_tasks.filter(t => t.date === selectedDate);
+  const displayTasks = weekly_tasks.filter(t => {
+    const matchesDate = t.date === selectedDate;
+    const matchesType = taskTypeFilter === 'all' || t.type === taskTypeFilter;
+    const matchesStatus = taskStatusFilter === 'all' || t.status === taskStatusFilter;
+    return matchesDate && matchesType && matchesStatus;
+  });
   const selectedDayInfo = week_days.find(d => d.date === selectedDate);
 
   function renderGoalModal() {
@@ -430,15 +437,23 @@ export const StudyPlannerPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
+    <div className="bg-[#FBF5E6] text-[#0C1220] min-h-[calc(100vh-140px)] p-4 sm:p-8 paper-dot-grid space-y-8">
       {/* Top Header & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-[#0C1220] pb-5">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
-            <CalendarIcon className="w-6 h-6 text-[#7E79D8]" />
-            Intelligent Study Planner & Calendar
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="font-arcade text-[9px] px-2 py-0.5 bg-[#FF4742] text-white border border-[#0C1220]">
+              SCHEDULE MODULE
+            </span>
+            <span className="font-arcade text-[9px] px-2 py-0.5 bg-[#00E5FF] text-[#0C1220] border border-[#0C1220]">
+              ADAPTIVE PLANNER
+            </span>
+          </div>
+          <h2 className="font-pixel text-xl sm:text-3xl font-extrabold uppercase text-[#0C1220] flex items-center gap-2.5">
+            <CalendarIcon className="w-6 h-6 text-[#FF4742]" />
+            STUDY PLANNER & SCHEDULE
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500">
+          <p className="font-mono text-xs text-[#53627C] mt-1">
             Balancing active spaced revision, weak topic remediation, and syllabus coverage
           </p>
         </div>
@@ -487,13 +502,13 @@ export const StudyPlannerPage: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-sm font-bold text-white">{active_goal.title}</h3>
+                <h3 className="text-sm font-bold text-[#1E222A]">{active_goal.title}</h3>
                 <Badge variant="cyan" size="sm">{active_goal.subject_name}</Badge>
                 <Badge variant={upcoming_deadlines[0].days_remaining <= 5 ? 'danger' : 'warning'} size="sm">
                   {upcoming_deadlines[0].days_remaining} Days Left
                 </Badge>
               </div>
-              <p className="text-xs text-slate-300 mt-1">
+              <p className="text-xs text-slate-600 mt-1">
                 Target Exam: <strong>{active_goal.exam_date}</strong> • Daily Budget: <strong>{active_goal.daily_study_minutes} mins</strong> • Target Mastery: <strong>{active_goal.target_mastery}%</strong>
               </p>
             </div>
@@ -591,15 +606,42 @@ export const StudyPlannerPage: React.FC = () => {
 
         {/* Selected Day's Task List */}
         <div className="space-y-3 pt-2">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h4 className="text-xs font-bold text-[#1E222A] uppercase tracking-wider">
               Tasks for {selectedDayInfo?.day || 'Day'} ({displayTasks.length} Sessions)
             </h4>
-            {selectedDayInfo?.is_today && (
-              <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Today's Focus
-              </span>
-            )}
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Type filter */}
+              <select
+                value={taskTypeFilter}
+                onChange={(e) => setTaskTypeFilter(e.target.value as any)}
+                className="bg-[#F5F6FA] border border-[#1E222A]/10 rounded-lg px-2.5 py-1 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
+              >
+                <option value="all">All Types</option>
+                <option value="quiz">Quiz</option>
+                <option value="flashcards">Flashcards</option>
+                <option value="revision">Revision</option>
+                <option value="reading">Reading</option>
+              </select>
+
+              {/* Status filter */}
+              <select
+                value={taskStatusFilter}
+                onChange={(e) => setTaskStatusFilter(e.target.value as any)}
+                className="bg-[#F5F6FA] border border-[#1E222A]/10 rounded-lg px-2.5 py-1 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
+              >
+                <option value="all">All Statuses</option>
+                <option value="scheduled">Scheduled</option>
+                <option value="completed">Completed</option>
+                <option value="skipped">Skipped</option>
+              </select>
+
+              {selectedDayInfo?.is_today && (
+                <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1 ml-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Today
+                </span>
+              )}
+            </div>
           </div>
 
           {displayTasks.length === 0 ? (
