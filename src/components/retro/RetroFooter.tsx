@@ -6,7 +6,7 @@ import { StarField } from './StarField';
 
 export const RetroFooter: React.FC = () => {
   return (
-    <footer className="relative bg-[#0A0E1A] text-white border-t-2 border-[#FF4742] overflow-hidden select-none">
+    <footer className="relative bg-[#070B14] text-white border-t-2 border-[#FF4742] overflow-hidden select-none">
       {/* Starfield in footer background */}
       <StarField className="opacity-40" showMoon={false} />
 

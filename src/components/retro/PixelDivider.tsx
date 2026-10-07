@@ -17,13 +17,14 @@ export const PixelDivider: React.FC<PixelDividerProps> = ({
 
   return (
     <div
-      className={`relative w-full overflow-hidden leading-none select-none pointer-events-none z-20 ${className}`}
+      className={`relative w-full overflow-hidden leading-none select-none pointer-events-none z-10 ${
+        isDarkToPaper ? 'bg-[#070B14]' : 'bg-[#FBF5E6]'
+      } ${className}`}
       aria-hidden="true"
     >
-      {/* SVG scalloped wave pattern */}
       <svg
-        className="w-full h-6 sm:h-8 block"
-        viewBox="0 0 1200 32"
+        className="w-full h-5 sm:h-7 block"
+        viewBox="0 0 1200 28"
         preserveAspectRatio="none"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -32,21 +33,21 @@ export const PixelDivider: React.FC<PixelDividerProps> = ({
             id={isDarkToPaper ? 'scallop-dtp' : 'scallop-ptd'}
             x="0"
             y="0"
-            width="32"
-            height="32"
+            width="28"
+            height="28"
             patternUnits="userSpaceOnUse"
           >
             {isDarkToPaper ? (
-              /* Scallop curves reaching down into the paper */
+              /* Scalloped cream paper edge pointing upwards into space */
               <path
-                d="M0,0 L32,0 L32,8 C24,24 8,24 0,8 Z"
-                fill="#0A0E1A"
+                d="M0,28 L0,12 C7,0 21,0 28,12 L28,28 Z"
+                fill="#FBF5E6"
               />
             ) : (
-              /* Scallop curves reaching down into dark */
+              /* Scalloped dark edge pointing upwards into paper */
               <path
-                d="M0,0 L32,0 L32,8 C24,24 8,24 0,8 Z"
-                fill="#FBF5E6"
+                d="M0,28 L0,12 C7,0 21,0 28,12 L28,28 Z"
+                fill="#070B14"
               />
             )}
           </pattern>
@@ -56,7 +57,7 @@ export const PixelDivider: React.FC<PixelDividerProps> = ({
           x="0"
           y="0"
           width="1200"
-          height="32"
+          height="28"
           fill={`url(#${isDarkToPaper ? 'scallop-dtp' : 'scallop-ptd'})`}
         />
       </svg>

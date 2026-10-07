@@ -261,9 +261,9 @@ body {
   background-repeat: repeat-x;
 }
 
-/* Retro Dot Matrix Grid for paper canvas */
+/* Retro Dot Matrix Grid for paper canvas - subtle parchment grain */
 .paper-dot-grid {
-  background-image: radial-gradient(#121829 1px, transparent 1px);
+  background-image: radial-gradient(rgba(18, 24, 41, 0.08) 1px, transparent 1px);
   background-size: 20px 20px;
 }
 

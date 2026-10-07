@@ -32,7 +32,7 @@ export const AppLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0A0E1A] text-white flex flex-col font-sans selection:bg-[#FF4742] selection:text-white">
+    <div className="min-h-screen bg-[#070B14] text-white flex flex-col font-sans selection:bg-[#FF4742] selection:text-white">
       {/* 4. Retro Navigation Bar */}
       <RetroNavbar />
 
