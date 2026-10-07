@@ -32,3 +32,4 @@ backend/venv/
 __pycache__/
 *.pyc
 .env
+.auto-accept.json

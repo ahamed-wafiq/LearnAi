@@ -274,12 +274,12 @@ export const FlashcardsPage: React.FC = () => {
   // Empty state: no documents uploaded
   if (documents.length === 0) {
     return (
-      <div className="bg-white rounded-3xl p-10 text-center max-w-xl mx-auto space-y-5 border border-[#1E222A]/10 shadow-sm">
-        <div className="w-16 h-16 rounded-2xl bg-[#7E79D8]/10 border border-[#7E79D8]/20 flex items-center justify-center mx-auto text-[#7E79D8]">
+      <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-10 text-center max-w-xl mx-auto space-y-5">
+        <div className="w-16 h-16 border-2 border-[#0C1220] bg-[#FF4742]/10 flex items-center justify-center mx-auto text-[#FF4742] shadow-[2px_2px_0px_#0C1220]">
           <BookOpen className="w-8 h-8" />
         </div>
-        <h2 className="text-xl font-bold text-[#1E222A]">No Study Materials Indexed Yet</h2>
-        <p className="text-sm text-slate-500">
+        <h2 className="font-pixel text-xl uppercase font-bold text-[#0C1220]">No Study Materials Indexed Yet</h2>
+        <p className="text-xs sm:text-sm text-slate-600 font-sans">
           To generate active-recall flashcards grounded in your course materials, please upload a PDF document first.
         </p>
         <Link to="/library">
@@ -362,21 +362,21 @@ export const FlashcardsPage: React.FC = () => {
 
       {/* GENERATOR MODAL */}
       {showGenerator && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-card w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-primary-500/30 space-y-6 shadow-2xl animate-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between">
+        <div className="fixed inset-0 z-50 bg-[#0C1220]/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#FFFDF7] w-full max-w-lg border-2 border-[#0C1220] shadow-[5px_5px_0px_#0C1220] p-6 sm:p-8 space-y-6 animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b-2 border-[#0C1220] pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center text-primary-400">
-                  <Sparkles className="w-5 h-5 text-[#7E79D8]" />
+                <div className="w-9 h-9 border-2 border-[#0C1220] bg-[#FF4742]/10 flex items-center justify-center text-[#FF4742] shadow-[2px_2px_0px_#0C1220]">
+                  <Sparkles className="w-5 h-5 text-[#FF4742]" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#1E222A]">Generate Flashcard Deck</h3>
-                  <p className="text-xs text-slate-500">Extract active-recall cards from PDF chunks</p>
+                  <h3 className="font-pixel text-base font-bold uppercase text-[#0C1220]">Generate Flashcard Deck</h3>
+                  <p className="font-arcade text-[10px] text-slate-500 uppercase">Extract active-recall cards from PDF chunks</p>
                 </div>
               </div>
               <button
                 onClick={() => !generating && setShowGenerator(false)}
-                className="text-slate-400 hover:text-[#1E222A] text-lg font-bold"
+                className="text-[#0C1220] hover:text-[#FF4742] text-xl font-bold font-arcade"
               >
                 &times;
               </button>
@@ -385,15 +385,15 @@ export const FlashcardsPage: React.FC = () => {
             <div className="space-y-4">
               {/* Document Selector */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#1E222A] flex items-center justify-between">
+                <label className="text-xs font-arcade uppercase font-bold text-[#0C1220] flex items-center justify-between">
                   <span>Source Document</span>
-                  <span className="text-[11px] text-[#7E79D8]">{documents.length} PDF(s) available</span>
+                  <span className="text-[10px] text-[#FF4742]">{documents.length} PDF(s) available</span>
                 </label>
                 <select
                   value={selectedDocId}
                   onChange={(e) => setSelectedDocId(e.target.value)}
                   disabled={generating}
-                  className="w-full bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl px-3.5 py-2.5 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
+                  className="w-full bg-white border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] px-3.5 py-2.5 text-xs text-[#0C1220] font-sans focus:outline-none"
                 >
                   <option value="">All Uploaded Documents</option>
                   {documents.map((doc) => (
@@ -406,7 +406,7 @@ export const FlashcardsPage: React.FC = () => {
 
               {/* Number of Cards */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#1E222A]">Number of Flashcards</label>
+                <label className="text-xs font-arcade uppercase font-bold text-[#0C1220]">Number of Flashcards</label>
                 <div className="grid grid-cols-3 gap-2">
                   {[4, 6, 10].map((num) => (
                     <button
@@ -414,10 +414,10 @@ export const FlashcardsPage: React.FC = () => {
                       type="button"
                       disabled={generating}
                       onClick={() => setNumCards(num)}
-                      className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
+                      className={`py-2 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] font-arcade text-xs uppercase font-bold transition-all active:translate-x-[1px] active:translate-y-[1px] ${
                         numCards === num
-                          ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
-                          : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
+                          ? 'bg-[#FF4742] text-white -translate-y-0.5'
+                          : 'bg-[#FFFDF7] text-[#0C1220] hover:bg-[#F5EDE0]'
                       }`}
                     >
                       {num} Cards
@@ -428,7 +428,7 @@ export const FlashcardsPage: React.FC = () => {
 
               {/* Difficulty Level */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#1E222A]">Target Difficulty</label>
+                <label className="text-xs font-arcade uppercase font-bold text-[#0C1220]">Target Difficulty</label>
                 <div className="grid grid-cols-3 gap-2">
                   {['easy', 'medium', 'hard'].map((diff) => (
                     <button
@@ -436,10 +436,10 @@ export const FlashcardsPage: React.FC = () => {
                       type="button"
                       disabled={generating}
                       onClick={() => setDifficulty(diff)}
-                      className={`py-2 rounded-xl text-xs font-semibold border capitalize transition-all ${
+                      className={`py-2 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] font-arcade text-xs uppercase font-bold transition-all active:translate-x-[1px] active:translate-y-[1px] ${
                         difficulty === diff
-                          ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
-                          : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
+                          ? 'bg-[#FF4742] text-white -translate-y-0.5'
+                          : 'bg-[#FFFDF7] text-[#0C1220] hover:bg-[#F5EDE0]'
                       }`}
                     >
                       {diff}
@@ -450,7 +450,7 @@ export const FlashcardsPage: React.FC = () => {
 
               {/* Topic Prompt */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-200">
+                <label className="text-xs font-arcade uppercase font-bold text-[#0C1220]">
                   Focus Topic / Concept <span className="text-slate-500 font-normal">(Optional)</span>
                 </label>
                 <input
@@ -459,12 +459,12 @@ export const FlashcardsPage: React.FC = () => {
                   value={topicPrompt}
                   onChange={(e) => setTopicPrompt(e.target.value)}
                   disabled={generating}
-                  className="w-full bg-surface-subtle border border-surface-border rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-primary-500"
+                  className="w-full bg-white border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] px-3.5 py-2.5 text-xs text-[#0C1220] font-sans placeholder:text-slate-400 focus:outline-none"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-surface-border">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t-2 border-[#0C1220]">
               <Button
                 variant="secondary"
                 size="sm"
@@ -494,15 +494,15 @@ export const FlashcardsPage: React.FC = () => {
             <button
               key={deck.id}
               onClick={() => selectDeck(deck, deck.cards, 'all')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border flex items-center gap-2.5 ${
+              className={`px-3.5 py-2 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] text-xs font-arcade uppercase whitespace-nowrap transition-all flex items-center gap-2 select-none active:translate-x-[1px] active:translate-y-[1px] ${
                 currentDeck?.id === deck.id
-                  ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
-                  : 'bg-white text-slate-700 border-[#1E222A]/10 hover:bg-slate-50 hover:text-[#1E222A]'
+                  ? 'bg-[#FF4742] text-white -translate-y-0.5'
+                  : 'bg-[#FFFDF7] text-[#0C1220] hover:bg-[#F5EDE0]'
               }`}
             >
-              <FileText className="w-3.5 h-3.5 text-[#7E79D8]" />
+              <FileText className={`w-3.5 h-3.5 ${currentDeck?.id === deck.id ? 'text-white' : 'text-[#00E5FF]'}`} />
               <span>{deck.title}</span>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full ${currentDeck?.id === deck.id ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'}`}>
+              <span className={`text-[9px] px-1.5 py-0.5 border border-[#0C1220] font-arcade ${currentDeck?.id === deck.id ? 'bg-[#0C1220] text-white' : 'bg-[#00E5FF]/20 text-[#0C1220]'}`}>
                 {deck.cards.length} cards
               </span>
             </button>
@@ -516,40 +516,40 @@ export const FlashcardsPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => applyFilter('all')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+              className={`px-3 py-1.5 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] text-xs font-arcade uppercase transition-all select-none active:translate-x-[1px] active:translate-y-[1px] ${
                 filterMode === 'all'
-                  ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
-                  : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
+                  ? 'bg-[#0C1220] text-white'
+                  : 'bg-[#FFFDF7] text-[#0C1220] hover:bg-[#F5EDE0]'
               }`}
             >
               All Cards ({currentDeck.cards.length})
             </button>
             <button
               onClick={() => applyFilter('review')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] text-xs font-arcade uppercase transition-all select-none flex items-center gap-1.5 active:translate-x-[1px] active:translate-y-[1px] ${
                 filterMode === 'review'
-                  ? 'bg-amber-100 text-amber-800 border-amber-300 font-bold'
-                  : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
+                  ? 'bg-[#FF4742] text-white'
+                  : 'bg-[#FFFDF7] text-[#0C1220] hover:bg-[#F5EDE0]'
               }`}
             >
-              <RotateCcw className="w-3 h-3 text-amber-500" />
+              <RotateCcw className={`w-3 h-3 ${filterMode === 'review' ? 'text-white' : 'text-[#FF4742]'}`} />
               Review Again ({reviewCount})
             </button>
             <button
               onClick={() => applyFilter('known')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] text-xs font-arcade uppercase transition-all select-none flex items-center gap-1.5 active:translate-x-[1px] active:translate-y-[1px] ${
                 filterMode === 'known'
-                  ? 'bg-emerald-100 text-emerald-800 border-emerald-300 font-bold'
-                  : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
+                  ? 'bg-[#059669] text-white'
+                  : 'bg-[#FFFDF7] text-[#0C1220] hover:bg-[#F5EDE0]'
               }`}
             >
-              <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+              <CheckCircle2 className={`w-3 h-3 ${filterMode === 'known' ? 'text-white' : 'text-[#059669]'}`} />
               Known ({knownCount})
             </button>
           </div>
 
-          <div className="text-xs text-slate-500">
-            Mastery: <strong className="text-emerald-600 font-bold">{currentDeck.cards.length > 0 ? Math.round((knownCount / currentDeck.cards.length) * 100) : 0}%</strong>
+          <div className="font-arcade text-xs text-slate-600 uppercase">
+            Mastery: <strong className="text-emerald-700 font-bold">{currentDeck.cards.length > 0 ? Math.round((knownCount / currentDeck.cards.length) * 100) : 0}%</strong>
           </div>
         </div>
       )}
@@ -557,22 +557,22 @@ export const FlashcardsPage: React.FC = () => {
       {!isCompleted && currentCard ? (
         <div className="space-y-5">
           {/* Progress Header */}
-          <div className="glass-card p-4 rounded-2xl border border-surface-border flex items-center justify-between gap-4">
+          <div className="bg-[#FFFDF7] p-4 border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <Badge variant="primary">{currentDeck?.doc_name || 'Study Deck'}</Badge>
-              <span className="text-xs font-semibold text-slate-300">
+              <span className="font-arcade text-xs text-[#0C1220] uppercase font-bold">
                 Card {currentIndex + 1} of {activeCards.length}
               </span>
             </div>
 
             <div className="flex items-center gap-3 flex-1 max-w-xs justify-end">
-              <div className="w-full h-2 bg-surface-light rounded-full overflow-hidden">
+              <div className="w-full h-3 bg-[#FFFDF7] border-2 border-[#0C1220] overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-primary-500 to-accent-cyan rounded-full transition-all duration-300"
+                  className="h-full bg-[#FF4742] transition-all duration-300"
                   style={{ width: `${((currentIndex + 1) / activeCards.length) * 100}%` }}
                 />
               </div>
-              <span className="text-xs font-mono text-slate-400">
+              <span className="font-arcade text-xs text-[#0C1220] font-bold">
                 {Math.round(((currentIndex + 1) / activeCards.length) * 100)}%
               </span>
             </div>
@@ -582,20 +582,20 @@ export const FlashcardsPage: React.FC = () => {
           <div className="perspective-1000 w-full min-h-[380px]">
             <div
               onClick={() => setIsFlipped(!isFlipped)}
-              className={`relative w-full min-h-[380px] rounded-3xl p-8 cursor-pointer transition-all duration-500 transform-style-3d glass-card border border-primary-500/20 shadow-2xl flex flex-col justify-between ${
-                isFlipped ? 'bg-surface-light/95 border-primary-500/50' : 'hover:border-primary-500/40'
+              className={`relative w-full min-h-[380px] p-8 cursor-pointer transition-all duration-500 transform-style-3d border-2 border-[#0C1220] shadow-[4px_4px_0px_#0C1220] flex flex-col justify-between ${
+                isFlipped ? 'bg-[#FFFDF7]' : 'bg-[#FFFDF7] hover:bg-[#FFFBF2]'
               }`}
             >
               {/* FRONT OF CARD */}
               <div className={`space-y-6 flex flex-col justify-between h-full ${isFlipped ? 'hidden' : 'flex'}`}>
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <span className="text-xs font-mono uppercase tracking-widest text-primary-400 font-semibold flex items-center gap-1.5">
+                  <span className="font-arcade text-xs uppercase tracking-wider text-[#FF4742] font-bold flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5" /> Front • Question / Prompt
                   </span>
                   <div className="flex items-center gap-2">
                     <Badge variant="cyan" size="sm">{currentCard.topic}</Badge>
-                    <span className="text-[11px] font-mono text-slate-400 bg-surface px-2 py-0.5 rounded border border-surface-border flex items-center gap-1">
-                      <BookOpen className="w-3 h-3 text-accent-cyan" />
+                    <span className="text-[10px] font-arcade text-slate-600 bg-[#FBF5E6] px-2 py-0.5 border border-[#0C1220] flex items-center gap-1 uppercase">
+                      <BookOpen className="w-3 h-3 text-[#0C1220]" />
                       {currentCard.filename} (p. {currentCard.page_number})
                     </span>
                   </div>
@@ -603,48 +603,48 @@ export const FlashcardsPage: React.FC = () => {
 
                 {/* Front Content */}
                 <div className="py-8 text-center space-y-4">
-                  <h3 className="text-xl sm:text-2xl font-bold text-[#1E222A] leading-relaxed max-w-xl mx-auto">
+                  <h3 className="font-pixel text-lg sm:text-xl font-bold text-[#0C1220] leading-relaxed max-w-xl mx-auto uppercase">
                     {currentCard.front}
                   </h3>
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-slate-400 pt-4 border-t border-surface-border/60">
+                <div className="flex items-center justify-between text-xs text-slate-500 pt-4 border-t-2 border-[#0C1220]/20 font-arcade uppercase">
                   <span className="flex items-center gap-1">
-                    <RotateCw className="w-3.5 h-3.5 text-primary-400" /> Click or press <kbd className="px-1.5 py-0.5 rounded bg-surface border border-surface-border font-mono text-[10px] text-slate-600">Space</kbd> to flip
+                    <RotateCw className="w-3.5 h-3.5 text-[#FF4742]" /> Click or press <kbd className="px-1.5 py-0.5 border border-[#0C1220] bg-[#FFFDF7] font-arcade text-[10px] text-[#0C1220]">Space</kbd> to flip
                   </span>
-                  <span className="text-slate-500">Tap anywhere to reveal back</span>
+                  <span>Tap anywhere to reveal back</span>
                 </div>
               </div>
 
               {/* BACK OF CARD */}
               <div className={`space-y-6 flex flex-col justify-between h-full ${!isFlipped ? 'hidden' : 'flex'}`}>
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <span className="text-xs font-mono uppercase tracking-widest text-emerald-600 font-semibold flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Back • Answer & Citation
+                  <span className="font-arcade text-xs uppercase tracking-wider text-[#059669] font-bold flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Back • Answer &amp; Citation
                   </span>
-                  <span className="text-[11px] font-mono text-slate-600 bg-surface px-2 py-0.5 rounded border border-surface-border flex items-center gap-1">
-                    <FileText className="w-3 h-3 text-accent-cyan" />
+                  <span className="text-[10px] font-arcade text-slate-600 bg-[#FBF5E6] px-2 py-0.5 border border-[#0C1220] flex items-center gap-1 uppercase">
+                    <FileText className="w-3 h-3 text-[#0C1220]" />
                     {currentCard.filename} (Page {currentCard.page_number})
                   </span>
                 </div>
 
                 {/* Back Content */}
                 <div className="py-3 space-y-4 text-left">
-                  <div className="text-sm sm:text-base text-[#1E222A] font-medium leading-relaxed bg-[#F5F6FA] p-5 rounded-2xl border border-[#1E222A]/10">
+                  <div className="text-sm sm:text-base text-[#0C1220] font-sans leading-relaxed bg-[#FBF5E6] p-5 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220]">
                     {currentCard.back}
                   </div>
 
                   {currentCard.excerpt && (
-                    <div className="p-3.5 rounded-xl bg-[#7E79D8]/10 border border-[#7E79D8]/20 text-xs text-[#5B54BD]">
-                      <span className="font-bold text-[#1E222A]">Grounded Excerpt: </span>
-                      <span className="italic text-slate-600">"{currentCard.excerpt}"</span>
+                    <div className="p-3.5 border-2 border-[#0C1220] shadow-[1px_1px_0px_#0C1220] bg-[#FFFDF7] text-xs">
+                      <span className="font-arcade text-[10px] text-[#FF4742] uppercase font-bold">Grounded Excerpt: </span>
+                      <span className="italic text-slate-700 font-sans">"{currentCard.excerpt}"</span>
                     </div>
                   )}
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-slate-400 pt-3 border-t border-surface-border/60">
+                <div className="flex items-center justify-between text-xs text-slate-500 pt-3 border-t-2 border-[#0C1220]/20 font-arcade uppercase">
                   <span>Rate your recall to record progress</span>
-                  <span className="text-primary-400 font-medium">Click a rating below</span>
+                  <span className="text-[#FF4742] font-bold">Click a rating below</span>
                 </div>
               </div>
             </div>
@@ -656,48 +656,48 @@ export const FlashcardsPage: React.FC = () => {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <button
                   onClick={() => handleRateCard('review', 1)}
-                  className="p-3.5 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 transition-all flex flex-col items-center gap-1"
+                  className="p-3 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] bg-[#FF4742] hover:bg-[#FF5F5B] text-white transition-all flex flex-col items-center gap-1 font-arcade uppercase active:translate-x-[1px] active:translate-y-[1px]"
                 >
                   <div className="flex items-center gap-1 font-bold text-xs">
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>Review Again</span>
-                    <kbd className="text-[10px] font-mono px-1 rounded bg-rose-500/20">1</kbd>
+                    <kbd className="text-[9px] px-1 bg-black/20 border border-white/20">1</kbd>
                   </div>
-                  <span className="text-[10px] text-rose-400/80">Mark Difficult</span>
+                  <span className="text-[9px] text-white/80">Mark Difficult</span>
                 </button>
 
                 <button
                   onClick={() => handleRateCard('review', 2)}
-                  className="p-3.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 transition-all flex flex-col items-center gap-1"
+                  className="p-3 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] bg-[#F8C02F] hover:bg-[#FBD060] text-[#0C1220] transition-all flex flex-col items-center gap-1 font-arcade uppercase active:translate-x-[1px] active:translate-y-[1px]"
                 >
                   <div className="flex items-center gap-1 font-bold text-xs">
                     <span>Hard</span>
-                    <kbd className="text-[10px] font-mono px-1 rounded bg-amber-500/20">2</kbd>
+                    <kbd className="text-[9px] px-1 bg-black/10 border border-black/20">2</kbd>
                   </div>
-                  <span className="text-[10px] text-amber-400/80">Needs Practice</span>
+                  <span className="text-[9px] text-slate-700">Needs Practice</span>
                 </button>
 
                 <button
                   onClick={() => handleRateCard('known', 3)}
-                  className="p-3.5 rounded-2xl bg-primary-500/10 hover:bg-primary-500/20 border border-primary-500/30 text-primary-300 transition-all flex flex-col items-center gap-1"
+                  className="p-3 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] bg-[#00E5FF] hover:bg-[#33ECFF] text-[#0C1220] transition-all flex flex-col items-center gap-1 font-arcade uppercase active:translate-x-[1px] active:translate-y-[1px]"
                 >
                   <div className="flex items-center gap-1 font-bold text-xs">
                     <span>Good</span>
-                    <kbd className="text-[10px] font-mono px-1 rounded bg-primary-500/20">3</kbd>
+                    <kbd className="text-[9px] px-1 bg-black/10 border border-black/20">3</kbd>
                   </div>
-                  <span className="text-[10px] text-primary-400/80">Recalled</span>
+                  <span className="text-[9px] text-slate-700">Recalled</span>
                 </button>
 
                 <button
                   onClick={() => handleRateCard('known', 4)}
-                  className="p-3.5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 transition-all flex flex-col items-center gap-1"
+                  className="p-3 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] bg-[#059669] hover:bg-[#10B981] text-white transition-all flex flex-col items-center gap-1 font-arcade uppercase active:translate-x-[1px] active:translate-y-[1px]"
                 >
                   <div className="flex items-center gap-1 font-bold text-xs">
                     <Check className="w-3.5 h-3.5" />
                     <span>Known / Easy</span>
-                    <kbd className="text-[10px] font-mono px-1 rounded bg-emerald-500/20">4</kbd>
+                    <kbd className="text-[9px] px-1 bg-black/20 border border-white/20">4</kbd>
                   </div>
-                  <span className="text-[10px] text-emerald-400/80">Mastered</span>
+                  <span className="text-[9px] text-white/80">Mastered</span>
                 </button>
               </div>
             </div>
@@ -716,30 +716,30 @@ export const FlashcardsPage: React.FC = () => {
         </div>
       ) : isCompleted ? (
         /* DECK COMPLETED SCREEN */
-        <div className="glass-card rounded-3xl p-8 text-center border border-primary-500/30 space-y-6 animate-in fade-in zoom-in-95 duration-200">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 to-accent-cyan flex items-center justify-center mx-auto text-white shadow-lg shadow-emerald-950">
+        <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[4px_4px_0px_#0C1220] p-8 text-center space-y-6 animate-in fade-in zoom-in-95 duration-200">
+          <div className="w-16 h-16 border-2 border-[#0C1220] bg-[#FF4742] shadow-[2px_2px_0px_#0C1220] flex items-center justify-center mx-auto text-white">
             <Trophy className="w-8 h-8" />
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-2xl font-extrabold text-[#1E222A]">
+            <h3 className="font-pixel text-2xl uppercase font-bold text-[#0C1220]">
               Flashcard Session Complete!
             </h3>
-            <p className="text-sm text-slate-600 max-w-md mx-auto">
-              You reviewed {activeCards.length} cards from <strong>{currentDeck?.title}</strong>.
+            <p className="text-xs sm:text-sm text-slate-600 font-sans max-w-md mx-auto">
+              You reviewed {activeCards.length} cards from <strong className="text-[#0C1220]">{currentDeck?.title}</strong>.
             </p>
           </div>
 
           {/* Stats Summary */}
-          <div className="flex items-center justify-center gap-6 py-2">
+          <div className="flex items-center justify-center gap-6 py-3 bg-[#FBF5E6] border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] max-w-sm mx-auto">
             <div className="text-center">
-              <span className="text-2xl font-extrabold text-emerald-400">{knownCount}</span>
-              <span className="text-xs text-slate-400 block">Marked Known</span>
+              <span className="font-arcade text-2xl font-bold text-[#059669] block">{knownCount}</span>
+              <span className="font-arcade text-[10px] text-slate-600 uppercase block mt-0.5">Marked Known</span>
             </div>
-            <div className="w-px h-8 bg-surface-border" />
+            <div className="w-0.5 h-8 bg-[#0C1220]" />
             <div className="text-center">
-              <span className="text-2xl font-extrabold text-amber-400">{reviewCount}</span>
-              <span className="text-xs text-slate-400 block">Needs Review</span>
+              <span className="font-arcade text-2xl font-bold text-[#FF4742] block">{reviewCount}</span>
+              <span className="font-arcade text-[10px] text-slate-600 uppercase block mt-0.5">Needs Review</span>
             </div>
           </div>
 

@@ -122,15 +122,15 @@ export const SettingsPage: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Card 1: Backend & AI Engine Diagnostics */}
-        <div className="bg-white rounded-3xl p-6 border border-[#1E222A]/10 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-6 space-y-4">
+          <div className="flex items-center justify-between border-b-2 border-[#0C1220] pb-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-2xl bg-[#7E79D8]/15 text-[#5B54BD] flex items-center justify-center">
+              <div className="w-9 h-9 border-2 border-[#0C1220] bg-[#FF4742]/10 text-[#FF4742] shadow-[2px_2px_0px_#0C1220] flex items-center justify-center">
                 <Server className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-[#1E222A]">FastAPI & Gemini RAG Service</h3>
-                <span className="text-[11px] text-slate-400">Endpoint: http://localhost:8000/api</span>
+                <h3 className="font-pixel text-sm font-bold uppercase text-[#0C1220]">FastAPI & Gemini RAG Service</h3>
+                <span className="font-arcade text-[10px] text-slate-500 uppercase">Endpoint: http://localhost:8000/api</span>
               </div>
             </div>
 
@@ -145,9 +145,9 @@ export const SettingsPage: React.FC = () => {
             </Button>
           </div>
 
-          <div className="space-y-2.5 pt-2">
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-[#F5F6FA] border border-[#1E222A]/5 text-xs">
-              <span className="font-semibold text-slate-600">FastAPI Connection</span>
+          <div className="space-y-2.5 pt-1">
+            <div className="flex items-center justify-between p-3 border-2 border-[#0C1220] bg-[#FBF5E6] shadow-[1px_1px_0px_#0C1220] text-xs">
+              <span className="font-arcade uppercase font-bold text-[#0C1220]">FastAPI Connection</span>
               {health?.status === 'ok' ? (
                 <Badge variant="success" size="sm">
                   <CheckCircle2 className="w-3 h-3" /> Operational
@@ -161,27 +161,27 @@ export const SettingsPage: React.FC = () => {
               )}
             </div>
 
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-[#F5F6FA] border border-[#1E222A]/5 text-xs">
-              <span className="font-semibold text-slate-600">Google Gemini API</span>
+            <div className="flex items-center justify-between p-3 border-2 border-[#0C1220] bg-[#FBF5E6] shadow-[1px_1px_0px_#0C1220] text-xs">
+              <span className="font-arcade uppercase font-bold text-[#0C1220]">Google Gemini API</span>
               {health?.gemini_configured ? (
                 <Badge variant="primary" size="sm">
-                  <Sparkles className="w-3 h-3" /> Gemini 2.5 Flash Configured
+                  <Sparkles className="w-3 h-3" /> Gemini 2.5 Flash
                 </Badge>
               ) : (
                 <Badge variant="warning" size="sm">API Key Missing</Badge>
               )}
             </div>
 
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-[#F5F6FA] border border-[#1E222A]/5 text-xs">
-              <span className="font-semibold text-slate-600">FAISS Vector Index</span>
-              <span className="font-mono font-bold text-[#1E222A]">
+            <div className="flex items-center justify-between p-3 border-2 border-[#0C1220] bg-[#FBF5E6] shadow-[1px_1px_0px_#0C1220] text-xs">
+              <span className="font-arcade uppercase font-bold text-[#0C1220]">FAISS Vector Index</span>
+              <span className="font-arcade font-bold text-[#0C1220]">
                 {health?.index?.total_vectors || 0} vectors ({health?.index?.total_chunks || 0} chunks)
               </span>
             </div>
 
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-[#F5F6FA] border border-[#1E222A]/5 text-xs">
-              <span className="font-semibold text-slate-600">Indexed Course Documents</span>
-              <span className="font-bold text-[#1E222A]">
+            <div className="flex items-center justify-between p-3 border-2 border-[#0C1220] bg-[#FBF5E6] shadow-[1px_1px_0px_#0C1220] text-xs">
+              <span className="font-arcade uppercase font-bold text-[#0C1220]">Indexed Course Documents</span>
+              <span className="font-arcade font-bold text-[#FF4742]">
                 {health?.documents_count || 0} PDF(s)
               </span>
             </div>
@@ -189,23 +189,23 @@ export const SettingsPage: React.FC = () => {
         </div>
 
         {/* Card 2: Study Pacing & Planner Preferences */}
-        <div className="bg-white rounded-3xl p-6 border border-[#1E222A]/10 shadow-sm space-y-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-[#F99F5B]/15 text-[#E8873F] flex items-center justify-center">
-              <Clock className="w-4 h-4" />
+        <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-6 space-y-4">
+          <div className="flex items-center gap-2.5 border-b-2 border-[#0C1220] pb-3">
+            <div className="w-9 h-9 border-2 border-[#0C1220] bg-[#F8C02F]/20 text-[#0C1220] shadow-[2px_2px_0px_#0C1220] flex items-center justify-center">
+              <Clock className="w-4 h-4 text-[#FF4742]" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[#1E222A]">Daily Pacing & Study Goals</h3>
-              <span className="text-[11px] text-slate-400">Used by the adaptive study planner</span>
+              <h3 className="font-pixel text-sm font-bold uppercase text-[#0C1220]">Daily Pacing & Study Goals</h3>
+              <span className="font-arcade text-[10px] text-slate-500 uppercase">Used by the adaptive study planner</span>
             </div>
           </div>
 
-          <div className="space-y-4 pt-2">
+          <div className="space-y-4 pt-1">
             {/* Daily study budget */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 flex items-center justify-between">
+              <label className="text-xs font-arcade uppercase font-bold text-[#0C1220] flex items-center justify-between">
                 <span>Daily Target Study Time</span>
-                <span className="font-bold text-[#7E79D8]">{dailyBudget} minutes / day</span>
+                <span className="font-bold text-[#FF4742]">{dailyBudget} minutes / day</span>
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {[15, 30, 45, 60].map((mins) => (
@@ -213,10 +213,10 @@ export const SettingsPage: React.FC = () => {
                     key={mins}
                     type="button"
                     onClick={() => setDailyBudget(mins)}
-                    className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
+                    className={`py-2 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] font-arcade text-xs uppercase font-bold transition-all active:translate-x-[1px] active:translate-y-[1px] ${
                       dailyBudget === mins
-                        ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
-                        : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:border-[#7E79D8]/50'
+                        ? 'bg-[#FF4742] text-white -translate-y-0.5'
+                        : 'bg-[#FFFDF7] text-[#0C1220] hover:bg-[#F5EDE0]'
                     }`}
                   >
                     {mins}m
@@ -227,17 +227,17 @@ export const SettingsPage: React.FC = () => {
 
             {/* Default Quiz Difficulty */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700">Default Practice Difficulty</label>
+              <label className="text-xs font-arcade uppercase font-bold text-[#0C1220]">Default Practice Difficulty</label>
               <div className="grid grid-cols-3 gap-2">
                 {['Easy', 'Medium', 'Hard'].map((diff) => (
                   <button
                     key={diff}
                     type="button"
                     onClick={() => setDefaultDifficulty(diff)}
-                    className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
+                    className={`py-2 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] font-arcade text-xs uppercase font-bold transition-all active:translate-x-[1px] active:translate-y-[1px] ${
                       defaultDifficulty === diff
-                        ? 'bg-[#F99F5B] text-white border-[#F99F5B] shadow-sm'
-                        : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:border-[#F99F5B]/50'
+                        ? 'bg-[#FF4742] text-white -translate-y-0.5'
+                        : 'bg-[#FFFDF7] text-[#0C1220] hover:bg-[#F5EDE0]'
                     }`}
                   >
                     {diff}
@@ -248,20 +248,20 @@ export const SettingsPage: React.FC = () => {
 
             {/* Default Quiz Question Count */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700">Default Questions per Drill</label>
+              <label className="text-xs font-arcade uppercase font-bold text-[#0C1220]">Default Questions per Drill</label>
               <div className="grid grid-cols-3 gap-2">
                 {[3, 5, 10].map((num) => (
                   <button
                     key={num}
                     type="button"
                     onClick={() => setDefaultQuestions(num)}
-                    className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
+                    className={`py-2 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] font-arcade text-xs uppercase font-bold transition-all active:translate-x-[1px] active:translate-y-[1px] ${
                       defaultQuestions === num
-                        ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
-                        : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:border-[#7E79D8]/50'
+                        ? 'bg-[#FF4742] text-white -translate-y-0.5'
+                        : 'bg-[#FFFDF7] text-[#0C1220] hover:bg-[#F5EDE0]'
                     }`}
                   >
-                    {num} Questions
+                    {num} Qs
                   </button>
                 ))}
               </div>
@@ -270,18 +270,18 @@ export const SettingsPage: React.FC = () => {
         </div>
 
         {/* Card 3: AI Tutor Persona */}
-        <div className="bg-white rounded-3xl p-6 border border-[#1E222A]/10 shadow-sm space-y-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center">
-              <Cpu className="w-4 h-4" />
+        <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-6 space-y-4">
+          <div className="flex items-center gap-2.5 border-b-2 border-[#0C1220] pb-3">
+            <div className="w-9 h-9 border-2 border-[#0C1220] bg-[#00E5FF]/20 text-[#0C1220] shadow-[2px_2px_0px_#0C1220] flex items-center justify-center">
+              <Cpu className="w-4 h-4 text-[#0C1220]" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[#1E222A]">AI Study Room Persona</h3>
-              <span className="text-[11px] text-slate-400">Controls tone and pedagogical grounding</span>
+              <h3 className="font-pixel text-sm font-bold uppercase text-[#0C1220]">AI Study Room Persona</h3>
+              <span className="font-arcade text-[10px] text-slate-500 uppercase">Controls tone and pedagogical grounding</span>
             </div>
           </div>
 
-          <div className="space-y-2.5 pt-2">
+          <div className="space-y-2.5 pt-1">
             {[
               { id: 'analytical', name: 'Analytical & Grounded', desc: 'Focuses strictly on formula derivations and citations from the PDF.' },
               { id: 'socratic', name: 'Socratic Coach', desc: 'Asks guiding questions to stimulate active recall before revealing answers.' },
@@ -290,10 +290,10 @@ export const SettingsPage: React.FC = () => {
               <label
                 key={p.id}
                 onClick={() => setAiPersona(p.id)}
-                className={`p-3 rounded-2xl border cursor-pointer transition-all flex items-start gap-3 ${
+                className={`p-3 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] cursor-pointer transition-all flex items-start gap-3 select-none active:translate-x-[1px] active:translate-y-[1px] ${
                   aiPersona === p.id
-                    ? 'bg-[#7E79D8]/10 border-[#7E79D8] text-[#1E222A]'
-                    : 'bg-[#F5F6FA] border-[#1E222A]/10 text-slate-600 hover:bg-[#EEF0F8]'
+                    ? 'bg-[#00E5FF]/20 text-[#0C1220]'
+                    : 'bg-[#FFFDF7] text-slate-700 hover:bg-[#F5EDE0]'
                 }`}
               >
                 <input
@@ -301,11 +301,11 @@ export const SettingsPage: React.FC = () => {
                   name="persona"
                   checked={aiPersona === p.id}
                   onChange={() => setAiPersona(p.id)}
-                  className="mt-1 accent-[#7E79D8]"
+                  className="mt-1 accent-[#FF4742]"
                 />
                 <div>
-                  <h4 className="text-xs font-bold text-[#1E222A]">{p.name}</h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5">{p.desc}</p>
+                  <h4 className="font-arcade text-xs uppercase font-bold text-[#0C1220]">{p.name}</h4>
+                  <p className="text-[11px] text-slate-600 font-sans mt-0.5">{p.desc}</p>
                 </div>
               </label>
             ))}
@@ -313,19 +313,19 @@ export const SettingsPage: React.FC = () => {
         </div>
 
         {/* Card 4: Learning Model Sync & Maintenance */}
-        <div className="bg-white rounded-3xl p-6 border border-[#1E222A]/10 shadow-sm space-y-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
-              <Database className="w-4 h-4" />
+        <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-6 space-y-4">
+          <div className="flex items-center gap-2.5 border-b-2 border-[#0C1220] pb-3">
+            <div className="w-9 h-9 border-2 border-[#0C1220] bg-emerald-100 text-emerald-800 shadow-[2px_2px_0px_#0C1220] flex items-center justify-center">
+              <Database className="w-4 h-4 text-[#059669]" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[#1E222A]">Analytics Sync & Maintenance</h3>
-              <span className="text-[11px] text-slate-400">Trigger model re-training and schedule pacing</span>
+              <h3 className="font-pixel text-sm font-bold uppercase text-[#0C1220]">Analytics Sync & Maintenance</h3>
+              <span className="font-arcade text-[10px] text-slate-500 uppercase">Trigger model re-training and schedule pacing</span>
             </div>
           </div>
 
-          <div className="space-y-3 pt-2">
-            <p className="text-xs text-slate-600 leading-relaxed">
+          <div className="space-y-3 pt-1">
+            <p className="text-xs text-slate-600 font-sans leading-relaxed">
               Force an immediate recomputation of the scikit-learn logistic regression weakness weights, cognitive retention decay curves, and adaptive 7-day study schedule.
             </p>
 
@@ -334,12 +334,12 @@ export const SettingsPage: React.FC = () => {
               onClick={handleRecalculateAll}
               isLoading={isSyncing}
               className="w-full justify-center"
-              leftIcon={<RefreshCw className="w-4 h-4 text-[#7E79D8]" />}
+              leftIcon={<RefreshCw className="w-4 h-4 text-[#FF4742]" />}
             >
               Recompute Analytics & Reschedule Planner
             </Button>
 
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <div className="pt-2 border-t-2 border-[#0C1220]/20 flex items-center justify-between text-xs font-arcade uppercase text-slate-600">
               <span className="flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" /> Grounded RAG Safe
               </span>

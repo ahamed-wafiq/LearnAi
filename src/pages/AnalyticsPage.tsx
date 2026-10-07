@@ -123,22 +123,22 @@ export const AnalyticsPage: React.FC = () => {
     return (
       <div className="space-y-8 animate-in fade-in duration-300">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
-            <BarChart3 className="w-6 h-6 text-[#7E79D8]" />
+          <h2 className="font-pixel text-xl sm:text-2xl font-bold uppercase text-[#0C1220] flex items-center gap-2.5">
+            <BarChart3 className="w-6 h-6 text-[#FF4742]" />
             Learning Analytics & ML Mastery
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500">
+          <p className="font-arcade text-xs text-slate-500 uppercase mt-1">
             Real-time mastery tracking, scikit-learn weakness predictions, and spaced repetition
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl p-10 text-center max-w-2xl mx-auto space-y-5 border border-[#1E222A]/10 shadow-sm">
-          <div className="w-16 h-16 rounded-2xl bg-[#7E79D8]/10 border border-[#7E79D8]/20 flex items-center justify-center mx-auto text-[#7E79D8]">
+        <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-10 text-center max-w-2xl mx-auto space-y-5">
+          <div className="w-16 h-16 border-2 border-[#0C1220] bg-[#FF4742]/10 flex items-center justify-center mx-auto text-[#FF4742] shadow-[2px_2px_0px_#0C1220]">
             <Brain className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-xl font-bold text-[#1E222A]">No Quiz or Review Activity Recorded Yet</h3>
-            <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
+            <h3 className="font-pixel text-xl uppercase font-bold text-[#0C1220]">No Quiz or Review Activity Recorded Yet</h3>
+            <p className="text-xs sm:text-sm text-slate-600 font-sans max-w-md mx-auto leading-relaxed">
               LearnSphere calculates real topic mastery and predictive weakness models from your actual study history. Take your first quiz or review flashcards to populate this dashboard.
             </p>
           </div>
@@ -237,21 +237,21 @@ export const AnalyticsPage: React.FC = () => {
 
       {/* ML DIAGNOSTICS MODAL */}
       {showMLModal && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-card w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-[#1E222A]/10 space-y-5 shadow-2xl animate-in zoom-in-95 duration-150 bg-white">
-            <div className="flex items-center justify-between">
+        <div className="fixed inset-0 z-50 bg-[#0C1220]/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#FFFDF7] w-full max-w-lg border-2 border-[#0C1220] shadow-[5px_5px_0px_#0C1220] p-6 sm:p-8 space-y-5 animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b-2 border-[#0C1220] pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center text-primary-400">
-                  <Brain className="w-5 h-5 text-[#7E79D8]" />
+                <div className="w-10 h-10 border-2 border-[#0C1220] bg-[#FF4742]/10 flex items-center justify-center text-[#FF4742] shadow-[2px_2px_0px_#0C1220]">
+                  <Brain className="w-5 h-5 text-[#FF4742]" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#1E222A]">ML Model Diagnostics</h3>
-                  <p className="text-xs text-slate-500">Topic-level weakness prediction architecture</p>
+                  <h3 className="font-pixel text-base font-bold uppercase text-[#0C1220]">ML Model Diagnostics</h3>
+                  <p className="font-arcade text-[10px] text-slate-500 uppercase">Topic-level weakness prediction architecture</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowMLModal(false)}
-                className="text-slate-400 hover:text-[#1E222A] text-lg font-bold"
+                className="text-[#0C1220] hover:text-[#FF4742] text-xl font-bold font-arcade"
               >
                 &times;
               </button>
@@ -375,43 +375,43 @@ export const AnalyticsPage: React.FC = () => {
       )}
 
       {/* Topic Mastery Heatmap Matrix */}
-      <div className="glass-card rounded-2xl p-6 border border-surface-border space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-[#0C1220] pb-3">
           <div>
-            <h3 className="text-base font-bold text-[#1E222A] flex items-center gap-2">
-              <Zap className="w-4 h-4 text-[#7E79D8]" />
+            <h3 className="font-pixel text-base font-bold uppercase text-[#0C1220] flex items-center gap-2">
+              <Zap className="w-4 h-4 text-[#FF4742]" />
               Topic & Skill Mastery Heatmap
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="font-arcade text-[10px] text-slate-500 uppercase mt-0.5">
               Calculated from quiz accuracy (55%), flashcard retention (30%), and exponential time decay (15%)
             </p>
           </div>
 
-          <div className="flex items-center gap-3 text-xs text-slate-500 flex-wrap">
+          <div className="flex items-center gap-3 text-xs font-arcade uppercase text-slate-600 flex-wrap">
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-md bg-emerald-500/20 border border-emerald-500/50" /> &ge;80% Strong
+              <span className="w-3 h-3 border-2 border-[#0C1220] bg-emerald-400" /> &ge;80% Strong
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-md bg-amber-500/20 border border-amber-500/50" /> 55-79% Consolidating
+              <span className="w-3 h-3 border-2 border-[#0C1220] bg-amber-400" /> 55-79% Consolidating
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-md bg-rose-500/20 border border-rose-500/50" /> &lt;55% Needs Revision
+              <span className="w-3 h-3 border-2 border-[#0C1220] bg-rose-400" /> &lt;55% Needs Revision
             </span>
           </div>
         </div>
 
         {/* Filter controls row */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 pb-2 border-b border-surface-border">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-1 pb-2 border-b-2 border-[#0C1220]/20">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs font-semibold text-slate-500 mr-1">Status:</span>
+            <span className="text-xs font-arcade uppercase font-bold text-[#0C1220] mr-1">Status:</span>
             {(['all', 'weak', 'consolidating', 'strong'] as const).map((mode) => (
               <button
                 key={mode}
                 onClick={() => setClassificationFilter(mode)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-semibold capitalize transition-all ${
+                className={`px-3 py-1 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] font-arcade text-xs uppercase font-bold transition-all active:translate-x-[1px] active:translate-y-[1px] ${
                   classificationFilter === mode
-                    ? 'bg-[#7E79D8] text-white shadow-sm'
-                    : 'bg-[#F5F6FA] text-slate-600 hover:bg-slate-200'
+                    ? 'bg-[#FF4742] text-white -translate-y-0.5'
+                    : 'bg-[#FFFDF7] text-[#0C1220] hover:bg-[#F5EDE0]'
                 }`}
               >
                 {mode === 'all' ? 'All' : mode}
@@ -421,11 +421,11 @@ export const AnalyticsPage: React.FC = () => {
 
           {availableDocs.length > 0 && (
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-500">Document:</span>
+              <span className="text-xs font-arcade uppercase font-bold text-[#0C1220]">Document:</span>
               <select
                 value={docFilter}
                 onChange={(e) => setDocFilter(e.target.value)}
-                className="bg-[#F5F6FA] border border-surface-border rounded-lg px-2.5 py-1 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
+                className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] px-2.5 py-1 text-xs text-[#0C1220] font-arcade uppercase focus:outline-none"
               >
                 <option value="all">All Documents</option>
                 {availableDocs.map((doc, idx) => (
@@ -477,7 +477,7 @@ export const AnalyticsPage: React.FC = () => {
                     </h4>
 
                     <span className="text-[10px] text-slate-500 flex items-center gap-1 mt-1 truncate">
-                      <BookOpen className="w-3 h-3 text-[#7E79D8] shrink-0" />
+                      <BookOpen className="w-3 h-3 text-[#00E5FF] shrink-0" />
                       {item.source_doc} (p. {item.page_number})
                     </span>
                   </div>
@@ -508,14 +508,14 @@ export const AnalyticsPage: React.FC = () => {
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Quiz Score History Line Chart */}
-        <div className="glass-card rounded-2xl p-6 border border-surface-border space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-6 space-y-4">
+          <div className="flex items-center justify-between border-b-2 border-[#0C1220] pb-3">
             <div>
-              <h3 className="text-base font-bold text-[#1E222A] flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-primary-500" />
+              <h3 className="font-pixel text-base font-bold uppercase text-[#0C1220] flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-[#FF4742]" />
                 Quiz Score Progression
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="font-arcade text-[10px] text-slate-500 uppercase mt-0.5">
                 Score performance across consecutive drill sessions
               </p>
             </div>
@@ -531,27 +531,27 @@ export const AnalyticsPage: React.FC = () => {
                 >
                   <defs>
                     <linearGradient id="scoreGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.0} />
+                      <stop offset="5%" stopColor="#FF4742" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#FF4742" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#F0F2F8" />
-                  <XAxis dataKey="date" stroke="#94A3B8" fontSize={11} tickLine={false} />
-                  <YAxis domain={[0, 100]} stroke="#94A3B8" fontSize={11} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#0C1220" strokeOpacity={0.1} />
+                  <XAxis dataKey="date" stroke="#0C1220" fontSize={11} tickLine={false} />
+                  <YAxis domain={[0, 100]} stroke="#0C1220" fontSize={11} tickLine={false} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#1E222A',
-                      borderColor: 'rgba(255,255,255,0.1)',
-                      borderRadius: '14px',
+                      backgroundColor: '#0C1220',
+                      border: '2px solid #FF4742',
+                      borderRadius: '0px',
                       color: '#FFFFFF',
-                      fontSize: '12px',
-                      boxShadow: '0 8px 24px rgba(0,0,0,0.15)'
+                      fontSize: '11px',
+                      fontFamily: 'monospace'
                     }}
                   />
                   <Area
                     type="monotone"
                     dataKey="score"
-                    stroke="#7E79D8"
+                    stroke="#FF4742"
                     strokeWidth={2.5}
                     fillOpacity={1}
                     fill="url(#scoreGrad)"
@@ -560,7 +560,7 @@ export const AnalyticsPage: React.FC = () => {
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex items-center justify-center text-xs text-slate-500">
+              <div className="h-full flex items-center justify-center font-arcade text-xs text-slate-500 uppercase">
                 No quiz score history recorded yet.
               </div>
             )}
@@ -568,14 +568,14 @@ export const AnalyticsPage: React.FC = () => {
         </div>
 
         {/* Topic Mastery & Quiz Accuracy Comparison */}
-        <div className="bg-white rounded-3xl p-6 border border-[#1E222A]/10 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-6 space-y-4">
+          <div className="flex items-center justify-between border-b-2 border-[#0C1220] pb-3">
             <div>
-              <h3 className="text-base font-bold text-[#1E222A] flex items-center gap-2">
-                <Brain className="w-4 h-4 text-[#7E79D8]" />
+              <h3 className="font-pixel text-base font-bold uppercase text-[#0C1220] flex items-center gap-2">
+                <Brain className="w-4 h-4 text-[#FF4742]" />
                 Topic Mastery vs Quiz Accuracy
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="font-arcade text-[10px] text-slate-500 uppercase mt-0.5">
                 Comparison of calculated mastery against raw quiz accuracy
               </p>
             </div>
@@ -590,22 +590,22 @@ export const AnalyticsPage: React.FC = () => {
                 data={filteredTopics}
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="#F0F2F8" />
-                <XAxis dataKey="topic" stroke="#94A3B8" fontSize={9} tickLine={false} />
-                <YAxis domain={[0, 100]} stroke="#94A3B8" fontSize={11} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#0C1220" strokeOpacity={0.1} />
+                <XAxis dataKey="topic" stroke="#0C1220" fontSize={9} tickLine={false} />
+                <YAxis domain={[0, 100]} stroke="#0C1220" fontSize={11} tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#1E222A',
-                    borderColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: '14px',
+                    backgroundColor: '#0C1220',
+                    border: '2px solid #00E5FF',
+                    borderRadius: '0px',
                     color: '#FFFFFF',
-                    fontSize: '12px',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.15)'
+                    fontSize: '11px',
+                    fontFamily: 'monospace'
                   }}
                 />
-                <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
-                <Bar dataKey="mastery" fill="#F99F5B" radius={[6, 6, 0, 0]} name="Mastery %" />
-                <Bar dataKey="quiz_accuracy" fill="#7E79D8" radius={[6, 6, 0, 0]} name="Accuracy %" />
+                <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px', fontFamily: 'monospace' }} />
+                <Bar dataKey="mastery" fill="#FF4742" stroke="#0C1220" strokeWidth={1} name="Mastery %" />
+                <Bar dataKey="quiz_accuracy" fill="#00E5FF" stroke="#0C1220" strokeWidth={1} name="Accuracy %" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -615,14 +615,14 @@ export const AnalyticsPage: React.FC = () => {
       {/* Personalized Revision Tasks & Spaced Repetition Flashcards */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Recommended Revision Tasks (7 cols) */}
-        <div className="lg:col-span-7 glass-card rounded-2xl p-6 border border-surface-border space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="lg:col-span-7 bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-6 space-y-4">
+          <div className="flex items-center justify-between border-b-2 border-[#0C1220] pb-3">
             <div>
-              <h3 className="text-base font-bold text-[#1E222A] flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#7E79D8]" />
+              <h3 className="font-pixel text-base font-bold uppercase text-[#0C1220] flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#FF4742]" />
                 Personalized Revision Tasks
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="font-arcade text-[10px] text-slate-500 uppercase mt-0.5">
                 Targeted review items generated from past mistakes and weakness patterns
               </p>
             </div>
@@ -630,23 +630,23 @@ export const AnalyticsPage: React.FC = () => {
           </div>
 
           {revision_tasks.length === 0 ? (
-            <div className="p-8 text-center text-xs text-slate-500">
+            <div className="p-8 text-center text-xs font-arcade text-slate-500 uppercase">
               No revision tasks needed right now. All topics have strong retention!
             </div>
           ) : (
             <div className="space-y-3">
               {revision_tasks.map((task) => (
-                <div key={task.id} className="p-4 rounded-xl bg-[#F8F9FD] border border-surface-border space-y-2.5">
+                <div key={task.id} className="p-4 border-2 border-[#0C1220] bg-[#FFFDF7] shadow-[2px_2px_0px_#0C1220] space-y-2.5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-[#1E222A]">{task.title}</span>
+                        <span className="text-xs font-bold text-[#0C1220]">{task.title}</span>
                         <Badge variant={task.priority === 'high' ? 'danger' : 'warning'} size="sm">
                           {task.priority} priority
                         </Badge>
                       </div>
-                      <span className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
-                        <FileText className="w-3 h-3 text-[#7E79D8]" />
+                      <span className="text-[10px] font-arcade text-slate-600 flex items-center gap-1 mt-0.5 uppercase">
+                        <FileText className="w-3 h-3 text-[#FF4742]" />
                         {task.doc_name} (Page {task.page_number}) • ~{task.estimated_minutes} mins
                       </span>
                     </div>
@@ -658,8 +658,8 @@ export const AnalyticsPage: React.FC = () => {
                     </Link>
                   </div>
 
-                  <p className="text-xs text-slate-600 leading-relaxed bg-white p-2.5 rounded-lg border border-surface-border/60">
-                    <span className="font-bold text-[#7E79D8]">Target Reason: </span>
+                  <p className="text-xs text-slate-700 leading-relaxed bg-[#FBF5E6] p-2.5 border border-[#0C1220] shadow-[1px_1px_0px_#0C1220] font-sans">
+                    <span className="font-arcade text-[10px] text-[#FF4742] uppercase font-bold">Target Reason: </span>
                     {task.reason}
                   </p>
                 </div>
@@ -669,14 +669,14 @@ export const AnalyticsPage: React.FC = () => {
         </div>
 
         {/* Spaced-Repetition Schedule (5 cols) */}
-        <div className="lg:col-span-5 glass-card rounded-2xl p-6 border border-surface-border space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="lg:col-span-5 bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-6 space-y-4">
+          <div className="flex items-center justify-between border-b-2 border-[#0C1220] pb-3">
             <div>
-              <h3 className="text-base font-bold text-[#1E222A] flex items-center gap-2">
-                <Clock className="w-4 h-4 text-[#7E79D8]" />
+              <h3 className="font-pixel text-base font-bold uppercase text-[#0C1220] flex items-center gap-2">
+                <Clock className="w-4 h-4 text-[#FF4742]" />
                 Spaced Repetition Schedule
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="font-arcade text-[10px] text-slate-500 uppercase mt-0.5">
                 Prioritizing cards marked 'Review Again'
               </p>
             </div>
@@ -688,36 +688,36 @@ export const AnalyticsPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-center">
-            <div className="p-3 rounded-xl bg-[#F8F9FD] border border-surface-border">
-              <span className="text-lg font-bold text-rose-600 block">{spaced_repetition.due_today_count}</span>
-              <span className="text-[11px] text-slate-500">Due Now / Today</span>
+            <div className="p-3 border-2 border-[#0C1220] bg-[#FFFDF7] shadow-[1px_1px_0px_#0C1220]">
+              <span className="font-arcade text-lg font-bold text-rose-600 block">{spaced_repetition.due_today_count}</span>
+              <span className="font-arcade text-[10px] text-slate-600 uppercase">Due Today</span>
             </div>
-            <div className="p-3 rounded-xl bg-[#F8F9FD] border border-surface-border">
-              <span className="text-lg font-bold text-amber-600 block">{spaced_repetition.due_this_week_count}</span>
-              <span className="text-[11px] text-slate-500">Due This Week</span>
+            <div className="p-3 border-2 border-[#0C1220] bg-[#FFFDF7] shadow-[1px_1px_0px_#0C1220]">
+              <span className="font-arcade text-lg font-bold text-amber-600 block">{spaced_repetition.due_this_week_count}</span>
+              <span className="font-arcade text-[10px] text-slate-600 uppercase">Due This Week</span>
             </div>
           </div>
 
           {spaced_repetition.cards.length === 0 ? (
-            <div className="p-6 text-center text-xs text-slate-500">
+            <div className="p-6 text-center text-xs font-arcade text-slate-500 uppercase">
               No flashcards in review rotation. Create cards from the Library to start spaced repetition.
             </div>
           ) : (
             <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1 scrollbar-none">
               {spaced_repetition.cards.slice(0, 6).map((c, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-[#F8F9FD] border border-surface-border space-y-1.5">
+                <div key={idx} className="p-3 border-2 border-[#0C1220] bg-[#FFFDF7] shadow-[1px_1px_0px_#0C1220] space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-[#7E79D8] truncate max-w-[170px]">
+                    <span className="text-[10px] font-arcade font-bold text-[#FF4742] truncate max-w-[170px] uppercase">
                       {c.topic}
                     </span>
                     <Badge variant={c.status === 'review' ? 'danger' : c.is_overdue ? 'warning' : 'neutral'} size="sm">
                       {c.status === 'review' ? 'Review Again' : c.is_overdue ? 'Due Today' : `In ${c.interval_days}d`}
                     </Badge>
                   </div>
-                  <p className="text-xs text-[#1E222A] line-clamp-2 font-medium">
+                  <p className="text-xs text-[#0C1220] line-clamp-2 font-medium">
                     {c.front}
                   </p>
-                  <span className="text-[10px] text-slate-500 block">
+                  <span className="text-[10px] font-arcade text-slate-500 block uppercase">
                     Source: {c.filename} (p. {c.page_number})
                   </span>
                 </div>

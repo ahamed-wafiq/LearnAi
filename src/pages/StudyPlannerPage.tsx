@@ -221,21 +221,21 @@ export const StudyPlannerPage: React.FC = () => {
     return (
       <div className="space-y-8 animate-in fade-in duration-300">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
-            <CalendarIcon className="w-6 h-6 text-[#7E79D8]" />
+          <h2 className="font-pixel text-xl sm:text-2xl font-bold uppercase text-[#0C1220] flex items-center gap-2.5">
+            <CalendarIcon className="w-6 h-6 text-[#FF4742]" />
             Intelligent Study Planner & Adaptive Schedule
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500">
+          <p className="font-arcade text-xs text-slate-500 uppercase mt-1">
             Balancing active spaced revision, weak topic remediation, and syllabus coverage
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl p-10 text-center max-w-xl mx-auto space-y-5 border border-[#1E222A]/10 shadow-sm">
-          <div className="w-16 h-16 rounded-2xl bg-[#7E79D8]/10 border border-[#7E79D8]/20 flex items-center justify-center mx-auto text-[#7E79D8]">
+        <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-10 text-center max-w-xl mx-auto space-y-5">
+          <div className="w-16 h-16 border-2 border-[#0C1220] bg-[#FF4742]/10 flex items-center justify-center mx-auto text-[#FF4742] shadow-[2px_2px_0px_#0C1220]">
             <BookOpen className="w-8 h-8" />
           </div>
-          <h3 className="text-xl font-bold text-[#1E222A]">No Course Materials Uploaded</h3>
-          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+          <h3 className="font-pixel text-xl uppercase font-bold text-[#0C1220]">No Course Materials Uploaded</h3>
+          <p className="text-xs sm:text-sm text-slate-600 font-sans leading-relaxed">
             LearnSphere extracts topics and generates personalized daily study sessions grounded in your actual course files. Upload a PDF to start scheduling.
           </p>
           <Link to="/library">
@@ -254,11 +254,11 @@ export const StudyPlannerPage: React.FC = () => {
       <div className="space-y-8 animate-in fade-in duration-300">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-[#1E222A] flex items-center gap-2.5">
-              <CalendarIcon className="w-6 h-6 text-[#7E79D8]" />
+            <h2 className="font-pixel text-xl sm:text-2xl font-bold uppercase text-[#0C1220] flex items-center gap-2.5">
+              <CalendarIcon className="w-6 h-6 text-[#FF4742]" />
               Intelligent Study Planner & Adaptive Schedule
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500">
+            <p className="font-arcade text-xs text-slate-500 uppercase mt-1">
               Personalized spaced revision, weak topic remediation, and syllabus pacing
             </p>
           </div>
@@ -267,13 +267,13 @@ export const StudyPlannerPage: React.FC = () => {
           </Button>
         </div>
 
-        <div className="bg-white rounded-3xl p-10 text-center max-w-xl mx-auto space-y-5 border border-[#1E222A]/10 shadow-sm">
-          <div className="w-16 h-16 rounded-2xl bg-[#7E79D8]/10 border border-[#7E79D8]/20 flex items-center justify-center mx-auto text-[#7E79D8]">
+        <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-10 text-center max-w-xl mx-auto space-y-5">
+          <div className="w-16 h-16 border-2 border-[#0C1220] bg-[#FF4742]/10 flex items-center justify-center mx-auto text-[#FF4742] shadow-[2px_2px_0px_#0C1220]">
             <Target className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-xl font-bold text-[#1E222A]">Define Your Target Study Goal</h3>
-            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+            <h3 className="font-pixel text-xl uppercase font-bold text-[#0C1220]">Define Your Target Study Goal</h3>
+            <p className="text-xs sm:text-sm text-slate-600 font-sans leading-relaxed">
               Set your target exam date, course subject, and daily study time budget. LearnSphere will automatically analyze your weak topics and overdue flashcards to construct your 7-day revision schedule.
             </p>
           </div>
@@ -301,21 +301,21 @@ export const StudyPlannerPage: React.FC = () => {
     if (!isGoalModalOpen) return null;
 
     return (
-      <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-        <div className="glass-card w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-primary-500/30 space-y-6 shadow-2xl animate-in zoom-in-95 duration-150">
-          <div className="flex items-center justify-between">
+      <div className="fixed inset-0 z-50 bg-[#0C1220]/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="bg-[#FFFDF7] w-full max-w-lg border-2 border-[#0C1220] shadow-[5px_5px_0px_#0C1220] p-6 sm:p-8 space-y-6 animate-in zoom-in-95 duration-150">
+          <div className="flex items-center justify-between border-b-2 border-[#0C1220] pb-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-primary-600/20 border border-primary-500/30 flex items-center justify-center text-primary-400">
+              <div className="w-10 h-10 border-2 border-[#0C1220] bg-[#FF4742]/10 flex items-center justify-center text-[#FF4742] shadow-[2px_2px_0px_#0C1220]">
                 <Target className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#1E222A]">Configure Study Goal & Schedule</h3>
-                <p className="text-xs text-slate-500">Adaptive exam deadline & daily time allocation</p>
+                <h3 className="font-pixel text-base font-bold uppercase text-[#0C1220]">Configure Study Goal & Schedule</h3>
+                <p className="font-arcade text-[10px] text-slate-500 uppercase">Adaptive exam deadline & daily time allocation</p>
               </div>
             </div>
             <button
               onClick={() => setIsGoalModalOpen(false)}
-              className="text-slate-400 hover:text-[#1E222A] text-lg font-bold"
+              className="text-[#0C1220] hover:text-[#FF4742] text-xl font-bold font-arcade"
             >
               &times;
             </button>
@@ -323,49 +323,49 @@ export const StudyPlannerPage: React.FC = () => {
 
           <form onSubmit={handleSaveGoal} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#1E222A]">Goal / Exam Title</label>
+              <label className="text-xs font-arcade uppercase font-bold text-[#0C1220]">Goal / Exam Title</label>
               <input
                 type="text"
                 value={goalTitle}
                 onChange={(e) => setGoalTitle(e.target.value)}
                 placeholder="e.g. Machine Learning Final Exam"
                 required
-                className="w-full bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl px-3.5 py-2.5 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
+                className="w-full bg-white border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] px-3.5 py-2.5 text-xs text-[#0C1220] font-sans focus:outline-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#1E222A]">Subject Name</label>
+                <label className="text-xs font-arcade uppercase font-bold text-[#0C1220]">Subject Name</label>
                 <input
                   type="text"
                   value={goalSubject}
                   onChange={(e) => setGoalSubject(e.target.value)}
                   placeholder="e.g. Machine Learning"
                   required
-                  className="w-full bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl px-3.5 py-2.5 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
+                  className="w-full bg-white border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] px-3.5 py-2.5 text-xs text-[#0C1220] font-sans focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#1E222A]">Exam / Target Date</label>
+                <label className="text-xs font-arcade uppercase font-bold text-[#0C1220]">Exam / Target Date</label>
                 <input
                   type="date"
                   value={goalExamDate}
                   min={new Date().toISOString().split('T')[0]}
                   onChange={(e) => setGoalExamDate(e.target.value)}
                   required
-                  className="w-full bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl px-3.5 py-2.5 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
+                  className="w-full bg-white border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] px-3.5 py-2.5 text-xs text-[#0C1220] font-sans focus:outline-none"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#1E222A]">Source Course Document</label>
+              <label className="text-xs font-arcade uppercase font-bold text-[#0C1220]">Source Course Document</label>
               <select
                 value={goalDocId}
                 onChange={(e) => setGoalDocId(e.target.value)}
-                className="w-full bg-[#F5F6FA] border border-[#1E222A]/10 rounded-xl px-3.5 py-2.5 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
+                className="w-full bg-white border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] px-3.5 py-2.5 text-xs text-[#0C1220] font-sans focus:outline-none"
               >
                 <option value="">All Uploaded Documents</option>
                 {documents.map((d) => (
@@ -377,9 +377,9 @@ export const StudyPlannerPage: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#1E222A] flex items-center justify-between">
+              <label className="text-xs font-arcade uppercase font-bold text-[#0C1220] flex items-center justify-between">
                 <span>Daily Available Study Time</span>
-                <span className="text-[#7E79D8] font-mono font-bold">{dailyMinutes} minutes / day</span>
+                <span className="text-[#FF4742] font-arcade font-bold">{dailyMinutes} minutes / day</span>
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {[30, 45, 60, 90].map((mins) => (
@@ -387,10 +387,10 @@ export const StudyPlannerPage: React.FC = () => {
                     key={mins}
                     type="button"
                     onClick={() => setDailyMinutes(mins)}
-                    className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
+                    className={`py-2 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] font-arcade text-xs uppercase font-bold transition-all active:translate-x-[1px] active:translate-y-[1px] ${
                       dailyMinutes === mins
-                        ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
-                        : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
+                        ? 'bg-[#FF4742] text-white -translate-y-0.5'
+                        : 'bg-[#FFFDF7] text-[#0C1220] hover:bg-[#F5EDE0]'
                     }`}
                   >
                     {mins}m
@@ -400,9 +400,9 @@ export const StudyPlannerPage: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#1E222A] flex items-center justify-between">
+              <label className="text-xs font-arcade uppercase font-bold text-[#0C1220] flex items-center justify-between">
                 <span>Target Mastery Level</span>
-                <span className="text-[#06b6d4] font-mono font-bold">{targetMastery}%</span>
+                <span className="text-[#00E5FF] font-arcade font-bold">{targetMastery}%</span>
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {[80, 90, 95].map((mast) => (
@@ -410,10 +410,10 @@ export const StudyPlannerPage: React.FC = () => {
                     key={mast}
                     type="button"
                     onClick={() => setTargetMastery(mast)}
-                    className={`py-2 rounded-xl text-xs font-semibold border transition-all ${
+                    className={`py-2 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] font-arcade text-xs uppercase font-bold transition-all active:translate-x-[1px] active:translate-y-[1px] ${
                       targetMastery === mast
-                        ? 'bg-[#7E79D8] text-white border-[#7E79D8] shadow-sm'
-                        : 'bg-[#F5F6FA] text-slate-600 border-[#1E222A]/10 hover:bg-slate-200 hover:text-[#1E222A]'
+                        ? 'bg-[#FF4742] text-white -translate-y-0.5'
+                        : 'bg-[#FFFDF7] text-[#0C1220] hover:bg-[#F5EDE0]'
                     }`}
                   >
                     {mast}% Mastery
@@ -422,7 +422,7 @@ export const StudyPlannerPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#1E222A]/10">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t-2 border-[#0C1220]">
               <Button type="button" variant="secondary" size="sm" onClick={() => setIsGoalModalOpen(false)}>
                 Cancel
               </Button>
@@ -530,46 +530,46 @@ export const StudyPlannerPage: React.FC = () => {
       )}
 
       {/* Today's Goals Progress Bar */}
-      <div className="glass-card p-5 rounded-2xl border border-surface-border flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-5 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-primary-500/10 text-primary-400 border border-primary-500/20">
-            <Sparkles className="w-5 h-5 text-[#7E79D8]" />
+          <div className="p-2 border-2 border-[#0C1220] bg-[#00E5FF]/20 text-[#0C1220] shadow-[1px_1px_0px_#0C1220]">
+            <Sparkles className="w-5 h-5 text-[#FF4742]" />
           </div>
           <div>
-            <h4 className="text-xs font-bold text-[#1E222A]">
+            <h4 className="font-pixel text-xs uppercase font-bold text-[#0C1220]">
               Today's Revision Goals ({today_stats.completed} of {today_stats.total} Completed)
             </h4>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[11px] text-slate-600 font-sans mt-0.5">
               {today_stats.minutes_spent} of {today_stats.minutes_planned} minutes studied today
             </p>
           </div>
         </div>
 
         <div className="w-full md:w-72 flex items-center gap-3">
-          <div className="flex-1 h-2 bg-[#F0F2F8] rounded-full overflow-hidden">
+          <div className="flex-1 h-3.5 bg-[#FFFDF7] border-2 border-[#0C1220] overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-[#7E79D8] to-emerald-400 rounded-full transition-all duration-300"
+              className="h-full bg-[#FF4742] transition-all duration-300"
               style={{ width: `${today_stats.percentage}%` }}
             />
           </div>
-          <span className="text-xs font-mono font-bold text-[#7E79D8]">
+          <span className="font-arcade text-xs font-bold text-[#0C1220]">
             {today_stats.percentage}%
           </span>
         </div>
       </div>
 
       {/* Weekly Calendar Navigation */}
-      <div className="glass-card rounded-2xl p-6 border border-surface-border space-y-6">
+      <div className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[3px_3px_0px_#0C1220] p-6 space-y-6">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-3">
-            <CalendarRange className="w-5 h-5 text-[#7E79D8]" />
-            <h3 className="text-base font-bold text-[#1E222A]">
+            <CalendarRange className="w-5 h-5 text-[#FF4742]" />
+            <h3 className="font-pixel text-sm sm:text-base font-bold text-[#0C1220] uppercase">
               Weekly Revision Calendar
             </h3>
-            <Badge variant="cyan" size="sm">7-Day Adaptive Horizon</Badge>
+            <Badge variant="cyan" size="sm">7-DAY ADAPTIVE HORIZON</Badge>
           </div>
-          <span className="text-xs text-slate-500">
-            Selected: <strong className="text-[#1E222A]">{selectedDate}</strong> ({selectedDayInfo ? `${selectedDayInfo.day}, ${selectedDate}` : ''})
+          <span className="font-arcade text-[10px] text-slate-500 uppercase">
+            Selected: <strong className="text-[#0C1220]">{selectedDate}</strong> ({selectedDayInfo ? `${selectedDayInfo.day}, ${selectedDate}` : ''})
           </span>
         </div>
 
@@ -581,21 +581,21 @@ export const StudyPlannerPage: React.FC = () => {
               <button
                 key={d.date}
                 onClick={() => setSelectedDate(d.date)}
-                className={`p-3 rounded-xl border text-center transition-all ${
+                className={`p-3 border-2 border-[#0C1220] text-center transition-all select-none font-arcade ${
                   isSelected
-                    ? 'bg-[#7E79D8] border-[#7E79D8] text-white shadow-sm ring-2 ring-[#7E79D8]/30'
+                    ? 'bg-[#FF4742] text-white shadow-[2px_2px_0px_#0C1220] -translate-y-0.5'
                     : d.is_today
-                    ? 'bg-[#F0F2F8] border-[#7E79D8]/40 text-[#1E222A]'
-                    : 'bg-[#F5F6FA] border-[#1E222A]/10 text-slate-600 hover:bg-slate-200 hover:text-[#1E222A]'
+                    ? 'bg-[#00E5FF]/20 text-[#0C1220] shadow-[2px_2px_0px_#0C1220] hover:bg-[#00E5FF]/30'
+                    : 'bg-[#FFFDF7] text-[#0C1220] hover:bg-[#F5EDE0] shadow-[2px_2px_0px_#0C1220]'
                 }`}
               >
-                <span className="text-[11px] font-semibold block">{d.day}</span>
-                <span className="text-sm font-bold block mt-0.5">{d.day_number}</span>
-                <div className="mt-1 flex items-center justify-center gap-1">
+                <span className="text-[10px] block uppercase font-bold tracking-wider">{d.day}</span>
+                <span className="font-pixel text-sm block mt-1">{d.day_number}</span>
+                <div className="mt-1.5 flex items-center justify-center gap-1">
                   {d.is_today && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#06b6d4]" title="Today" />
+                    <span className="w-2 h-2 bg-[#00E5FF] border border-[#0C1220]" title="Today" />
                   )}
-                  <span className="text-[10px] text-slate-400">
+                  <span className={`text-[9px] ${isSelected ? 'text-white/80' : 'text-slate-500'}`}>
                     {d.completed_count}/{d.tasks_count}
                   </span>
                 </div>
@@ -607,7 +607,7 @@ export const StudyPlannerPage: React.FC = () => {
         {/* Selected Day's Task List */}
         <div className="space-y-3 pt-2">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <h4 className="text-xs font-bold text-[#1E222A] uppercase tracking-wider">
+            <h4 className="font-arcade text-xs font-bold text-[#0C1220] uppercase tracking-wider">
               Tasks for {selectedDayInfo?.day || 'Day'} ({displayTasks.length} Sessions)
             </h4>
             <div className="flex items-center gap-2 flex-wrap">
@@ -615,7 +615,7 @@ export const StudyPlannerPage: React.FC = () => {
               <select
                 value={taskTypeFilter}
                 onChange={(e) => setTaskTypeFilter(e.target.value as any)}
-                className="bg-[#F5F6FA] border border-[#1E222A]/10 rounded-lg px-2.5 py-1 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
+                className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] px-2.5 py-1 text-xs text-[#0C1220] font-arcade uppercase focus:outline-none"
               >
                 <option value="all">All Types</option>
                 <option value="quiz">Quiz</option>
@@ -628,7 +628,7 @@ export const StudyPlannerPage: React.FC = () => {
               <select
                 value={taskStatusFilter}
                 onChange={(e) => setTaskStatusFilter(e.target.value as any)}
-                className="bg-[#F5F6FA] border border-[#1E222A]/10 rounded-lg px-2.5 py-1 text-xs text-[#1E222A] focus:outline-none focus:border-[#7E79D8]"
+                className="bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] px-2.5 py-1 text-xs text-[#0C1220] font-arcade uppercase focus:outline-none"
               >
                 <option value="all">All Statuses</option>
                 <option value="scheduled">Scheduled</option>
@@ -637,7 +637,7 @@ export const StudyPlannerPage: React.FC = () => {
               </select>
 
               {selectedDayInfo?.is_today && (
-                <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1 ml-1">
+                <span className="font-arcade text-[10px] text-emerald-700 font-bold flex items-center gap-1 ml-1 uppercase">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Today
                 </span>
               )}
@@ -645,9 +645,9 @@ export const StudyPlannerPage: React.FC = () => {
           </div>
 
           {displayTasks.length === 0 ? (
-            <div className="p-8 rounded-xl bg-[#F5F6FA] border border-[#1E222A]/10 text-center text-xs text-slate-500 space-y-2">
-              <p>No study sessions scheduled for this date.</p>
-              <Button variant="secondary" size="sm" onClick={handleRecalculateSchedule} leftIcon={<Sparkles className="w-3.5 h-3.5" />}>
+            <div className="p-8 bg-[#FFFDF7] border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] text-center text-xs text-slate-600 space-y-3">
+              <p className="font-sans">No study sessions scheduled for this date.</p>
+              <Button variant="secondary" size="sm" onClick={handleRecalculateSchedule} leftIcon={<Sparkles className="w-3.5 h-3.5 text-[#FF4742]" />}>
                 Populate Schedule
               </Button>
             </div>
@@ -660,18 +660,18 @@ export const StudyPlannerPage: React.FC = () => {
                 return (
                   <div
                     key={t.id}
-                    className={`p-4 rounded-xl border transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+                    className={`p-4 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 ${
                       isDone
-                        ? 'bg-emerald-500/5 border-emerald-500/30 opacity-75'
+                        ? 'bg-emerald-500/10 opacity-75'
                         : isSkipped
-                        ? 'bg-slate-100/50 border-[#1E222A]/10 opacity-50'
-                        : 'bg-[#F8F9FD] border-[#1E222A]/10 hover:border-[#7E79D8]'
+                        ? 'bg-slate-200/50 opacity-60'
+                        : 'bg-[#FFFDF7] hover:bg-[#FFF9EE]'
                     }`}
                   >
                     <div className="flex items-start gap-3.5">
                       <button
                         onClick={() => handleToggleTaskStatus(t)}
-                        className="mt-0.5 text-[#7E79D8] hover:text-[#5B54BD] transition-colors shrink-0"
+                        className="mt-0.5 text-[#0C1220] hover:text-[#FF4742] transition-colors shrink-0"
                         title={isDone ? 'Mark incomplete' : 'Mark completed'}
                       >
                         {isDone ? (
@@ -685,7 +685,7 @@ export const StudyPlannerPage: React.FC = () => {
                         <div className="flex items-center gap-2 flex-wrap">
                           <span
                             className={`text-sm font-bold ${
-                              isDone ? 'line-through text-slate-400' : 'text-[#1E222A]'
+                              isDone ? 'line-through text-slate-400' : 'text-[#0C1220]'
                             }`}
                           >
                             {t.title}
@@ -721,18 +721,18 @@ export const StudyPlannerPage: React.FC = () => {
                         </div>
 
                         <div className="flex items-center gap-2 text-xs text-slate-500 flex-wrap">
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5 text-[#7E79D8]" /> {t.time} ({t.duration_minutes} mins)
+                          <span className="flex items-center gap-1 font-arcade text-[10px]">
+                            <Clock className="w-3.5 h-3.5 text-[#FF4742]" /> {t.time} ({t.duration_minutes} mins)
                           </span>
                           <span>•</span>
-                          <span className="flex items-center gap-1">
-                            <FileText className="w-3.5 h-3.5 text-[#06b6d4]" /> {t.doc_name} (p. {t.page_number})
+                          <span className="flex items-center gap-1 font-arcade text-[10px]">
+                            <FileText className="w-3.5 h-3.5 text-[#00E5FF]" /> {t.doc_name} (p. {t.page_number})
                           </span>
                         </div>
 
                         {t.reason && (
-                          <p className="text-[11px] text-slate-600 leading-relaxed bg-white p-2 rounded-lg border border-[#1E222A]/5 mt-1 max-w-2xl">
-                            <span className="font-semibold text-[#7E79D8]">Adaptive Reason: </span>
+                          <p className="text-[11px] text-slate-700 leading-relaxed bg-[#FBF5E6] p-2.5 border border-[#0C1220] shadow-[1px_1px_0px_#0C1220] mt-1 max-w-2xl font-sans">
+                            <span className="font-arcade text-[10px] text-[#FF4742] uppercase font-bold">Adaptive Reason: </span>
                             {t.reason}
                           </p>
                         )}
@@ -745,14 +745,14 @@ export const StudyPlannerPage: React.FC = () => {
                         <>
                           <button
                             onClick={() => handleSkipTask(t)}
-                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:text-[#1E222A] border border-[#1E222A]/10 hover:bg-slate-200 flex items-center gap-1 transition-all"
+                            className="px-2.5 py-1.5 border-2 border-[#0C1220] shadow-[1px_1px_0px_#0C1220] bg-[#FFFDF7] hover:bg-[#F5EDE0] text-xs font-arcade uppercase text-[#0C1220] flex items-center gap-1 transition-all"
                             title="Skip this task"
                           >
                             <SkipForward className="w-3.5 h-3.5" /> Skip
                           </button>
                           <button
                             onClick={() => handleRescheduleTask(t)}
-                            className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:text-amber-700 border border-[#1E222A]/10 hover:bg-amber-50 flex items-center gap-1 transition-all"
+                            className="px-2.5 py-1.5 border-2 border-[#0C1220] shadow-[1px_1px_0px_#0C1220] bg-[#FFFDF7] hover:bg-[#FFE58F] text-xs font-arcade uppercase text-[#0C1220] flex items-center gap-1 transition-all"
                             title="Reschedule to tomorrow"
                           >
                             <RotateCcw className="w-3.5 h-3.5" /> Tomorrow
