@@ -141,118 +141,181 @@ export const HeroPixelScene: React.FC = () => {
 
           {/* ═══════════════════════════════════════════════════════════
               3. CENTRAL RETRO AI COMPUTER TERMINAL (Main Focal Point)
+              Enlarged CRT TV with LEARNSPHERE Name & Brief Intro
               ═══════════════════════════════════════════════════════════ */}
-          <g transform="translate(390, 110)">
+          <g transform="translate(355, 75)">
             {/* Monitor Outer Chassis (Dark Slate with Hard Pixel Border) */}
-            <rect x="0" y="0" width="220" height="175" fill="#141B2D" stroke="#070B14" strokeWidth="6" />
-            <rect x="6" y="6" width="208" height="163" fill="#1F2942" stroke="#0D1322" strokeWidth="3" />
+            <rect x="0" y="0" width="290" height="210" fill="#141B2D" stroke="#070B14" strokeWidth="6" />
+            <rect x="6" y="6" width="278" height="198" fill="#1F2942" stroke="#0D1322" strokeWidth="3" />
 
             {/* Top Ventilation Grills */}
-            <rect x="20" y="12" width="180" height="4" fill="#0D1322" />
-            <rect x="20" y="18" width="180" height="4" fill="#0D1322" />
+            <rect x="24" y="12" width="242" height="4" fill="#0D1322" />
+            <rect x="24" y="18" width="242" height="4" fill="#0D1322" />
 
             {/* CRT Screen Bezel */}
-            <rect x="18" y="28" width="184" height="114" fill="#0B101D" stroke="#070B14" strokeWidth="4" />
+            <rect x="18" y="26" width="254" height="146" fill="#0B101D" stroke="#070B14" strokeWidth="4" />
 
             {/* Glowing Phosphor Screen (Cyan/Teal) */}
             <rect
               x="24"
-              y="34"
-              width="172"
-              height="102"
+              y="32"
+              width="242"
+              height="134"
               fill="#062228"
               stroke="#00E5FF"
-              strokeWidth="2"
+              strokeWidth="2.5"
               filter="url(#crt-glow)"
             />
 
-            {/* Screen Content: Pixel Art AI Study OS Interface */}
-            {/* Header bar on screen */}
-            <rect x="28" y="38" width="164" height="14" fill="#00E5FF" />
+            {/* Top Cyan Title Bar with Web Name */}
+            <rect x="28" y="36" width="234" height="19" fill="#00E5FF" />
             <text
-              x="110"
-              y="49"
+              x="145"
+              y="50"
               fontFamily="Press Start 2P, monospace"
-              fontSize="7"
+              fontSize="9"
               fill="#062228"
               textAnchor="middle"
               fontWeight="bold"
+              letterSpacing="1.5"
             >
-              AI STUDY OS
+              LEARNSPHERE
             </text>
 
-            {/* Pixel Art Study Diagram: Book + Neural Nodes */}
-            {/* Open Book Pixel Sprite */}
-            <rect x="42" y="62" width="24" height="20" fill="#0B353E" stroke="#00E5FF" strokeWidth="1.5" />
-            <rect x="70" y="62" width="24" height="20" fill="#0B353E" stroke="#00E5FF" strokeWidth="1.5" />
-            <line x1="68" y1="62" x2="68" y2="82" stroke="#FF4742" strokeWidth="2" />
-            <line x1="46" y1="68" x2="62" y2="68" stroke="#00E5FF" strokeWidth="1.5" />
-            <line x1="46" y1="74" x2="60" y2="74" stroke="#00E5FF" strokeWidth="1.5" />
-            <line x1="74" y1="68" x2="90" y2="68" stroke="#00E5FF" strokeWidth="1.5" />
-            <line x1="74" y1="74" x2="88" y2="74" stroke="#00E5FF" strokeWidth="1.5" />
-
-            {/* Neural Vector Nodes */}
-            <circle cx="120" cy="66" r="4" fill="#FF4742" />
-            <circle cx="150" cy="60" r="4" fill="#F8C02F" />
-            <circle cx="135" cy="80" r="4" fill="#00E5FF" />
-            <circle cx="160" cy="82" r="4" fill="#39FF14" />
-            {/* Neural connectors */}
-            <line x1="120" y1="66" x2="135" y2="80" stroke="#00E5FF" strokeWidth="1.5" />
-            <line x1="120" y1="66" x2="150" y2="60" stroke="#00E5FF" strokeWidth="1.5" />
-            <line x1="150" y1="60" x2="135" y2="80" stroke="#00E5FF" strokeWidth="1.5" />
-            <line x1="135" y1="80" x2="160" y2="82" stroke="#00E5FF" strokeWidth="1.5" />
-
-            {/* Math Formula & Vector Status readout on screen */}
+            {/* Sub-bar: OS Version & Live Status */}
+            <rect x="28" y="57" width="234" height="12" fill="#092B32" />
             <text
               x="36"
-              y="102"
-              fontFamily="VT323, monospace"
-              fontSize="12"
-              fill="#00E5FF"
-              letterSpacing="1"
-            >
-              FAISS::TOP-K RETRIEVAL [p.42]
-            </text>
-            <text
-              x="36"
-              y="120"
-              fontFamily="VT323, monospace"
-              fontSize="11"
+              y="66"
+              fontFamily="Press Start 2P, monospace"
+              fontSize="5"
               fill="#F8C02F"
-              letterSpacing="1"
+              letterSpacing="0.5"
             >
-              θ := θ - η ∇J(θ) // GROUNDED
+              AI STUDY OS // V2.0
             </text>
+            <text
+              x="254"
+              y="66"
+              fontFamily="Press Start 2P, monospace"
+              fontSize="5"
+              fill="#39FF14"
+              textAnchor="end"
+            >
+              ONLINE [OK]
+            </text>
+
+            {/* Terminal Screen: Brief Intro & Grounded Core Capabilities */}
+            <g transform="translate(36, 76)">
+              {/* Terminal command prompt */}
+              <text
+                x="0"
+                y="11"
+                fontFamily="Press Start 2P, monospace"
+                fontSize="6"
+                fill="#FF4742"
+              >
+                &gt;
+              </text>
+              <text
+                x="14"
+                y="11"
+                fontFamily="Press Start 2P, monospace"
+                fontSize="5.5"
+                fill="#FFFFFF"
+                letterSpacing="0.3"
+              >
+                TURN STUDY MATERIALS INTO
+              </text>
+
+              <text
+                x="14"
+                y="23"
+                fontFamily="Press Start 2P, monospace"
+                fontSize="5.5"
+                fill="#FFFFFF"
+                letterSpacing="0.3"
+              >
+                AN INTELLIGENT LEARNING LAB
+              </text>
+
+              {/* Bullet 1: Grounded RAG + Citations */}
+              <rect x="2" y="33" width="4" height="4" fill="#00E5FF" />
+              <text
+                x="14"
+                y="37"
+                fontFamily="Press Start 2P, monospace"
+                fontSize="5"
+                fill="#00E5FF"
+              >
+                GROUNDED RAG + EXACT CITATIONS
+              </text>
+
+              {/* Bullet 2: PDF & Flashcards */}
+              <rect x="2" y="45" width="4" height="4" fill="#F8C02F" />
+              <text
+                x="14"
+                y="49"
+                fontFamily="Press Start 2P, monospace"
+                fontSize="5"
+                fill="#F8C02F"
+              >
+                PDF READER &amp; ACTIVE RECALL
+              </text>
+
+              {/* Prompt line with pulsing cursor */}
+              <text
+                x="0"
+                y="63"
+                fontFamily="Press Start 2P, monospace"
+                fontSize="5.5"
+                fill="#39FF14"
+              >
+                SYSTEM READY_
+              </text>
+            </g>
 
             {/* Bottom Controls / Buttons Bar */}
-            <rect x="24" y="146" width="60" height="14" fill="#FF4742" stroke="#070B14" strokeWidth="2" />
+            <rect x="24" y="180" width="76" height="16" fill="#FF4742" stroke="#070B14" strokeWidth="2" />
             <text
-              x="54"
-              y="156"
+              x="62"
+              y="191"
               fontFamily="Press Start 2P, monospace"
               fontSize="6"
               fill="#FFFFFF"
               textAnchor="middle"
             >
-              RAG
+              RAG ACTIVE
+            </text>
+
+            <rect x="108" y="181" width="66" height="14" fill="#0D1B2A" stroke="#00E5FF" strokeWidth="1.5" />
+            <text
+              x="141"
+              y="191"
+              fontFamily="Press Start 2P, monospace"
+              fontSize="5"
+              fill="#00E5FF"
+              textAnchor="middle"
+            >
+              FAISS:P.42
             </text>
 
             {/* Colored Status Indicator LEDs */}
-            <circle cx="150" cy="153" r="3" fill="#39FF14" />
-            <circle cx="165" cy="153" r="3" fill="#00E5FF" />
-            <circle cx="180" cy="153" r="3" fill="#FF4742" />
+            <circle cx="218" cy="188" r="3.5" fill="#39FF14" />
+            <circle cx="234" cy="188" r="3.5" fill="#00E5FF" />
+            <circle cx="250" cy="188" r="3.5" fill="#FF4742" />
 
             {/* Terminal Stand / Neck */}
-            <rect x="85" y="175" width="50" height="20" fill="#0D1322" stroke="#070B14" strokeWidth="3" />
+            <rect x="115" y="210" width="60" height="18" fill="#0D1322" stroke="#070B14" strokeWidth="3" />
             {/* Terminal Base Foot */}
-            <rect x="65" y="195" width="90" height="10" fill="#1F2942" stroke="#070B14" strokeWidth="3" />
+            <rect x="85" y="228" width="120" height="12" fill="#1F2942" stroke="#070B14" strokeWidth="3" />
           </g>
 
           {/* ═══════════════════════════════════════════════════════════
               4. FLOATING STUDY ARTIFACTS ORBITING THE CENTRAL AI
               ═══════════════════════════════════════════════════════════ */}
           {/* Floating Document Left: Page 42 with citation tag */}
-          <g transform="translate(300, 150)">
+          <g transform="translate(255, 125)">
             <rect x="0" y="0" width="60" height="74" fill="#FBF5E6" stroke="#0C1220" strokeWidth="3" />
             {/* Red PDF Header */}
             <rect x="0" y="0" width="60" height="12" fill="#FF4742" />
@@ -275,7 +338,7 @@ export const HeroPixelScene: React.FC = () => {
           </g>
 
           {/* Floating Open Textbook Right */}
-          <g transform="translate(640, 140)">
+          <g transform="translate(665, 125)">
             <polygon points="0,15 35,5 35,45 0,55" fill="#FBF5E6" stroke="#0C1220" strokeWidth="2.5" />
             <polygon points="35,5 70,15 70,55 35,45" fill="#FBF5E6" stroke="#0C1220" strokeWidth="2.5" />
             {/* Book Spine in Coral */}
@@ -292,7 +355,7 @@ export const HeroPixelScene: React.FC = () => {
           </g>
 
           {/* Floating Data Floppy / Vector Cartridge */}
-          <g transform="translate(620, 220)">
+          <g transform="translate(670, 215)">
             <rect x="0" y="0" width="36" height="36" fill="#1F2942" stroke="#0C1220" strokeWidth="2.5" />
             <rect x="6" y="2" width="24" height="14" fill="#C0C6D8" stroke="#0C1220" strokeWidth="1" />
             <rect x="6" y="20" width="24" height="12" fill="#FBF5E6" />
@@ -302,7 +365,7 @@ export const HeroPixelScene: React.FC = () => {
           </g>
 
           {/* Floating Neural Pulse Node Left */}
-          <g transform="translate(330, 240)">
+          <g transform="translate(280, 225)">
             <rect x="0" y="0" width="24" height="24" fill="#062228" stroke="#00E5FF" strokeWidth="2" />
             <circle cx="12" cy="12" r="5" fill="#FF4742" />
             <line x1="0" y1="12" x2="24" y2="12" stroke="#00E5FF" strokeWidth="1" />
