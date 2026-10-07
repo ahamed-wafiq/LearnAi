@@ -216,76 +216,42 @@ export const HeroPixelScene: React.FC = () => {
               ONLINE [OK]
             </text>
 
-            {/* Center Brief Intro Section (Centered, Proper Fit, Clear Visible Fonts) */}
-            {/* Headline Line 1 */}
+            {/* Large Centered Brief Intro (High-Visibility Retro Fonts) */}
             <text
               x="190"
-              y="100"
+              y="114"
               fontFamily="Press Start 2P, monospace"
-              fontSize="8"
+              fontSize="10.5"
               fill="#FFFFFF"
               textAnchor="middle"
-              letterSpacing="0.8"
+              letterSpacing="1"
             >
               TURN YOUR STUDY MATERIALS
             </text>
 
-            {/* Headline Line 2 */}
             <text
               x="190"
-              y="115"
+              y="138"
               fontFamily="Press Start 2P, monospace"
-              fontSize="8"
+              fontSize="11"
               fill="#00E5FF"
               textAnchor="middle"
-              letterSpacing="0.8"
+              letterSpacing="1"
             >
-              INTO AN INTELLIGENT LEARNING LAB
+              INTO AN INTELLIGENT
             </text>
 
-            {/* Decorative Divider with Center Diamond */}
-            <line x1="50" y1="124" x2="175" y2="124" stroke="#124854" strokeWidth="2" />
-            <polygon points="190,121 194,124 190,127 186,124" fill="#FF4742" />
-            <line x1="205" y1="124" x2="330" y2="124" stroke="#124854" strokeWidth="2" />
-
-            {/* Core Capabilities - Centered Row 1 */}
             <text
               x="190"
-              y="139"
+              y="164"
               fontFamily="Press Start 2P, monospace"
-              fontSize="6.5"
-              fill="#FFE58F"
-              textAnchor="middle"
-              letterSpacing="0.6"
-            >
-              ◆ GROUNDED RAG  ◆  PAGE CITATIONS
-            </text>
-
-            {/* Core Capabilities - Centered Row 2 */}
-            <text
-              x="190"
-              y="153"
-              fontFamily="Press Start 2P, monospace"
-              fontSize="6.5"
+              fontSize="13"
               fill="#F8C02F"
               textAnchor="middle"
-              letterSpacing="0.6"
+              fontWeight="bold"
+              letterSpacing="2"
             >
-              ◆ PDF OCR READER  ◆  ACTIVE RECALL
-            </text>
-
-            {/* Terminal Command Prompt Pill - Centered */}
-            <rect x="75" y="163" width="230" height="17" fill="#03161A" stroke="#00E5FF" strokeWidth="1.5" />
-            <text
-              x="190"
-              y="175"
-              fontFamily="Press Start 2P, monospace"
-              fontSize="6.5"
-              fill="#39FF14"
-              textAnchor="middle"
-              letterSpacing="0.5"
-            >
-              &gt; SYSTEM READY: ASK ANYTHING_
+              LEARNING LAB
             </text>
 
             {/* Bottom Controls / Buttons Bar on Bezel */}
