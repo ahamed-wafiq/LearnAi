@@ -139,6 +139,17 @@ app.add_middleware(
 )
 
 
+@app.get("/")
+async def root():
+    """Root welcome endpoint for Render health and uptime checks."""
+    return {
+        "name": "Learn AI RAG API",
+        "status": "online",
+        "docs": "/docs",
+        "health": "/api/health",
+    }
+
+
 # ── Pydantic Request Models for Flashcards & Planner ────────────────────
 
 from pydantic import BaseModel
