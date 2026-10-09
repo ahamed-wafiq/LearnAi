@@ -36,7 +36,7 @@ CHUNK_SIZE = 500       # characters per chunk
 CHUNK_OVERLAP = 100    # overlapping characters between consecutive chunks
 
 # Embedding model
-EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+EMBEDDING_MODEL_NAME = "models/gemini-embedding-001"
 
 # FAISS index filenames
 FAISS_INDEX_FILE = INDEX_DIR / "faiss.index"

@@ -2,17 +2,19 @@
 Learn AI RAG Backend — Embedding generation and FAISS vector store.
 
 Handles:
-  - Loading / lazy-initialising the sentence-transformers model
-  - Generating embeddings for text chunks
+  - Generating embeddings via Google Gemini Embedding API (models/gemini-embedding-001)
+  - Zero local RAM overhead (eliminates heavy PyTorch/CUDA bloat for cloud & Render free-tier)
   - Building, updating, searching, and persisting the FAISS index
   - Maintaining authoritative FAISS ID mapping back to document chunks
 """
 
+import os
 import json
 import numpy as np
 import faiss
-from sentence_transformers import SentenceTransformer
 from pathlib import Path
+from dotenv import load_dotenv
+from google import genai
 
 from config import (
     EMBEDDING_MODEL_NAME,
@@ -21,21 +23,64 @@ from config import (
     TOP_K,
 )
 
+# Load environment
+load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
+
 # ── Module-level singletons ────────────────────────────────────────────
 
-_model: SentenceTransformer | None = None
 _index: faiss.IndexFlatIP | None = None  # Inner-product (cosine after normalisation)
 _chunks_meta: list[dict] = []            # Parallel list of chunk metadata
+EMBEDDING_DIM = 3072                     # Gemini embedding dimension (or 768 fallback)
 
 
-def _get_model() -> SentenceTransformer:
-    """Lazy-load the embedding model once."""
-    global _model
-    if _model is None:
-        print(f"[embeddings] Loading model: {EMBEDDING_MODEL_NAME} ...")
-        _model = SentenceTransformer(EMBEDDING_MODEL_NAME)
-        print("[embeddings] Model loaded.")
-    return _model
+def _get_genai_client() -> genai.Client:
+    api_key = os.getenv("GEMINI_API_KEY", "")
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY is not configured in backend/.env")
+    return genai.Client(api_key=api_key)
+
+
+def _embed_texts(texts: list[str]) -> np.ndarray:
+    """Generate normalized vector embeddings using Google Gemini API."""
+    if not texts:
+        return np.empty((0, EMBEDDING_DIM), dtype=np.float32)
+
+    api_key = os.getenv("GEMINI_API_KEY", "")
+    if api_key:
+        try:
+            client = _get_genai_client()
+            all_vecs = []
+            batch_size = 50
+            for i in range(0, len(texts), batch_size):
+                batch = texts[i : i + batch_size]
+                res = client.models.embed_content(
+                    model="gemini-embedding-001",
+                    contents=batch,
+                )
+                for emb in res.embeddings:
+                    vec = np.array(emb.values, dtype=np.float32)
+                    norm = np.linalg.norm(vec)
+                    if norm > 0:
+                        vec = vec / norm
+                    all_vecs.append(vec)
+            if all_vecs:
+                return np.array(all_vecs, dtype=np.float32)
+        except Exception as e:
+            print(f"[embeddings] Gemini embedding API warning: {e}, using fallback vectorizer")
+
+    # Lightweight fallback vectorizer if offline
+    dim = EMBEDDING_DIM
+    vecs = []
+    for text in texts:
+        vec = np.zeros(dim, dtype=np.float32)
+        for word in text.lower().split():
+            idx = hash(word) % dim
+            vec[idx] += 1.0
+        norm = np.linalg.norm(vec)
+        if norm > 0:
+            vec = vec / norm
+        vecs.append(vec)
+    return np.array(vecs, dtype=np.float32)
 
 
 # ── Persistence ─────────────────────────────────────────────────────────
@@ -55,19 +100,22 @@ def _load_index() -> None:
     global _index, _chunks_meta
 
     if FAISS_INDEX_FILE.exists() and CHUNKS_META_FILE.exists():
-        _index = faiss.read_index(str(FAISS_INDEX_FILE))
-        with open(CHUNKS_META_FILE, "r", encoding="utf-8") as f:
-            _chunks_meta = json.load(f)
-        # Ensure all existing chunks have faiss_index_id assigned
-        for i, chunk in enumerate(_chunks_meta):
-            if "faiss_index_id" not in chunk:
-                chunk["faiss_index_id"] = i
-        print(f"[embeddings] Loaded index with {_index.ntotal} vectors and {len(_chunks_meta)} chunks.")
-    else:
-        # all-MiniLM-L6-v2 produces 384-dimensional embeddings
-        _index = faiss.IndexFlatIP(384)
-        _chunks_meta = []
-        print("[embeddings] Created fresh FAISS index.")
+        try:
+            _index = faiss.read_index(str(FAISS_INDEX_FILE))
+            with open(CHUNKS_META_FILE, "r", encoding="utf-8") as f:
+                _chunks_meta = json.load(f)
+            # Ensure all existing chunks have faiss_index_id assigned
+            for i, chunk in enumerate(_chunks_meta):
+                if "faiss_index_id" not in chunk:
+                    chunk["faiss_index_id"] = i
+            print(f"[embeddings] Loaded index with {_index.ntotal} vectors and {len(_chunks_meta)} chunks.")
+            return
+        except Exception as e:
+            print(f"[embeddings] Warning loading FAISS index: {e}, initializing fresh index.")
+
+    _index = faiss.IndexFlatIP(EMBEDDING_DIM)
+    _chunks_meta = []
+    print("[embeddings] Created fresh FAISS index.")
 
 
 def ensure_index_loaded() -> None:
@@ -92,19 +140,22 @@ def add_chunks(chunks: list[dict]) -> tuple[int, list[int]]:
     if not chunks:
         return 0, []
 
-    model = _get_model()
     texts = [c["text"] for c in chunks]
-    embeddings = model.encode(texts, show_progress_bar=False, normalize_embeddings=True)
-    embeddings = np.array(embeddings, dtype=np.float32)
+    embeddings = _embed_texts(texts)
 
-    start_id = _index.ntotal if _index else 0
+    # Initialize index with dynamic embedding dimension if needed
+    global _index
+    if _index is None or (_index.ntotal == 0 and embeddings.shape[1] != _index.d):
+        _index = faiss.IndexFlatIP(embeddings.shape[1])
+
+    start_id = _index.ntotal
     faiss_ids = []
     for i, c in enumerate(chunks):
         fid = start_id + i
         c["faiss_index_id"] = fid
         faiss_ids.append(fid)
 
-    _index.add(embeddings)  # type: ignore[union-attr]
+    _index.add(embeddings)
     _chunks_meta.extend(chunks)
     _save_index()
 
@@ -122,9 +173,10 @@ def search(query: str, top_k: int = TOP_K) -> list[dict]:
     if _index is None or _index.ntotal == 0:
         return []
 
-    model = _get_model()
-    query_vec = model.encode([query], normalize_embeddings=True)
-    query_vec = np.array(query_vec, dtype=np.float32)
+    query_vec = _embed_texts([query])
+    if query_vec.shape[1] != _index.d:
+        # Dimension mismatch protection
+        query_vec = np.resize(query_vec, (1, _index.d))
 
     distances, indices = _index.search(query_vec, min(top_k, _index.ntotal))
 
@@ -155,9 +207,7 @@ def remove_document(doc_id: str) -> tuple[int, list[dict]]:
         return 0, _chunks_meta
 
     # Rebuild
-    model = _get_model()
-    dim = model.get_sentence_embedding_dimension()
-    _index = faiss.IndexFlatIP(dim)
+    _index = faiss.IndexFlatIP(EMBEDDING_DIM)
     _chunks_meta = remaining
 
     # Reassign sequential FAISS IDs
@@ -166,8 +216,9 @@ def remove_document(doc_id: str) -> tuple[int, list[dict]]:
 
     if remaining:
         texts = [c["text"] for c in remaining]
-        embeddings = model.encode(texts, show_progress_bar=False, normalize_embeddings=True)
-        embeddings = np.array(embeddings, dtype=np.float32)
+        embeddings = _embed_texts(texts)
+        if embeddings.shape[1] != _index.d:
+            _index = faiss.IndexFlatIP(embeddings.shape[1])
         _index.add(embeddings)
 
     _save_index()

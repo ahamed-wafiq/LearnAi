@@ -12,13 +12,18 @@ from config import DATABASE_URL
 class Base(DeclarativeBase):
     pass
 
-# Create engine with connection health pre-ping
+# Create engine with connection health pre-ping and fast connect timeout
+connect_args = {}
+if "psycopg" in DATABASE_URL or "postgresql" in DATABASE_URL:
+    connect_args = {"connect_timeout": 3}
+
 engine = create_engine(
     DATABASE_URL,
     echo=False,
     pool_pre_ping=True,
     pool_size=10,
     max_overflow=20,
+    connect_args=connect_args,
 )
 
 # Session factory
