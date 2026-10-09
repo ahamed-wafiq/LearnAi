@@ -50,7 +50,7 @@ export const HomePage: React.FC = () => {
 
             {/* Clean Readable Sans-Serif Paragraph */}
             <p className="font-sans text-xs sm:text-sm text-[#384357] leading-relaxed max-w-3xl pt-1">
-              LearnSphere turns textbooks, lecture slides and research papers into an intelligent searchable knowledge base.
+              Learn AI turns textbooks, lecture slides and research papers into an intelligent searchable knowledge base.
               Ask questions and receive grounded answers connected directly to source pages with zero hallucinations.
             </p>
           </div>

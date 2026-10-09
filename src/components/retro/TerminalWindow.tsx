@@ -10,7 +10,7 @@ interface TerminalWindowProps {
 }
 
 export const TerminalWindow: React.FC<TerminalWindowProps> = ({
-  title = 'TERMINAL // LEARNSPHERE-OS',
+  title = 'TERMINAL // LEARN-AI-OS',
   badge = 'SYS.ONLINE',
   children,
   className = '',

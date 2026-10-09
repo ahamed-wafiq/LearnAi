@@ -1,11 +1,11 @@
 """
-LearnSphere RAG Backend — Embedding generation and FAISS vector store.
+Learn AI RAG Backend — Embedding generation and FAISS vector store.
 
 Handles:
   - Loading / lazy-initialising the sentence-transformers model
   - Generating embeddings for text chunks
   - Building, updating, searching, and persisting the FAISS index
-  - Persisting chunk metadata alongside the index
+  - Maintaining authoritative FAISS ID mapping back to document chunks
 """
 
 import json
@@ -58,6 +58,10 @@ def _load_index() -> None:
         _index = faiss.read_index(str(FAISS_INDEX_FILE))
         with open(CHUNKS_META_FILE, "r", encoding="utf-8") as f:
             _chunks_meta = json.load(f)
+        # Ensure all existing chunks have faiss_index_id assigned
+        for i, chunk in enumerate(_chunks_meta):
+            if "faiss_index_id" not in chunk:
+                chunk["faiss_index_id"] = i
         print(f"[embeddings] Loaded index with {_index.ntotal} vectors and {len(_chunks_meta)} chunks.")
     else:
         # all-MiniLM-L6-v2 produces 384-dimensional embeddings
@@ -75,25 +79,36 @@ def ensure_index_loaded() -> None:
 
 # ── Core operations ─────────────────────────────────────────────────────
 
-def add_chunks(chunks: list[dict]) -> int:
+def add_chunks(chunks: list[dict]) -> tuple[int, list[int]]:
     """
     Embed a list of chunk dicts and add them to the FAISS index.
 
-    Each dict must have a 'text' key.  The full dict is stored in _chunks_meta.
-    Returns the number of vectors added.
+    Each dict must have a 'text' key.
+    Attaches 'faiss_index_id' to each chunk dict.
+    Returns (num_added, list_of_faiss_ids).
     """
     ensure_index_loaded()
+
+    if not chunks:
+        return 0, []
 
     model = _get_model()
     texts = [c["text"] for c in chunks]
     embeddings = model.encode(texts, show_progress_bar=False, normalize_embeddings=True)
     embeddings = np.array(embeddings, dtype=np.float32)
 
-    _index.add(embeddings)           # type: ignore[union-attr]
+    start_id = _index.ntotal if _index else 0
+    faiss_ids = []
+    for i, c in enumerate(chunks):
+        fid = start_id + i
+        c["faiss_index_id"] = fid
+        faiss_ids.append(fid)
+
+    _index.add(embeddings)  # type: ignore[union-attr]
     _chunks_meta.extend(chunks)
     _save_index()
 
-    return len(texts)
+    return len(texts), faiss_ids
 
 
 def search(query: str, top_k: int = TOP_K) -> list[dict]:
@@ -115,35 +130,39 @@ def search(query: str, top_k: int = TOP_K) -> list[dict]:
 
     results: list[dict] = []
     for dist, idx in zip(distances[0], indices[0]):
-        if idx == -1:
+        if idx == -1 or idx >= len(_chunks_meta):
             continue
-        chunk = {**_chunks_meta[idx], "score": float(dist)}
+        chunk = {**_chunks_meta[idx], "score": float(dist), "faiss_index_id": idx}
         results.append(chunk)
 
     return results
 
 
-def remove_document(doc_id: str) -> int:
+def remove_document(doc_id: str) -> tuple[int, list[dict]]:
     """
     Remove all chunks belonging to a document from the index.
 
-    Because FAISS IndexFlatIP doesn't support selective deletion we rebuild
-    the index from the remaining chunks.  Returns the number of chunks removed.
+    Rebuilds the index from the remaining chunks and reassigns sequential faiss_index_ids.
+    Returns (removed_count, remaining_chunks).
     """
     global _index, _chunks_meta
     ensure_index_loaded()
 
-    remaining = [c for c in _chunks_meta if c["doc_id"] != doc_id]
+    remaining = [c for c in _chunks_meta if c.get("doc_id") != doc_id]
     removed_count = len(_chunks_meta) - len(remaining)
 
     if removed_count == 0:
-        return 0
+        return 0, _chunks_meta
 
     # Rebuild
     model = _get_model()
     dim = model.get_sentence_embedding_dimension()
     _index = faiss.IndexFlatIP(dim)
     _chunks_meta = remaining
+
+    # Reassign sequential FAISS IDs
+    for i, chunk in enumerate(_chunks_meta):
+        chunk["faiss_index_id"] = i
 
     if remaining:
         texts = [c["text"] for c in remaining]
@@ -152,14 +171,14 @@ def remove_document(doc_id: str) -> int:
         _index.add(embeddings)
 
     _save_index()
-    return removed_count
+    return removed_count, _chunks_meta
 
 
 def get_index_stats() -> dict:
     """Return basic stats about the current index."""
     ensure_index_loaded()
     total = _index.ntotal if _index else 0
-    doc_ids = set(c["doc_id"] for c in _chunks_meta)
+    doc_ids = set(c.get("doc_id") for c in _chunks_meta if c.get("doc_id"))
     return {
         "total_vectors": total,
         "total_chunks": len(_chunks_meta),
@@ -173,4 +192,3 @@ def get_document_chunks(doc_id: str | None = None) -> list[dict]:
     if doc_id:
         return [c for c in _chunks_meta if c.get("doc_id") == doc_id]
     return list(_chunks_meta)
-

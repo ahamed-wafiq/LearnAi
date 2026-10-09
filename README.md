@@ -1,4 +1,4 @@
-# LearnSphere — AI-Powered Study OS with Local RAG
+# Learn AI — AI-Powered Study OS with Local RAG
 
 <p align="center">
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="React 19" />
@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/Gemini_API-3.5_Flash-4285F4?logo=google&logoColor=white" alt="Gemini" />
 </p>
 
-LearnSphere is a modern, student-centric **AI Study Operating System** featuring a local **Retrieval-Augmented Generation (RAG)** pipeline. Upload textbooks, lecture slides, and research papers — LearnSphere extracts, chunks, and indexes your documents locally, allowing you to ask questions with answers grounded directly in your study materials and supported by **page-level citations**.
+Learn AI is a modern, student-centric **AI Study Operating System** featuring a local **Retrieval-Augmented Generation (RAG)** pipeline. Upload textbooks, lecture slides, and research papers — Learn AI extracts, chunks, and indexes your documents locally, allowing you to ask questions with answers grounded directly in your study materials and supported by **page-level citations**.
 
 ---
 

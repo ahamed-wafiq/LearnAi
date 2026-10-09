@@ -139,7 +139,7 @@ export const AnalyticsPage: React.FC = () => {
           <div className="space-y-2">
             <h3 className="font-pixel text-xl uppercase font-bold text-[#0C1220]">No Quiz or Review Activity Recorded Yet</h3>
             <p className="text-xs sm:text-sm text-slate-600 font-sans max-w-md mx-auto leading-relaxed">
-              LearnSphere calculates real topic mastery and predictive weakness models from your actual study history. Take your first quiz or review flashcards to populate this dashboard.
+              Learn AI calculates real topic mastery and predictive weakness models from your actual study history. Take your first quiz or review flashcards to populate this dashboard.
             </p>
           </div>
 

@@ -16,11 +16,11 @@ export const RetroFooter: React.FC = () => {
           <div className="md:col-span-5 space-y-4">
             <div className="flex items-center gap-3">
               <div className="bg-[#FF4742] text-white px-2.5 py-1.5 border-2 border-[#0C1220] shadow-[2px_2px_0px_#0C1220] font-arcade text-xs">
-                LS
+                AI
               </div>
               <div>
                 <span className="font-pixel text-lg sm:text-xl font-bold tracking-wider block text-white">
-                  LEARNSPHERE
+                  LEARN AI
                 </span>
                 <span className="font-arcade text-[9px] text-[#00E5FF] tracking-widest uppercase block -mt-0.5">
                   AI-POWERED STUDY OS
@@ -153,7 +153,7 @@ export const RetroFooter: React.FC = () => {
             <span className="bg-[#FF4742] text-white px-2 py-0.5 border border-[#0C1220]">
               DEPT.28
             </span>
-            <span>LEARNSPHERE OS © 2026 // ALL RIGHTS RESERVED.</span>
+            <span>LEARN AI OS © 2026 // ALL RIGHTS RESERVED.</span>
           </div>
 
           <div className="flex items-center gap-4 text-[#00E5FF]">

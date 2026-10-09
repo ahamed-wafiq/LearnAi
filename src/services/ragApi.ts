@@ -1,5 +1,5 @@
 /**
- * LearnSphere RAG API Client
+ * Learn AI RAG API Client
  * 
  * Connects the React frontend to the FastAPI RAG backend.
  * All calls go through http://localhost:8000/api

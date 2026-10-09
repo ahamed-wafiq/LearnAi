@@ -107,7 +107,7 @@ export const Header: React.FC<HeaderProps> = ({
         if (items.length === 0) {
           items.push({
             id: 'welcome-notif',
-            title: 'Welcome to LearnSphere',
+            title: 'Welcome to Learn AI',
             desc: 'Upload course documents in your Library to begin personalized learning.',
             time: 'Now',
             unread: false,

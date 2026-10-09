@@ -78,7 +78,9 @@ class TestLearnSphereWorkflows(unittest.TestCase):
         """Verify both /api/health and /health alias respond with healthy status."""
         status_code, body = http_get("/api/health")
         self.assertEqual(status_code, 200)
-        self.assertEqual(body.get("status"), "ok")
+        self.assertIn(body.get("status"), ["ok", "healthy"])
+        self.assertEqual(body.get("database"), "connected")
+        self.assertEqual(body.get("faiss"), "ready")
         self.assertIn("index", body)
         self.assertGreaterEqual(body["index"].get("total_vectors", 0), 0)
         self.assertTrue(body.get("gemini_configured"))
@@ -86,7 +88,7 @@ class TestLearnSphereWorkflows(unittest.TestCase):
         # Verify /health alias
         status_code_alias, body_alias = http_get("/health")
         self.assertEqual(status_code_alias, 200)
-        self.assertEqual(body_alias.get("status"), "ok")
+        self.assertIn(body_alias.get("status"), ["ok", "healthy"])
 
     def test_02_document_listing_and_inspection(self):
         """Verify documents endpoint returns indexed PDFs with valid metadata."""

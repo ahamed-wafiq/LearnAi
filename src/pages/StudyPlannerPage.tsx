@@ -236,7 +236,7 @@ export const StudyPlannerPage: React.FC = () => {
           </div>
           <h3 className="font-pixel text-xl uppercase font-bold text-[#0C1220]">No Course Materials Uploaded</h3>
           <p className="text-xs sm:text-sm text-slate-600 font-sans leading-relaxed">
-            LearnSphere extracts topics and generates personalized daily study sessions grounded in your actual course files. Upload a PDF to start scheduling.
+            Learn AI extracts topics and generates personalized daily study sessions grounded in your actual course files. Upload a PDF to start scheduling.
           </p>
           <Link to="/library">
             <Button variant="primary" leftIcon={<FileText className="w-4 h-4" />}>
@@ -274,7 +274,7 @@ export const StudyPlannerPage: React.FC = () => {
           <div className="space-y-2">
             <h3 className="font-pixel text-xl uppercase font-bold text-[#0C1220]">Define Your Target Study Goal</h3>
             <p className="text-xs sm:text-sm text-slate-600 font-sans leading-relaxed">
-              Set your target exam date, course subject, and daily study time budget. LearnSphere will automatically analyze your weak topics and overdue flashcards to construct your 7-day revision schedule.
+              Set your target exam date, course subject, and daily study time budget. Learn AI will automatically analyze your weak topics and overdue flashcards to construct your 7-day revision schedule.
             </p>
           </div>
           <Button variant="glow" onClick={() => setIsGoalModalOpen(true)} leftIcon={<Sparkles className="w-4 h-4" />}>

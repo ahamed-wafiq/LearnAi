@@ -32,11 +32,11 @@ export const RetroNavbar: React.FC<RetroNavbarProps> = ({ className = '' }) => {
           className="flex items-center gap-2 px-2 py-1 bg-[#151F36] border border-[#FF4742]/60 hover:bg-[#1A2642] transition-colors shrink-0"
         >
           <span className="bg-[#FF4742] text-white px-1.5 py-0.5 font-arcade text-[10px] tracking-tighter">
-            LS
+            AI
           </span>
           <div className="flex flex-col">
             <span className="font-pixel text-xs sm:text-sm font-bold tracking-wider text-white leading-none">
-              LEARNSPHERE
+              LEARN AI
             </span>
             <span className="font-arcade text-[7px] sm:text-[8px] text-[#00E5FF] tracking-widest uppercase mt-0.5">
               AI STUDY OS // V2.0

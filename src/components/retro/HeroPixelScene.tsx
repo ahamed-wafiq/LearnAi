@@ -179,7 +179,7 @@ export const HeroPixelScene: React.FC = () => {
               fontWeight="bold"
               letterSpacing="3"
             >
-              LEARNSPHERE
+              LEARN AI
             </text>
 
             {/* Sub-bar: OS Version & Live Status */}

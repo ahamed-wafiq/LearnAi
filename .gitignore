@@ -33,3 +33,5 @@ __pycache__/
 *.pyc
 .env
 .auto-accept.json
+*.blend1
+

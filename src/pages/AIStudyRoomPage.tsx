@@ -630,7 +630,7 @@ export const AIStudyRoomPage: React.FC = () => {
                       msg.role === 'user' ? 'text-[#00E5FF]' : 'text-[#FF4742]'
                     }`}
                   >
-                    {msg.role === 'user' ? '> USER' : '// LEARNSPHERE COPILOT'}
+                    {msg.role === 'user' ? '> USER' : '// LEARN AI COPILOT'}
                   </span>
                   <span className="text-[9px] text-slate-500">{msg.timestamp}</span>
                 </div>
