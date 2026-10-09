@@ -115,19 +115,24 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# ── CORS — allow the Vite dev server ─────────────────────────────────────
+# ── CORS — allow Vite dev server, Vercel deployments, and production origins ─
+
+cors_origins_env = os.getenv("CORS_ORIGINS", "")
+custom_origins = [orig.strip() for orig in cors_origins_env.split(",") if orig.strip()]
+
+default_origins = [
+    "http://localhost:5173", "http://127.0.0.1:5173",
+    "http://localhost:5174", "http://127.0.0.1:5174",
+    "http://localhost:5175", "http://127.0.0.1:5175",
+    "http://localhost:5176", "http://127.0.0.1:5176",
+    "http://localhost:3000", "http://127.0.0.1:3000",
+    "http://localhost:8080", "http://127.0.0.1:8080",
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173", "http://127.0.0.1:5173",
-        "http://localhost:5174", "http://127.0.0.1:5174",
-        "http://localhost:5175", "http://127.0.0.1:5175",
-        "http://localhost:5176", "http://127.0.0.1:5176",
-        "http://localhost:3000", "http://127.0.0.1:3000",
-        "http://localhost:8080", "http://127.0.0.1:8080",
-    ],
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+    allow_origins=default_origins + custom_origins if not cors_origins_env == "*" else ["*"],
+    allow_origin_regex=r"^(https?://(localhost|127\.0\.0\.1)(:\d+)?|https://.*\.vercel\.app)$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -898,4 +903,6 @@ async def recalculate_schedule():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.getenv("PORT", 8000))
+    is_prod = os.getenv("RENDER", "") or os.getenv("ENVIRONMENT") == "production"
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=not is_prod)

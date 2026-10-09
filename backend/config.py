@@ -20,10 +20,16 @@ UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 INDEX_DIR.mkdir(parents=True, exist_ok=True)
 
 # Database configuration
-DATABASE_URL = os.getenv(
+raw_db_url = os.getenv(
     "DATABASE_URL",
     "postgresql+psycopg://postgres:123456@127.0.0.1:3000/learnai"
 )
+if raw_db_url.startswith("postgres://"):
+    raw_db_url = raw_db_url.replace("postgres://", "postgresql+psycopg://", 1)
+elif raw_db_url.startswith("postgresql://") and not raw_db_url.startswith("postgresql+"):
+    raw_db_url = raw_db_url.replace("postgresql://", "postgresql+psycopg://", 1)
+
+DATABASE_URL = raw_db_url
 
 # Chunking parameters
 CHUNK_SIZE = 500       # characters per chunk

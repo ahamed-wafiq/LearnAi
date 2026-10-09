@@ -2,10 +2,11 @@
  * Learn AI RAG API Client
  * 
  * Connects the React frontend to the FastAPI RAG backend.
- * All calls go through http://localhost:8000/api
+ * Uses VITE_API_URL in production (e.g. Render backend) or defaults to http://localhost:8000
  */
 
-const API_BASE = 'http://localhost:8000/api';
+const RAW_API_URL = (import.meta.env.VITE_API_URL as string) || 'http://localhost:8000';
+const API_BASE = `${RAW_API_URL.replace(/\/+$/, '')}/api`;
 
 // ── Types ─────────────────────────────────────────────────────────────
 
